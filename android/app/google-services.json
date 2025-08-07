@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "114329531940",
+    "project_id": "deshi-multi-store",
+    "storage_bucket": "deshi-multi-store.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114329531940:android:bd5c03c0b08b653dd08ab1",
+        "android_client_info": {
+          "package_name": "com.deshiimultistore.partner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-InDvg4y5Xj7czNOkPG-VizkqhTvtA74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114329531940:android:f1da1a0565a817d5d08ab1",
+        "android_client_info": {
+          "package_name": "com.ruvanshi.user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-InDvg4y5Xj7czNOkPG-VizkqhTvtA74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114329531940:android:10748f907d96a262d08ab1",
+        "android_client_info": {
+          "package_name": "com.desiimultistore.driver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-InDvg4y5Xj7czNOkPG-VizkqhTvtA74"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

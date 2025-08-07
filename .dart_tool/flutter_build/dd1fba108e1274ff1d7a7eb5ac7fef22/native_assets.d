@@ -1,0 +1,1 @@
+ C:\\AnjaliCollection\\Ruvanshi\\User\\Ruvanshi\\Ruvanshi\\.dart_tool\\flutter_build\\dd1fba108e1274ff1d7a7eb5ac7fef22\\native_assets.yaml: 
