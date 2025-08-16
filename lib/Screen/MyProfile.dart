@@ -986,6 +986,7 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     themeNotifier = Provider.of<ThemeNotifier>(context);
 
     return Scaffold(
+      backgroundColor: colors.white30,
       key: scaffoldKey,
       body: SafeArea(
         child: SingleChildScrollView(

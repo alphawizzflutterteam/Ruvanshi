@@ -241,6 +241,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     return SafeArea(
       child: Scaffold(
+          backgroundColor: colors.white30,
           appBar: widget.fromBottom
               ? null
               : getSimpleAppBar(getTranslated(context, 'CART')!, context),

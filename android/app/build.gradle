@@ -46,19 +46,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-//    lintOptions {
-//        checkReleaseBuilds false
-//    }
-
-//    sourceSets {
-//        main.java.srcDirs += 'src/main/kotlin'
-//    }
-
-//    aaptOptions {
-//        cruncherEnabled = false
-//    }
-
-
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.ruvanshi.user"
@@ -97,8 +84,6 @@ flutter {
     source '../..'
 }
 dependencies {
-//    constraints {
-//    }
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'

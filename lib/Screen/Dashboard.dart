@@ -241,267 +241,169 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     String? title;
     if (_selBottom == 1)
       title = getTranslated(context, 'CATEGORY');
-    // else if (_selBottom == 2)
-    //   title = getTranslated(context, 'OFFER');
     else if (_selBottom == 2)
       title = getTranslated(context, 'MYBAG');
     else if (_selBottom == 3) title = getTranslated(context, 'PROFILE');
 
     return AppBar(
       elevation: 0.0,
-      centerTitle: _selBottom == 0 ? true : false,
+      backgroundColor: colors.white70,
+      leadingWidth: 200,
+      centerTitle: false,
       title: _selBottom == 0
-          ? Container(
+          ? Image.asset(
+              'assets/images/applogo.png',
               height: 40,
-              child: TextFormField(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Search(),
-                    ),
-                  );
-                },
-                enabled: true,
-                decoration: InputDecoration(
-                  hintText: 'Search Product',
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: colors.blackTemp,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                    borderSide: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                  hintStyle: Theme.of(this.context)
-                      .textTheme
-                      .titleSmall!
-                      .copyWith(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.normal),
-                  filled: true,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                  fillColor: Colors.grey[200],
-                ),
-              ),
             )
           : Text(
-              title!,
-              style: TextStyle(
-                  color: colors.blackTemp, fontWeight: FontWeight.normal),
+              title ?? "",
+              style: const TextStyle(
+                color: colors.primary,
+                fontWeight: FontWeight.normal,
+              ),
             ),
-      actions: <Widget>[
-        _selBottom == 0
-            ? Container()
-            : IconButton(
-                icon: SvgPicture.asset(
-                  imagePath + "search.svg",
-                  height: 20,
-                  color: colors.blackTemp,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Search(),
-                      ));
-                }),
+      actions: [
         IconButton(
           icon: SvgPicture.asset(
-            imagePath + "desel_notification.svg",
-            color: colors.blackTemp,
+            imagePath + "search.svg",
+            height: 20,
+            color: Colors.black,
           ),
           onPressed: () {
-            CUR_USERID != null
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NotificationList(),
-                    ))
-                : Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Login(),
-                    ));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Search()),
+            );
           },
         ),
-        _selBottom == 0
-            ? Container()
-            : IconButton(
-                padding: EdgeInsets.all(0),
-                icon: SvgPicture.asset(
-                  imagePath + "desel_fav.svg",
-                  color: colors.blackTemp,
-                ),
-                onPressed: () {
-                  CUR_USERID != null
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Favorite(),
-                          ))
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Login(),
-                          ));
-                },
-              ),
       ],
-      backgroundColor: colors.whiteTemp,
     );
   }
 
   Widget _getBottomBar() {
     return Material(
-        color: Theme.of(context).colorScheme.white,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.white,
-            boxShadow: [
-              BoxShadow(
-                  color: Theme.of(context).colorScheme.black26, blurRadius: 10)
-            ],
-          ),
-          child: TabBar(
-            onTap: (_) {
-              if (_tabController.index == 3) {
-                if (CUR_USERID == null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Login(),
-                    ),
-                  );
-                  _tabController.animateTo(0);
-                }
+      color: Theme.of(context).colorScheme.white,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.white,
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.black26,
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: TabBar(
+          onTap: (_) {
+            if (_tabController.index == 3) {
+              if (CUR_USERID == null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Login(),
+                  ),
+                );
+                _tabController.animateTo(0);
               }
-            },
-            controller: _tabController,
-            tabs: [
-              Tab(
-                icon: _selBottom == 0
-                    ? SvgPicture.asset(
-                        imagePath + "sel_home.svg",
-                        color: colors.secondary,
-                      )
-                    : SvgPicture.asset(
-                        imagePath + "desel_home.svg",
-                        color: colors.primary,
-                      ),
-                text:
-                    _selBottom == 0 ? getTranslated(context, 'HOME_LBL') : null,
+            }
+          },
+          controller: _tabController,
+          tabs: [
+            Tab(
+              icon: SvgPicture.asset(
+                _selBottom == 0
+                    ? imagePath + "sel_home.svg"
+                    : imagePath + "desel_home.svg",
+                color: _selBottom == 0 ? colors.secondary : Colors.black,
               ),
-              Tab(
-                icon: _selBottom == 1
-                    ? SvgPicture.asset(
-                        imagePath + "category01.svg",
-                        color: colors.secondary,
-                      )
-                    : SvgPicture.asset(
-                        imagePath + "category.svg",
-                        color: colors.primary,
-                      ),
-                text:
-                    _selBottom == 1 ? getTranslated(context, 'category') : null,
+              text: getTranslated(context, 'HOME_LBL'),
+            ),
+            Tab(
+              icon: SvgPicture.asset(
+                _selBottom == 1
+                    ? imagePath + "category01.svg"
+                    : imagePath + "category.svg",
+                color: _selBottom == 1 ? colors.secondary : Colors.black,
               ),
-              // Tab(
-              //   icon: _selBottom == 2
-              //       ? SvgPicture.asset(
-              //           imagePath + "sale02.svg",
-              //           color: colors.secondary,
-              //         )
-              //       : SvgPicture.asset(
-              //           imagePath + "sale.svg",
-              //           color: colors.primary,
-              //         ),
-              //   text: _selBottom == 2 ? getTranslated(context, 'SALE') : null,
-              // ),
-              Tab(
-                icon: Selector<UserProvider, String>(
-                  builder: (context, data, child) {
-                    return Stack(
-                      children: [
-                        Center(
-                          child: _selBottom == 2
-                              ? SvgPicture.asset(
-                                  imagePath + "cart01.svg",
-                                  color: colors.secondary,
-                                )
-                              : SvgPicture.asset(
-                                  imagePath + "cart.svg",
-                                  color: colors.primary,
-                                ),
+              text: getTranslated(context, 'category'),
+            ),
+            // Tab(
+            //   icon: SvgPicture.asset(
+            //     _selBottom == 2
+            //         ? imagePath + "sale02.svg"
+            //         : imagePath + "sale.svg",
+            //     color: _selBottom == 2 ? colors.secondary : Colors.black,
+            //   ),
+            //   text: getTranslated(context, 'SALE'),
+            // ),
+            Tab(
+              icon: Selector<UserProvider, String>(
+                builder: (context, data, child) {
+                  return Stack(
+                    children: [
+                      Center(
+                        child: SvgPicture.asset(
+                          _selBottom == 2
+                              ? imagePath + "cart01.svg"
+                              : imagePath + "cart.svg",
+                          color:
+                              _selBottom == 2 ? colors.secondary : Colors.black,
                         ),
-                        (data != null && data.isNotEmpty && data != "0")
-                            ? new Positioned.directional(
-                                bottom: _selBottom == 2 ? 6 : 20,
-                                textDirection: Directionality.of(context),
-                                end: 0,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: colors.primary),
-                                  child: new Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(3),
-                                      child: new Text(
-                                        data,
-                                        style: TextStyle(
-                                            fontSize: 7,
-                                            fontWeight: FontWeight.bold,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .white),
-                                      ),
-                                    ),
+                      ),
+                      if (data != null && data.isNotEmpty && data != "0")
+                        Positioned.directional(
+                          bottom: _selBottom == 2 ? 6 : 20,
+                          textDirection: Directionality.of(context),
+                          end: 0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: colors.primary,
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(3),
+                                child: Text(
+                                  data,
+                                  style: TextStyle(
+                                    fontSize: 7,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.white,
                                   ),
                                 ),
-                              )
-                            : Container()
-                      ],
-                    );
-                  },
-                  selector: (_, homeProvider) => homeProvider.curCartCount,
-                ),
-                text: _selBottom == 2 ? getTranslated(context, 'CART') : null,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+                selector: (_, homeProvider) => homeProvider.curCartCount,
               ),
-              Tab(
-                icon: _selBottom == 3
-                    ? SvgPicture.asset(
-                        imagePath + "profile01.svg",
-                        color: colors.secondary,
-                      )
-                    : SvgPicture.asset(
-                        imagePath + "profile.svg",
-                        color: colors.primary,
-                      ),
-                text:
-                    _selBottom == 3 ? getTranslated(context, 'ACCOUNT') : null,
-              ),
-            ],
-            indicator: UnderlineTabIndicator(
-              borderSide: BorderSide(color: colors.primary, width: 5.0),
-              insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
+              text: getTranslated(context, 'CART'),
             ),
-            labelColor: colors.primary,
-            labelStyle: TextStyle(fontSize: 8, fontWeight: FontWeight.w600),
+            Tab(
+              icon: SvgPicture.asset(
+                _selBottom == 3
+                    ? imagePath + "profile01.svg"
+                    : imagePath + "profile.svg",
+                color: _selBottom == 3 ? colors.secondary : Colors.black,
+              ),
+              text: getTranslated(context, 'ACCOUNT'),
+            ),
+          ],
+          indicator: UnderlineTabIndicator(
+            // borderSide: BorderSide(color: colors.lightWhite2, width: 5.0),
+            insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
           ),
-        ));
+          labelColor: colors.secondary,
+          unselectedLabelColor: Colors.black,
+          labelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          unselectedLabelStyle:
+              TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
   }
 
   @override

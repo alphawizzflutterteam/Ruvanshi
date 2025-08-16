@@ -222,7 +222,7 @@ class _AllCategoryState extends State<AllCategory> {
   // }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _catList());
+    return Scaffold(backgroundColor: colors.white30, body: _catList());
   }
 
   Widget catItem(int index, BuildContext context1) {
@@ -354,253 +354,6 @@ class _AllCategoryState extends State<AllCategory> {
     );
   }
 
-  // _catList() {
-  //   return Selector<HomeProvider, bool>(
-  //     builder: (context, data, child) {
-  //       return data
-  //           ? Container(
-  //               width: double.infinity,
-  //               child: Shimmer.fromColors(
-  //                   baseColor: Theme.of(context).colorScheme.simmerBase,
-  //                   highlightColor: Theme.of(context).colorScheme.simmerHigh,
-  //                   child: catLoading()))
-  //           : Padding(
-  //             padding: const EdgeInsets.only(left: 20.0, right: 20),
-  //             child: Container(
-  //         height: MediaQuery.of(context).size.height,
-  //               width: MediaQuery.of(context).size.width,
-  //               child: GridView.count(
-  //                   // itemCount: catList.length < 10 ? catList.length : 10,
-  //                   scrollDirection: Axis.vertical,
-  //                   shrinkWrap: true,
-  //                   physics: AlwaysScrollableScrollPhysics(),
-  //                   crossAxisSpacing: 2,
-  //                   mainAxisSpacing: 60,
-  //                   crossAxisCount: 3,
-  //                   // childAspectRatio: 2,
-  //                   // crossAxisCount: 4,
-  //                   // crossAxisSpacing: 1,
-  //                   children: List.generate(
-  //                     catList.length,
-  //                     (index) {
-  //                       return Padding(
-  //                         padding: const EdgeInsetsDirectional.only(end: 20),
-  //                         child: GestureDetector(
-  //                           onTap: () async {
-  //                             if (catList[index].subList == null ||
-  //                                 catList[index].subList!.length == 0) {
-  //                               await Navigator.push(
-  //                                   context,
-  //                                   MaterialPageRoute(
-  //                                     builder: (context) => ProductList(
-  //                                       name: catList[index].name,
-  //                                       id: catList[index].id,
-  //                                       tag: false,
-  //                                       fromSeller: false,
-  //                                     ),
-  //                                   ));
-  //                             } else {
-  //                               await Navigator.push(
-  //                                   context,
-  //                                   MaterialPageRoute(
-  //                                     builder: (context) => SubCategory(
-  //                                       title: catList[index].name!,
-  //                                       subList: catList[index].subList,
-  //                                     ),
-  //                                   ));
-  //                             }
-  //                           },
-  //                           child: Column(
-  //                             mainAxisAlignment: MainAxisAlignment.start,
-  //                             mainAxisSize: MainAxisSize.min,
-  //                             children: <Widget>[
-  //                           catList[index].image != null ?
-  //                               Container(
-  //                                 height: 70,
-  //                                 width: 140,
-  //                                 decoration: BoxDecoration(
-  //                                   image: DecorationImage(
-  //                                     image:
-  //                                     NetworkImage(
-  //                                       "${catList[index].image}",
-  //                                     )
-  //                                   )
-  //                                 ),
-  //                               )
-  //                           :
-  //                             Container(
-  //                             height: 90,
-  //                             width: 140,
-  //                           child: Image.asset("assets/images/homelogo.png")
-  //                             ),
-  //                               // Image.network(
-  //                               //   radius: 30,
-  //                               //   backgroundImage: NetworkImage(
-  //                               //     "${catList[index].image}",
-  //                               //   ),
-  //                               // ),
-  //                               // CircleAvatar(
-  //                               //   child: FadeInImage(
-  //                               //     fadeInDuration: Duration(milliseconds: 150),
-  //                               //     image: CachedNetworkImageProvider(
-  //                               //       catList[index].image!,
-  //                               //     ),
-  //                               //     height: 50.0,
-  //                               //     width: 50.0,
-  //                               //     fit: BoxFit.contain,
-  //                               //     imageErrorBuilder:
-  //                               //         (context, error, stackTrace) =>
-  //                               //         erroWidget(50),
-  //                               //     placeholder: placeHolder(50),
-  //                               //   ),
-  //                               // ),
-  //                               // Container(
-  //                               //   child: Text(
-  //                               //     catList[index].name!,
-  //                               //     style: Theme.of(context)
-  //                               //         .textTheme
-  //                               //         .bodySmall!
-  //                               //         .copyWith(
-  //                               //             color: Theme.of(context)
-  //                               //                 .colorScheme
-  //                               //                 .fontColor,
-  //                               //             fontWeight: FontWeight.w600,
-  //                               //             fontSize: 10),
-  //                               //     overflow: TextOverflow.ellipsis,
-  //                               //     textAlign: TextAlign.center,
-  //                               //   ),
-  //                               //   width: 50,
-  //                               // ),
-  //                               Container(
-  //                                 child: Text(
-  //                                   catList[index].name!.toUpperCase(),
-  //                                   style: Theme.of(context)
-  //                                       .textTheme
-  //                                       .bodySmall!
-  //                                       .copyWith(
-  //                                           color: Theme.of(context)
-  //                                               .colorScheme
-  //                                               .fontColor,
-  //                                           fontWeight: FontWeight.w600,
-  //                                           fontSize: 10),
-  //                                   overflow: TextOverflow.ellipsis,
-  //                                   textAlign: TextAlign.center,
-  //                                   maxLines: 2,
-  //                                 ),
-  //                                 width: 70,
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ),
-  //                       );
-  //                       //subCatItem(data, index, context);
-  //                     },
-  //                   )
-  //                   // itemBuilder: (context, index) {
-  //                   //   if (index == 0)
-  //                   //     return Container();
-  //                   //   else
-  //                   //     return Padding(
-  //                   //       padding: const EdgeInsetsDirectional.only(end: 10),
-  //                   //       child: GestureDetector(
-  //                   //         onTap: () async {
-  //                   //           if (catList[index].subList == null ||
-  //                   //               catList[index].subList!.length == 0) {
-  //                   //             await Navigator.push(
-  //                   //                 context,
-  //                   //                 MaterialPageRoute(
-  //                   //                   builder: (context) => ProductList(
-  //                   //                     name: catList[index].name,
-  //                   //                     id: catList[index].id,
-  //                   //                     tag: false,
-  //                   //                     fromSeller: false,
-  //                   //                   ),
-  //                   //                 ));
-  //                   //           } else {
-  //                   //             await Navigator.push(
-  //                   //                 context,
-  //                   //                 MaterialPageRoute(
-  //                   //                   builder: (context) => SubCategory(
-  //                   //                     title: catList[index].name!,
-  //                   //                     subList: catList[index].subList,
-  //                   //                   ),
-  //                   //                 ));
-  //                   //           }
-  //                   //         },
-  //                   //         child: Column(
-  //                   //           mainAxisAlignment: MainAxisAlignment.start,
-  //                   //           mainAxisSize: MainAxisSize.min,
-  //                   //           children: <Widget>[
-  //                   //             CircleAvatar(
-  //                   //               radius: 30,
-  //                   //               backgroundImage: NetworkImage(
-  //                   //                 "${catList[index].image}",
-  //                   //
-  //                   //               ),
-  //                   //             ),
-  //                   //             // CircleAvatar(
-  //                   //             //   child: FadeInImage(
-  //                   //             //     fadeInDuration: Duration(milliseconds: 150),
-  //                   //             //     image: CachedNetworkImageProvider(
-  //                   //             //       catList[index].image!,
-  //                   //             //     ),
-  //                   //             //     height: 50.0,
-  //                   //             //     width: 50.0,
-  //                   //             //     fit: BoxFit.contain,
-  //                   //             //     imageErrorBuilder:
-  //                   //             //         (context, error, stackTrace) =>
-  //                   //             //         erroWidget(50),
-  //                   //             //     placeholder: placeHolder(50),
-  //                   //             //   ),
-  //                   //             // ),
-  //                   //             // Container(
-  //                   //             //   child: Text(
-  //                   //             //     catList[index].name!,
-  //                   //             //     style: Theme.of(context)
-  //                   //             //         .textTheme
-  //                   //             //         .bodySmall!
-  //                   //             //         .copyWith(
-  //                   //             //             color: Theme.of(context)
-  //                   //             //                 .colorScheme
-  //                   //             //                 .fontColor,
-  //                   //             //             fontWeight: FontWeight.w600,
-  //                   //             //             fontSize: 10),
-  //                   //             //     overflow: TextOverflow.ellipsis,
-  //                   //             //     textAlign: TextAlign.center,
-  //                   //             //   ),
-  //                   //             //   width: 50,
-  //                   //             // ),
-  //                   //             Container(
-  //                   //               child: Text(
-  //                   //                 catList[index].name!.toUpperCase(),
-  //                   //                 style: Theme.of(context)
-  //                   //                     .textTheme
-  //                   //                     .bodySmall!
-  //                   //                     .copyWith(
-  //                   //                     color: Theme.of(context)
-  //                   //                         .colorScheme
-  //                   //                         .fontColor,
-  //                   //                     fontWeight: FontWeight.w600,
-  //                   //                     fontSize: 11),
-  //                   //                 overflow: TextOverflow.ellipsis,
-  //                   //                 textAlign: TextAlign.center,
-  //                   //                 maxLines: 2,
-  //                   //               ),
-  //                   //               width: 70,
-  //                   //             ),
-  //                   //           ],
-  //                   //         ),
-  //                   //       ),
-  //                   //     );
-  //                   // },
-  //                   ),
-  //             ),
-  //           );
-  //     },
-  //     selector: (_, homeProvider) => homeProvider.catLoading,
-  //   );
-  // }
-
   _catList() {
     return Selector<HomeProvider, bool>(
       builder: (context, data, child) {
@@ -608,9 +361,11 @@ class _AllCategoryState extends State<AllCategory> {
             ? Container(
                 width: double.infinity,
                 child: Shimmer.fromColors(
-                    baseColor: Theme.of(context).colorScheme.simmerBase,
-                    highlightColor: Theme.of(context).colorScheme.simmerHigh,
-                    child: catLoading()))
+                  baseColor: Theme.of(context).colorScheme.simmerBase,
+                  highlightColor: Theme.of(context).colorScheme.simmerHigh,
+                  child: catLoading(),
+                ),
+              )
             : Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20),
                 child: Container(
@@ -631,26 +386,28 @@ class _AllCategoryState extends State<AllCategory> {
                           child: GestureDetector(
                             onTap: () async {
                               if (catList[index].subList == null ||
-                                  catList[index].subList!.length == 0) {
+                                  catList[index].subList!.isEmpty) {
                                 await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProductList(
-                                        name: catList[index].name,
-                                        id: catList[index].id,
-                                        tag: false,
-                                        fromSeller: false,
-                                      ),
-                                    ));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductList(
+                                      name: catList[index].name,
+                                      id: catList[index].id,
+                                      tag: false,
+                                      fromSeller: false,
+                                    ),
+                                  ),
+                                );
                               } else {
                                 await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SubCategory(
-                                        title: catList[index].name!,
-                                        subList: catList[index].subList,
-                                      ),
-                                    ));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SubCategory(
+                                      title: catList[index].name!,
+                                      subList: catList[index].subList,
+                                    ),
+                                  ),
+                                );
                               }
                             },
                             child: Column(
@@ -658,18 +415,23 @@ class _AllCategoryState extends State<AllCategory> {
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
                                 catList[index].image != null
-                                    ? CircleAvatar(
-                                        radius: 35, // Adjust the size as needed
-                                        backgroundImage: NetworkImage(
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
                                           "${catList[index].image}",
+                                          height: 70,
+                                          width: 70,
+                                          fit: BoxFit.cover,
                                         ),
-                                        backgroundColor: Colors.transparent,
                                       )
-                                    : CircleAvatar(
-                                        radius: 35, // Adjust the size as needed
-                                        backgroundImage: AssetImage(
-                                            "assets/images/homelogo.png"),
-                                        backgroundColor: Colors.transparent,
+                                    : ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.asset(
+                                          "assets/images/homelogo.png",
+                                          height: 70,
+                                          width: 70,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                 SizedBox(height: 8),
                                 Container(
@@ -679,11 +441,12 @@ class _AllCategoryState extends State<AllCategory> {
                                         .textTheme
                                         .bodySmall!
                                         .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .fontColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 10),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .fontColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 10,
+                                        ),
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
                                     maxLines: 2,
