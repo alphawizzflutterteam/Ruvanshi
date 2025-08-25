@@ -11,6 +11,7 @@ class SellerProfile extends StatefulWidget {
       sellerImage,
       sellerRating,
       storeDesc,
+      hsncode,
       sellerStoreName;
 
   SellerProfile(
@@ -20,6 +21,7 @@ class SellerProfile extends StatefulWidget {
       this.sellerImage,
       this.sellerRating,
       this.storeDesc,
+      this.hsncode,
       this.sellerStoreName})
       : super(key: key);
 

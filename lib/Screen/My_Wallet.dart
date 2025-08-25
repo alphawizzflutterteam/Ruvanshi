@@ -169,6 +169,7 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
           STATUS: "Success",
           PAYMENT_METHOD: payMethod.toLowerCase()
         };
+        print('wallet_____${parameter}______');
 
         Response response =
             await post(addTransactionApi, body: parameter, headers: headers)
@@ -513,7 +514,7 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
         });
 
       var options = {
-        KEY: razorpayId,
+        'key': 'rzp_test_1DP5mmOlF5G5ag',
         AMOUNT: amt.toString(),
         // NAME: settingsProvider.userName,
         NAME: "RUVANSHI",

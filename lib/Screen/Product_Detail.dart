@@ -28,6 +28,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tuple/tuple.dart';
+import 'package:video_player/video_player.dart';
 import '../Helper/ApiBaseHelper.dart';
 import '../Helper/AppBtn.dart';
 import '../Helper/Color.dart';
@@ -35,6 +36,7 @@ import '../Helper/Constant.dart';
 import '../Helper/Session.dart';
 import '../Helper/SimBtn.dart';
 import '../Helper/String.dart';
+import '../Helper/vimeoplayer.dart';
 import '../Model/Section_Model.dart';
 import '../Model/User.dart';
 import 'Favorite.dart';
@@ -69,6 +71,7 @@ int total = 0;
 class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   int _curSlider = 0;
   final _pageController = PageController();
+  VideoPlayerController? _videoController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<int?> _selectedIndex = [];
   ChoiceChip? choiceChip, tagChip;
@@ -89,6 +92,8 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   List<Product> productList = [];
   late Animation<double> _progressAnimation;
   late AnimationController _progressAnimcontroller;
+  AnimationController? buttonController;
+  Animation? buttonSqueezeanimation;
 
   var isDarkTheme;
   late ShortDynamicLink shortenedLink;
@@ -101,6 +106,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     sliderList.clear();
+
     sliderList.add(widget.model!.image);
     if (widget.model!.videType != null &&
         widget.model!.video != null &&
@@ -155,24 +161,42 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     //  notificationcontroller = ScrollController(keepScrollOffset: true);
     // notificationcontroller!.addListener(_transactionscrollListener);
 
-    labelLargeController = new AnimationController(
+    buttonController = new AnimationController(
         duration: new Duration(milliseconds: 2000), vsync: this);
 
-    labelLargeSqueezeanimation = new Tween(
+    buttonSqueezeanimation = new Tween(
       begin: deviceWidth! * 0.7,
       end: 50.0,
     ).animate(new CurvedAnimation(
-      parent: labelLargeController!,
+      parent: buttonController!,
       curve: new Interval(
         0.0,
         0.150,
       ),
     ));
+
+    if (widget.model!.videType == "self_hosted" && widget.model!.video != "") {
+      _videoController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.model!.video!),
+        videoPlayerOptions: VideoPlayerOptions(
+          mixWithOthers: true,
+        ),
+      );
+
+      _videoController!.addListener(() {
+        setState(() {});
+      });
+      _videoController!.setLooping(false);
+      _videoController!.initialize();
+    }
   }
 
   _setProgressAnim(double maxWidth, int curPageIndex) {
     setState(() {
-      growStepWidth = maxWidth / sliderList.length;
+      growStepWidth = maxWidth /
+          (widget.model!.videType != null && widget.model!.video != ""
+              ? sliderList.length + 1
+              : sliderList.length);
       beginWidth = growStepWidth * (curPageIndex - 1);
       endWidth = growStepWidth * curPageIndex;
 
@@ -198,7 +222,8 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    labelLargeController!.dispose();
+    buttonController!.dispose();
+    if (_videoController != null) _videoController!.dispose();
     //notificationcontroller!.dispose();
     super.dispose();
   }
@@ -218,9 +243,14 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
       final File imageFile =
           File('$documentDirectory/${widget.model!.name}.png');
       imageFile.writeAsBytesSync(bytes1);
-      Share.shareFiles(['$documentDirectory/${widget.model!.name}.png'],
-          text:
-              "${widget.model!.name}\n${shortenedLink.shortUrl.toString()}\n$shareLink");
+      // Share.shareFiles(['$documentDirectory/${widget.model!.name}.png'],
+      //     text:
+      //         "${widget.model!.name}\n${shortenedLink.shortUrl.toString()}\n$shareLink");
+      SharePlus.instance.share(ShareParams(
+        files: [XFile('$documentDirectory/${widget.model!.name}.png')],
+        text:
+            '${widget.model!.name}\n${shortenedLink.shortUrl.toString()}\n$shareLink',
+      ));
     } catch (e) {
       print(e);
     }
@@ -274,16 +304,18 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
       statusBarColor: Colors.transparent,
     ));*/
 
-    return Scaffold(
-      key: _scaffoldKey,
-      body: _isNetworkAvail
-          ? Stack(
-              children: <Widget>[
-                _showContent(),
-                showCircularProgress(_isProgress, colors.primary),
-              ],
-            )
-          : noInternet(context),
+    return SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        body: _isNetworkAvail
+            ? Stack(
+                children: <Widget>[
+                  _showContent(),
+                  showCircularProgress(_isProgress, colors.primary),
+                ],
+              )
+            : noInternet(context),
+      ),
     );
   }
 
@@ -295,124 +327,441 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     return result;
   }
 
+//   Widget _slider() {
+//     double height = MediaQuery.of(context).size.height * .48;
+//     double statusBarHeight = MediaQuery.of(context).padding.top;
+//
+//     return InkWell(
+//       onTap: () {
+//         // Navigator.push(
+//         //     context,
+//         //     PageRouteBuilder(
+//         //       // transitionDuration: Duration(seconds: 1),
+//         //       pageBuilder: (_, __, ___) => ProductPreview(
+//         //         pos: _curSlider,
+//         //         secPos: widget.secPos,
+//         //         index: widget.index,
+//         //         id: widget.model!.id,
+//         //         imgList: sliderList,
+//         //         list: widget.list,
+//         //         video: widget.model!.video,
+//         //         videoType: widget.model!.videType,
+//         //         from: true,
+//         //         screenSize: MediaQuery.of(context).size,
+//         //       ),
+//         //     )
+//         // );
+//       },
+//       child: Stack(
+//         children: <Widget>[
+//           Hero(
+//             tag: widget.list!
+//                 ? "${widget.index}${widget.model!.id}"
+//                 : "${widget.index}",
+//             child: Container(
+//               padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
+//               height: height,
+//               width: double.infinity,
+//               child: PageView.builder(
+//                 itemCount: sliderList.length,
+//                 scrollDirection: Axis.horizontal,
+//                 controller: _pageController,
+//                 reverse: false,
+//                 onPageChanged: (index) {
+//                   /*   if (mounted)
+//                       setState(() {
+//                         _curSlider = index;
+//                       });*/
+//                   //index i starts from 0!
+//                   _curSlider = index;
+//                   _progressAnimcontroller.reset(); //reset the animation first
+//                   _setProgressAnim(deviceWidth!, index + 1);
+//                   // context.read<ProductDetailProvider>().setCurSlider(index);
+//                 },
+//                 itemBuilder: (BuildContext context, int index) {
+//                   return Stack(
+//                     children: [
+//                       FadeInImage(
+//                         image: CachedNetworkImageProvider(sliderList[index]!),
+//                         placeholder: AssetImage(
+//                           "assets/images/sliderph.png",
+//                         ),
+//                         height: height,
+//                         width: double.maxFinite,
+//                         // fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
+//
+//                         imageErrorBuilder: (context, error, stackTrace) =>
+//                             erroWidget(height),
+//
+//                         //  fit: extendImg ? BoxFit.fill : BoxFit.contain,
+//                       ),
+//                       // index == 1 ? playIcon() : Container()
+//                     ],
+//                   );
+//                 },
+//               ),
+//             ),
+//           ),
+//           Positioned.fill(
+//               child: Align(
+//                   alignment: Alignment.bottomCenter,
+//                   child: Row(
+//                     children: <Widget>[
+//                       AnimatedProgressBar(
+//                         animation: _progressAnimation,
+//                       ),
+//                       Expanded(
+//                         child: Container(
+//                           height: 5.0,
+//                           width: double.infinity,
+//                           decoration: BoxDecoration(
+//                               color: Theme.of(context).colorScheme.white),
+//                         ),
+//                       )
+//                     ],
+//                   ))),
+//           /*  Positioned.fill(
+//             child: Align(
+//                 alignment: Alignment.bottomCenter,
+//                 child: Container(
+//                   margin: EdgeInsetsDirectional.only(bottom: 5),
+//                   child: Text(
+//                     "${_curSlider + 1}/${sliderList.length}",
+//                     style: Theme.of(context)
+//                         .textTheme
+//                         .bodySmall!
+//                         .copyWith(color: colors.primary),
+//                   ),
+//                   decoration: BoxDecoration(
+//                       color: Theme.of(context).colorScheme.lightWhite,
+//                       borderRadius: BorderRadius.circular(5)),
+//                   padding: EdgeInsets.symmetric(horizontal: 5),
+//                 )),
+//           ),
+// */
+//           favImg(),
+//           indicatorImage(),
+//         ],
+//       ),
+//     );
+//   }
+
+  //main
   Widget _slider() {
     double height = MediaQuery.of(context).size.height * .48;
     double statusBarHeight = MediaQuery.of(context).padding.top;
 
     return InkWell(
-      onTap: () {
-        // Navigator.push(
-        //     context,
-        //     PageRouteBuilder(
-        //       // transitionDuration: Duration(seconds: 1),
-        //       pageBuilder: (_, __, ___) => ProductPreview(
-        //         pos: _curSlider,
-        //         secPos: widget.secPos,
-        //         index: widget.index,
-        //         id: widget.model!.id,
-        //         imgList: sliderList,
-        //         list: widget.list,
-        //         video: widget.model!.video,
-        //         videoType: widget.model!.videType,
-        //         from: true,
-        //         screenSize: MediaQuery.of(context).size,
-        //       ),
-        //     )
-        // );
-      },
+      onTap: () {},
       child: Stack(
         children: <Widget>[
           Hero(
-            tag: widget.list!
-                ? "${widget.index}${widget.model!.id}"
+            tag: widget.list == true
+                ? "${widget.index}${widget.model?.id ?? ''}"
                 : "${widget.index}",
             child: Container(
               padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
               height: height,
               width: double.infinity,
               child: PageView.builder(
-                itemCount: sliderList.length,
+                itemCount: (widget.model?.videType != null &&
+                        widget.model?.video != null &&
+                        widget.model!.video!.isNotEmpty)
+                    ? sliderList.length + 1
+                    : sliderList.length,
                 scrollDirection: Axis.horizontal,
                 controller: _pageController,
                 reverse: false,
                 onPageChanged: (index) {
-                  /*   if (mounted)
-                      setState(() {
-                        _curSlider = index;
-                      });*/
-                  //index i starts from 0!
+                  if (mounted) {
+                    setState(() {
+                      _curSlider = index;
+                    });
+                  }
                   _curSlider = index;
-                  _progressAnimcontroller.reset(); //reset the animation first
-                  _setProgressAnim(deviceWidth!, index + 1);
-                  // context.read<ProductDetailProvider>().setCurSlider(index);
+                  _progressAnimcontroller.reset();
+                  if (deviceWidth != null) {
+                    _setProgressAnim(deviceWidth!, index + 1);
+                  }
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  return Stack(
-                    children: [
-                      FadeInImage(
-                        image: CachedNetworkImageProvider(sliderList[index]!),
-                        placeholder: AssetImage(
-                          "assets/images/sliderph.png",
+                  // Check if this is the video item
+                  if (index == sliderList.length &&
+                      widget.model?.videType != null &&
+                      widget.model?.video != null &&
+                      widget.model!.video!.isNotEmpty) {
+                    if (widget.model!.videType == "vimeo") {
+                      print("testing2");
+                      String videoUrl = widget.model!.video!;
+                      if (videoUrl.contains("https://vimeo.com/")) {
+                        List<String> id = videoUrl.split("https://vimeo.com/");
+                        if (id.length > 1 && id[1].isNotEmpty) {
+                          return SafeArea(
+                            child: Container(
+                              width: double.maxFinite,
+                              height: double.maxFinite,
+                              child: Center(
+                                child: VimeoPlayer(
+                                  id: id[1],
+                                  autoPlay: true,
+                                  looping: false,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                      // Fallback for invalid Vimeo URL
+                      return Container(
+                        child: Center(
+                          child: Text("Invalid Vimeo URL"),
                         ),
-                        height: height,
-                        width: double.maxFinite,
-                        // fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
+                      );
+                    } else {
+                      print("testing3");
+                      return (_videoController?.value.isInitialized == true)
+                          ? AspectRatio(
+                              aspectRatio:
+                                  MediaQuery.of(context).size.aspectRatio,
+                              child: Container(
+                                color: Colors.red,
+                                width: MediaQuery.of(context).size.width,
+                                height: _videoController!.value.size.height,
+                                child: Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: <Widget>[
+                                    VideoPlayer(_videoController!),
+                                    _ControlsOverlay(
+                                        controller: _videoController),
+                                    VideoProgressIndicator(
+                                      _videoController!,
+                                      allowScrubbing: true,
+                                      colors: VideoProgressColors(
+                                        playedColor: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      // Set minHeight for progress bar thickness
+                                      // minHeight is available in video_player >=2.2.7
+                                      // minHeight: 8.0,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Theme.of(context).colorScheme.primary),
+                                ),
+                              ),
+                            );
+                    }
+                  }
 
-                        imageErrorBuilder: (context, error, stackTrace) =>
-                            erroWidget(height),
+                  // Regular image slider item
+                  if (index < sliderList.length && sliderList[index] != null) {
+                    return Stack(
+                      children: [
+                        FadeInImage(
+                          image: CachedNetworkImageProvider(sliderList[index]!),
+                          placeholder: AssetImage(
+                            "assets/images/sliderph.png",
+                          ),
+                          height: height,
+                          width: double.maxFinite,
+                          fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
+                          imageErrorBuilder: (context, error, stackTrace) =>
+                              erroWidget(height),
+                        ),
+                        // index == 1 ? playIcon() : Container()
+                      ],
+                    );
+                  }
 
-                        //  fit: extendImg ? BoxFit.fill : BoxFit.contain,
-                      ),
-                      // index == 1 ? playIcon() : Container()
-                    ],
+                  // Fallback for invalid index
+                  return Container(
+                    child: Center(
+                      child: Text("No content available"),
+                    ),
                   );
                 },
               ),
             ),
           ),
           Positioned.fill(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Row(
-                    children: <Widget>[
-                      AnimatedProgressBar(
-                        animation: _progressAnimation,
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 5.0,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.white),
-                        ),
-                      )
-                    ],
-                  ))),
-          /*  Positioned.fill(
             child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  margin: EdgeInsetsDirectional.only(bottom: 5),
-                  child: Text(
-                    "${_curSlider + 1}/${sliderList.length}",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: colors.primary),
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: <Widget>[
+                  AnimatedProgressBar(
+                    animation: _progressAnimation,
                   ),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.lightWhite,
-                      borderRadius: BorderRadius.circular(5)),
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                )),
+                  Expanded(
+                    child: Container(
+                      height: 5.0,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-*/
           favImg(),
           indicatorImage(),
         ],
       ),
     );
   }
+  // Widget _slider() {
+  //   double height = MediaQuery.of(context).size.height * .48;
+  //   double statusBarHeight = MediaQuery.of(context).padding.top;
+  //
+  //   return InkWell(
+  //     onTap: () {},
+  //     child: Stack(
+  //       children: <Widget>[
+  //         Hero(
+  //           tag: widget.list!
+  //               ? "${widget.index}${widget.model!.id}"
+  //               : "${widget.index}",
+  //           child: Container(
+  //             padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
+  //             height: height,
+  //             width: double.infinity,
+  //             child: PageView.builder(
+  //               itemCount:
+  //                   widget.model!.videType != null && widget.model!.video != ""
+  //                       ? sliderList.length + 1
+  //                       : sliderList.length,
+  //               scrollDirection: Axis.horizontal,
+  //               controller: _pageController,
+  //               reverse: false,
+  //               onPageChanged: (index) {
+  //                 if (mounted)
+  //                   setState(() {
+  //                     _curSlider = index;
+  //                   });
+  //                 _curSlider = index;
+  //                 _progressAnimcontroller.reset();
+  //                 _setProgressAnim(deviceWidth!, index + 1);
+  //               },
+  //               itemBuilder: (BuildContext context, int index) {
+  //                 if (index == sliderList.length &&
+  //                     widget.model!.videType != null &&
+  //                     widget.model!.video != "") {
+  //                   if (widget.model!.videType == "vimeo") {
+  //                     print("testing2");
+  //                     List<String> id =
+  //                         widget.model!.video!.split("https://vimeo.com/");
+  //                     return SafeArea(
+  //                         child: Container(
+  //                       width: double.maxFinite,
+  //                       height: double.maxFinite,
+  //                       child: Center(
+  //                         child: VimeoPlayer(
+  //                           id: id[1],
+  //                           autoPlay: true,
+  //                           looping: false,
+  //                         ),
+  //                       ),
+  //                     ));
+  //                   } else {
+  //                     print("testing3");
+  //                     return _videoController!.value.isInitialized
+  //                         ? AspectRatio(
+  //                             aspectRatio:
+  //                                 MediaQuery.of(context).size.aspectRatio,
+  //                             child: Container(
+  //                               color: Colors.red,
+  //                               width: MediaQuery.of(context).size.width,
+  //                               height: _videoController!.value.size.height,
+  //                               child: Stack(
+  //                                 alignment: Alignment.bottomCenter,
+  //                                 children: <Widget>[
+  //                                   VideoPlayer(_videoController!),
+  //                                   _ControlsOverlay(
+  //                                       controller: _videoController),
+  //                                   VideoProgressIndicator(
+  //                                     _videoController!,
+  //                                     allowScrubbing: true,
+  //                                     colors: VideoProgressColors(
+  //                                       playedColor: Theme.of(context)
+  //                                           .colorScheme
+  //                                           .primary,
+  //                                     ),
+  //                                     padding:
+  //                                         EdgeInsets.symmetric(vertical: 8.0),
+  //                                     // Set minHeight for progress bar thickness
+  //                                     // minHeight is available in video_player >=2.2.7
+  //                                     // minHeight: 8.0,
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           )
+  //                         : Container(
+  //                             child: Center(
+  //                               child: CircularProgressIndicator(
+  //                                 valueColor: AlwaysStoppedAnimation<Color>(
+  //                                     Theme.of(context).colorScheme.primary),
+  //                               ),
+  //                             ),
+  //                           );
+  //                   }
+  //                 }
+  //                 return Stack(
+  //                   children: [
+  //                     FadeInImage(
+  //                       image: CachedNetworkImageProvider(sliderList[index]!),
+  //                       placeholder: AssetImage(
+  //                         "assets/images/sliderph.png",
+  //                       ),
+  //                       height: height,
+  //                       width: double.maxFinite,
+  //                       fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
+  //
+  //                       imageErrorBuilder: (context, error, stackTrace) =>
+  //                           erroWidget(height),
+  //
+  //                       // fit: extendImg ? BoxFit.fill : BoxFit.contain,
+  //                     ),
+  //                     // index == 1 ? playIcon() : Container()
+  //                   ],
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //         Positioned.fill(
+  //             child: Align(
+  //                 alignment: Alignment.bottomCenter,
+  //                 child: Row(
+  //                   children: <Widget>[
+  //                     AnimatedProgressBar(
+  //                       animation: _progressAnimation,
+  //                     ),
+  //                     Expanded(
+  //                       child: Container(
+  //                         height: 5.0,
+  //                         width: double.infinity,
+  //                         decoration: BoxDecoration(
+  //                             color: Theme.of(context).colorScheme.white),
+  //                       ),
+  //                     )
+  //                   ],
+  //                 ))),
+  //         favImg(),
+  //         indicatorImage(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget favImg() {
     return Positioned.directional(
@@ -529,6 +878,137 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     );
   }
 
+  // _price(pos, from) {
+  //   double price = double.parse(widget.model!.prVarientList![pos].disPrice!);
+  //   if (price == 0)
+  //     price = double.parse(widget.model!.prVarientList![pos].price!);
+  //
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text(
+  //           CUR_CURRENCY! + " " + price.toString(),
+  //           //style: Theme.of(context).textTheme.titleLarge,
+  //           style: TextStyle(
+  //             color: Theme.of(context).colorScheme.fontColor,
+  //             fontWeight: FontWeight.bold,
+  //             fontSize: 20,
+  //           ),
+  //         ),
+  //         from
+  //             ? Padding(
+  //                 padding: const EdgeInsetsDirectional.only(
+  //                     start: 3.0, bottom: 5, top: 3),
+  //                 child: widget.model!.availability == "0"
+  //                     ? Container()
+  //                     : Row(
+  //                         children: <Widget>[
+  //                           GestureDetector(
+  //                             child: Card(
+  //                               shape: RoundedRectangleBorder(
+  //                                 borderRadius: BorderRadius.circular(50),
+  //                               ),
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.all(8.0),
+  //                                 child: Icon(
+  //                                   Icons.remove,
+  //                                   size: 15,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                             onTap: () {
+  //                               if (_isProgress == false &&
+  //                                   (int.parse(qtyController.text)) > 0)
+  //                                 removeFromCart();
+  //                             },
+  //                           ),
+  //                           Container(
+  //                             width: 37,
+  //                             height: 20,
+  //                             color: Colors.transparent,
+  //                             child: Stack(
+  //                               children: [
+  //                                 Selector<CartProvider,
+  //                                     Tuple2<List<dynamic>, List<dynamic>>>(
+  //                                   builder: (context, data, child) {
+  //                                     setVariant == false
+  //                                         ? qtyController.text = data.item1
+  //                                                 .contains(widget.model!.id)
+  //                                             ? data.item2[data.item1
+  //                                                     .indexWhere((element) =>
+  //                                                         element ==
+  //                                                         widget.model!.id)]
+  //                                                 .toString()
+  //                                             : "0"
+  //                                         : "0";
+  //                                     return TextField(
+  //                                       textAlign: TextAlign.center,
+  //                                       readOnly: true,
+  //                                       style: TextStyle(
+  //                                           fontSize: 12,
+  //                                           color: Theme.of(context)
+  //                                               .colorScheme
+  //                                               .fontColor,
+  //                                           fontWeight: FontWeight.bold),
+  //                                       controller: qtyController,
+  //                                       // _controller[index],
+  //                                       decoration: InputDecoration(
+  //                                         border: InputBorder.none,
+  //                                       ),
+  //                                     );
+  //                                   },
+  //                                   selector: (_, provider) => Tuple2(
+  //                                       provider.cartIdList, provider.qtyList),
+  //                                 ),
+  //                                 /*    TextField(
+  //                           textAlign: TextAlign.center,
+  //                           readOnly: true,
+  //                           style: TextStyle(
+  //                             fontSize: 12,
+  //                           ),
+  //                           controller: qtyController,
+  //                           // _controller[index],
+  //                           decoration: InputDecoration(
+  //                             border: InputBorder.none,
+  //                           ),
+  //                         ),*/
+  //                               ],
+  //                             ),
+  //                           ), // ),
+  //
+  //                           GestureDetector(
+  //                             child: Card(
+  //                               shape: RoundedRectangleBorder(
+  //                                 borderRadius: BorderRadius.circular(50),
+  //                               ),
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.all(8.0),
+  //                                 child: Icon(
+  //                                   Icons.add,
+  //                                   size: 15,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                             onTap: () {
+  //                               if (_isProgress == false)
+  //                                 addToCart(
+  //                                     (int.parse(qtyController.text) +
+  //                                             int.parse(
+  //                                                 widget.model!.qtyStepSize!))
+  //                                         .toString(),
+  //                                     false);
+  //                             },
+  //                           )
+  //                         ],
+  //                       ),
+  //               )
+  //             : Container(),
+  //       ],
+  //     ),
+  //   );
+  // }
   _price(pos, from) {
     double price = double.parse(widget.model!.prVarientList![pos].disPrice!);
     if (price == 0)
@@ -541,7 +1021,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
         children: [
           Text(
             CUR_CURRENCY! + " " + price.toString(),
-            //style: Theme.of(context).textTheme.titleLarge,
             style: TextStyle(
               color: Theme.of(context).colorScheme.fontColor,
               fontWeight: FontWeight.bold,
@@ -554,105 +1033,129 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                       start: 3.0, bottom: 5, top: 3),
                   child: widget.model!.availability == "0"
                       ? Container()
-                      : Row(
-                          children: <Widget>[
-                            GestureDetector(
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 15,
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                if (_isProgress == false &&
-                                    (int.parse(qtyController.text)) > 0)
-                                  removeFromCart();
-                              },
-                            ),
-                            Container(
-                              width: 37,
-                              height: 20,
-                              color: Colors.transparent,
-                              child: Stack(
-                                children: [
-                                  Selector<CartProvider,
-                                      Tuple2<List<dynamic>, List<dynamic>>>(
-                                    builder: (context, data, child) {
-                                      setVariant == false
-                                          ? qtyController.text = data.item1
-                                                  .contains(widget.model!.id)
-                                              ? data.item2[data.item1
-                                                      .indexWhere((element) =>
-                                                          element ==
-                                                          widget.model!.id)]
-                                                  .toString()
-                                              : "0"
-                                          : "0";
-                                      return TextField(
-                                        textAlign: TextAlign.center,
-                                        readOnly: true,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .fontColor,
-                                            fontWeight: FontWeight.bold),
-                                        controller: qtyController,
-                                        // _controller[index],
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                        ),
-                                      );
-                                    },
-                                    selector: (_, provider) => Tuple2(
-                                        provider.cartIdList, provider.qtyList),
-                                  ),
-                                  /*    TextField(
-                            textAlign: TextAlign.center,
-                            readOnly: true,
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                            controller: qtyController,
-                            // _controller[index],
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                            ),
-                          ),*/
-                                ],
-                              ),
-                            ), // ),
+                      : Selector<CartProvider,
+                          Tuple2<List<dynamic>, List<dynamic>>>(
+                          builder: (context, data, child) {
+                            // Check current quantity
+                            String currentQty = "0";
+                            if (setVariant == false) {
+                              currentQty = data.item1.contains(widget.model!.id)
+                                  ? data.item2[data.item1.indexWhere(
+                                          (element) =>
+                                              element == widget.model!.id)]
+                                      .toString()
+                                  : "0";
+                            }
+                            qtyController.text = currentQty;
 
-                            GestureDetector(
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 15,
+                            if (currentQty == "0") {
+                              return GestureDetector(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0, vertical: 12.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.3),
+                                        spreadRadius: 1,
+                                        blurRadius: 2,
+                                        offset: Offset(0, 1),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "ADD",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              onTap: () {
-                                if (_isProgress == false)
-                                  addToCart(
-                                      (int.parse(qtyController.text) +
-                                              int.parse(
-                                                  widget.model!.qtyStepSize!))
-                                          .toString(),
-                                      false);
-                              },
-                            )
-                          ],
+                                onTap: () {
+                                  if (_isProgress == false) {
+                                    addToCart(
+                                        widget.model!.qtyStepSize!, false);
+                                  }
+                                },
+                              );
+                            } else {
+                              return Row(
+                                children: <Widget>[
+                                  GestureDetector(
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Icon(
+                                          Icons.remove,
+                                          size: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      if (_isProgress == false &&
+                                          (int.parse(qtyController.text)) > 0)
+                                        removeFromCart();
+                                    },
+                                  ),
+                                  Container(
+                                    width: 37,
+                                    height: 20,
+                                    color: Colors.transparent,
+                                    child: TextField(
+                                      textAlign: TextAlign.center,
+                                      readOnly: true,
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .fontColor,
+                                          fontWeight: FontWeight.bold),
+                                      controller: qtyController,
+                                      decoration: InputDecoration(
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Icon(
+                                          Icons.add,
+                                          size: 15,
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      if (_isProgress == false)
+                                        addToCart(
+                                            (int.parse(qtyController.text) +
+                                                    int.parse(widget
+                                                        .model!.qtyStepSize!))
+                                                .toString(),
+                                            false);
+                                    },
+                                  )
+                                ],
+                              );
+                            }
+                          },
+                          selector: (_, provider) =>
+                              Tuple2(provider.cartIdList, provider.qtyList),
                         ),
                 )
               : Container(),
@@ -2080,10 +2583,18 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                     _specification(),
                     // Divider(),
 
-                    _deliverPincode(),
+                    // _deliverPincode(),
 
                     //Divider(),
-                    _sellerDetail(),
+                    // _sellerDetail(),
+                    Text(
+                      "   HSN Code : ${widget.model!.hsn_code ?? ''}",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
                     // Divider()
                     //_tags()
                   ],
@@ -2647,6 +3158,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           };
 
           if (CUR_USERID != null) parameter[USER_ID] = CUR_USERID;
+          print('Productdetail:_____${parameter}______');
 
           Response response =
               await post(getProductApi, headers: headers, body: parameter)
@@ -2794,6 +3306,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                       sellerName: widget.model!.seller_name ?? "",
                       sellerID: widget.model!.seller_id,
                       storeDesc: widget.model!.store_description,
+                      hsncode: widget.model!.hsn_code,
                     )));
           },
         ),
@@ -3379,6 +3892,83 @@ class AnimatedProgressBar extends AnimatedWidget {
       height: 5.0,
       width: animation.value,
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.black),
+    );
+  }
+}
+
+class _ControlsOverlay extends StatelessWidget {
+  const _ControlsOverlay({Key? key, this.controller}) : super(key: key);
+
+  static const _examplePlaybackRates = [
+    0.25,
+    0.5,
+    1.0,
+    1.5,
+    2.0,
+    3.0,
+    5.0,
+    10.0,
+  ];
+
+  final VideoPlayerController? controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        AnimatedSwitcher(
+          duration: Duration(milliseconds: 50),
+          reverseDuration: Duration(milliseconds: 200),
+          child: controller!.value.isPlaying
+              ? SizedBox.shrink()
+              : Container(
+                  color: Theme.of(context).colorScheme.black26,
+                  child: Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Theme.of(context).colorScheme.white,
+                      size: 100.0,
+                    ),
+                  ),
+                ),
+        ),
+        GestureDetector(
+          onTap: () {
+            controller!.value.isPlaying
+                ? controller!.pause()
+                : controller!.play();
+          },
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: PopupMenuButton<double>(
+            initialValue: controller!.value.playbackSpeed,
+            tooltip: 'Playback speed',
+            onSelected: (speed) {
+              controller!.setPlaybackSpeed(speed);
+            },
+            itemBuilder: (context) {
+              return [
+                for (final speed in _examplePlaybackRates)
+                  PopupMenuItem(
+                    value: speed,
+                    child: Text('${speed}x'),
+                  )
+              ];
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                // Using less vertical padding as the text is also longer
+                // horizontally, so it feels like it would need more spacing
+                // horizontally (matching the aspect ratio of the video).
+                vertical: 12,
+                horizontal: 16,
+              ),
+              child: Text('${controller!.value.playbackSpeed}x'),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

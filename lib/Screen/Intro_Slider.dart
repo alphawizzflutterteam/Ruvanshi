@@ -91,50 +91,6 @@ class _GettingStartedScreenState extends State<IntroSlider>
     return result;
   }
 
-  // Widget _slider() {
-  //   return Expanded(
-  //     child: PageView.builder(
-  //       itemCount: slideList.length,
-  //       scrollDirection: Axis.horizontal,
-  //       controller: _pageController,
-  //       onPageChanged: _onPageChanged,
-  //       itemBuilder: (BuildContext context, int index) {
-  //         return SingleChildScrollView(
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.max,
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: <Widget>[
-  //               Container(
-  //                 height: MediaQuery.of(context).size.height * .5,
-  //                 child: Image.asset(
-  //                   slideList[index].imageUrl,
-  //                 ),
-  //               ),
-  //               Container(
-  //                   margin: EdgeInsetsDirectional.only(top: 20),
-  //                   child: Text(slideList[index].title,
-  //                       style: Theme.of(context)
-  //                           .textTheme
-  //                           .titleMedium!
-  //                           .copyWith(
-  //                               color: Theme.of(context).colorScheme.fontColor,
-  //                               fontWeight: FontWeight.bold))),
-  //               Container(
-  //                 padding: EdgeInsetsDirectional.only(
-  //                     top: 30.0, start: 15.0, end: 15.0),
-  //                 child: Text(slideList[index].description,
-  //                     textAlign: TextAlign.center,
-  //                     style: Theme.of(context).textTheme.titleSmall!.copyWith(
-  //                         color: Theme.of(context).colorScheme.fontColor,
-  //                         fontWeight: FontWeight.normal)),
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
   _slider() {
     return Expanded(
       child: PageView.builder(
@@ -217,41 +173,6 @@ class _GettingStartedScreenState extends State<IntroSlider>
       ),
     );
   }
-
-  // _btn() {
-  //   return Column(
-  //     children: [
-  //       Row(
-  //           mainAxisSize: MainAxisSize.min,
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: getList()),
-  //       Center(
-  //           child: Padding(
-  //         padding: const EdgeInsetsDirectional.only(bottom: 18.0),
-  //         child: AppBtn(
-  //             title: _currentPage == 0 || _currentPage == 1
-  //                 ? getTranslated(context, 'NEXT_LBL')
-  //                 : getTranslated(context, 'GET_STARTED'),
-  //             btnAnim: buttonSqueezeanimation,
-  //             btnCntrl: buttonController,
-  //             onBtnSelected: () {
-  //               if (_currentPage == 2) {
-  //                 setPrefrenceBool(ISFIRSTTIME, true);
-  //                 Navigator.pushReplacement(
-  //                   context,
-  //                   MaterialPageRoute(builder: (context) => SignInUpAcc()),
-  //                 );
-  //               } else {
-  //                 _currentPage = _currentPage + 1;
-  //                 _pageController.animateToPage(_currentPage,
-  //                     curve: Curves.decelerate,
-  //                     duration: Duration(milliseconds: 300));
-  //               }
-  //             }),
-  //       )),
-  //     ],
-  //   );
-  // }
 
   _buildIndicatorDots() {
     return Row(

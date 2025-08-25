@@ -509,9 +509,9 @@ class _LoginPageState extends State<SetPass> with TickerProviderStateMixin {
       child: SizedBox(
         width: 100,
         height: 100,
-        child: Image.asset(
-          'assets/images/loginlogo.png',
-        ),
+        // child: Image.asset(
+        //   'assets/images/loginlogo.png',
+        // ),
       ),
     );
   }

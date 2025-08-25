@@ -22,10 +22,10 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+//apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'com.google.gms.google-services'
-googleServices.disableVersionCheck = true
+//googleServices.disableVersionCheck = true
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -34,28 +34,26 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 35
     namespace "com.ruvanshi.user"
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-        coreLibraryDesugaringEnabled true
+    compileSdkVersion 35
+    ndkVersion "26.1.10909125"
 
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.ruvanshi.user"
         minSdkVersion 23
         targetSdkVersion 35
+        namespace "com.ruvanshi.user"
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
-
     }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 
     signingConfigs {
         release {
@@ -75,7 +73,7 @@ android {
     android {
         lintOptions {
             disable 'InvalidPackage'
-            checkReleaseBuilds false //<- add this line
+            checkReleaseBuilds false
         }
     }
 
@@ -86,7 +84,7 @@ flutter {
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.5"
     implementation platform('com.google.firebase:firebase-bom:31.1.0')
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-dynamic-links:17.0.1'

@@ -144,6 +144,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
   clearAll() {
     totalPrice = 0;
     oriPrice = 0;
+    cgstAmount = 0.0;
+    sgstAmount = 0.0;
 
     taxPer = 0;
     delCharge = 0;
@@ -241,7 +243,6 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     return SafeArea(
       child: Scaffold(
-          backgroundColor: colors.white30,
           appBar: widget.fromBottom
               ? null
               : getSimpleAppBar(getTranslated(context, 'CART')!, context),
@@ -1419,6 +1420,103 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
   var dCharge;
   String? overallAmount;
+  double cgstAmount = 0.0;
+  double sgstAmount = 0.0;
+  // Future<void> _getCart(String save) async {
+  //   _isNetworkAvail = await isNetworkAvailable();
+  //
+  //   if (_isNetworkAvail) {
+  //     try {
+  //       var parameter = {
+  //         USER_ID: CUR_USERID,
+  //         ADD_ID: selAddress ?? '',
+  //         SAVE_LATER: save
+  //       };
+  //       print("jkfffffffffffff___________${parameter}");
+  //
+  //       print(parameter.toString());
+  //       Response response =
+  //           await post(getCartApi, body: parameter, headers: headers)
+  //               .timeout(Duration(seconds: timeOut));
+  //       log(response.body.toString());
+  //       log(response.body.toString());
+  //
+  //       var getdata = json.decode(response.body);
+  //       bool error = getdata["error"];
+  //       String? msg = getdata["message"];
+  //       if (!error) {
+  //         var data = getdata["data"];
+  //         setState(() {
+  //           print("Cart nEW================> : $totalamount");
+  //           totalamount = getdata['overall_amount'];
+  //           print("Cart aMOUBT================> : $totalamount");
+  //           //sellerId = data[0]["product_details"][0]["seller_id"];
+  //         });
+  //         cgstAmount = getdata.containsKey('cgst_amount')
+  //             ? double.parse(
+  //                 getdata['cgst_amount'].toString().replaceAll(",", ""))
+  //             : 0.0;
+  //         sgstAmount = getdata.containsKey('sgst_amount')
+  //             ? double.parse(
+  //                 getdata['sgst_amount'].toString().replaceAll(",", ""))
+  //             : 0.0;
+  //
+  //         print("CGST Amount: $cgstAmount");
+  //         print("SGST Amount: $sgstAmount");
+  //         // isOnOff = onOff;
+  //         // var  onOff = await checkOnOff(sellerId);
+  //         // setState(() {
+  //         //   isOnOff = onOff;
+  //         // });
+  //         //print("is On off===========> : $onOff");
+  //         // print("Seller Id-----------> $seller_id");
+  //         print("Cart Data================> : $data");
+  //         print("ssssssssssssssssssssssss$getdata['delivery_charge']");
+  //         oriPrice = double.parse(getdata[SUB_TOTAL]);
+  //         // delCharge =getdata['delivery_charge'].toString();
+  //         //double.parse(getdata['delivery_charge'].toString());
+  //         dCharge = double.parse(
+  //             getdata['delivery_charge'].toString().replaceAll(",", ""));
+  //         taxAmount = double.parse(
+  //             getdata['tax_amount'].toString().replaceAll(",", ""));
+  //
+  //         print(" charge here ${delCharge}");
+  //         taxPer = double.parse(getdata[TAX_PER]);
+  //
+  //         totalPrice = delCharge + oriPrice;
+  //         List<SectionModel> cartList = (data as List)
+  //             .map((data) => new SectionModel.fromCart(data))
+  //             .toList();
+  //         context.read<CartProvider>().setCartlist(cartList);
+  //         // overallAmount = cartList[0].finalTotal;
+  //
+  //         if (getdata.containsKey(PROMO_CODES)) {
+  //           var promo = getdata[PROMO_CODES];
+  //           promoList =
+  //               (promo as List).map((e) => new Promo.fromJson(e)).toList();
+  //         }
+  //
+  //         for (int i = 0; i < cartList.length; i++)
+  //           _controller.add(new TextEditingController());
+  //       } else {
+  //         if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
+  //       }
+  //       if (mounted)
+  //         setState(() {
+  //           _isCartLoad = false;
+  //         });
+  //
+  //       _getAddress();
+  //     } on TimeoutException catch (_) {
+  //       setSnackbar(getTranslated(context, 'somethingMSg')!, _scaffoldKey);
+  //     }
+  //   } else {
+  //     if (mounted)
+  //       setState(() {
+  //         _isNetworkAvail = false;
+  //       });
+  //   }
+  // }
   Future<void> _getCart(String save) async {
     _isNetworkAvail = await isNetworkAvailable();
 
@@ -1429,53 +1527,49 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           ADD_ID: selAddress ?? '',
           SAVE_LATER: save
         };
-        print("jkfffffffffffff___________${parameter}");
 
-        print(parameter.toString());
         Response response =
             await post(getCartApi, body: parameter, headers: headers)
                 .timeout(Duration(seconds: timeOut));
-        log(response.body.toString());
-        log(response.body.toString());
 
         var getdata = json.decode(response.body);
         bool error = getdata["error"];
         String? msg = getdata["message"];
+
         if (!error) {
           var data = getdata["data"];
+
           setState(() {
-            print("Cart nEW================> : $totalamount");
             totalamount = getdata['overall_amount'];
-            print("Cart aMOUBT================> : $totalamount");
-            //sellerId = data[0]["product_details"][0]["seller_id"];
+            oriPrice = double.parse(getdata[SUB_TOTAL]);
+            dCharge = double.parse(
+                getdata['delivery_charge'].toString().replaceAll(",", ""));
+            taxAmount = double.parse(
+                getdata['tax_amount'].toString().replaceAll(",", ""));
+            taxPer = double.parse(getdata[TAX_PER]);
+
+            cgstAmount = getdata['cgst_amount'] != null
+                ? double.parse(
+                    getdata['cgst_amount'].toString().replaceAll(",", ""))
+                : 0.0;
+            sgstAmount = getdata['sgst_amount'] != null
+                ? double.parse(
+                    getdata['sgst_amount'].toString().replaceAll(",", ""))
+                : 0.0;
           });
-          // isOnOff = onOff;
-          // var  onOff = await checkOnOff(sellerId);
-          // setState(() {
-          //   isOnOff = onOff;
-          // });
-          //print("is On off===========> : $onOff");
-          // print("Seller Id-----------> $seller_id");
-          print("Cart Data================> : $data");
-          print("ssssssssssssssssssssssss$getdata['delivery_charge']");
-          oriPrice = double.parse(getdata[SUB_TOTAL]);
-          // delCharge =getdata['delivery_charge'].toString();
 
-          //double.parse(getdata['delivery_charge'].toString());
-          dCharge = double.parse(
-              getdata['delivery_charge'].toString().replaceAll(",", ""));
-          taxAmount = double.parse(
-              getdata['tax_amount'].toString().replaceAll(",", ""));
-
-          print(" charge here ${delCharge}");
-          taxPer = double.parse(getdata[TAX_PER]);
+          print("Subtotal: $oriPrice");
+          print("CGST Amount: $cgstAmount");
+          print("SGST Amount: $sgstAmount");
+          print("Tax Amount: $taxAmount");
+          print("Total Amount: $totalamount");
 
           totalPrice = delCharge + oriPrice;
+
           List<SectionModel> cartList = (data as List)
               .map((data) => new SectionModel.fromCart(data))
               .toList();
           context.read<CartProvider>().setCartlist(cartList);
-          // overallAmount = cartList[0].finalTotal;
 
           if (getdata.containsKey(PROMO_CODES)) {
             var promo = getdata[PROMO_CODES];
@@ -1483,25 +1577,29 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                 (promo as List).map((e) => new Promo.fromJson(e)).toList();
           }
 
-          for (int i = 0; i < cartList.length; i++)
+          for (int i = 0; i < cartList.length; i++) {
             _controller.add(new TextEditingController());
+          }
         } else {
           if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
         }
-        if (mounted)
+
+        if (mounted) {
           setState(() {
             _isCartLoad = false;
           });
+        }
 
         _getAddress();
       } on TimeoutException catch (_) {
         setSnackbar(getTranslated(context, 'somethingMSg')!, _scaffoldKey);
       }
     } else {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _isNetworkAvail = false;
         });
+      }
     }
   }
 
@@ -2988,7 +3086,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
       checkoutState!(() {});
       var options = {
-        'key': razorpayId, //rzp_test_1DP5mmOlF5G5ag
+        // 'key': razorpayId, //rzp_test_1DP5mmOlF5G5ag
+        'key': 'rzp_test_1DP5mmOlF5G5ag',
         'amount': "$amt",
         'name': 'Place Order',
         'prefill': {CONTACT: contact},
@@ -3494,7 +3593,6 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
   }
 
 /////
-//   kfhkfh
   orderSummary(List<SectionModel> cartList) {
     return Card(
         elevation: 0,
@@ -3529,38 +3627,72 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Tax Amount',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2),
-                  ),
-                  Text(
-                    CUR_CURRENCY! + " " + taxAmount.toStringAsFixed(2),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.fontColor,
-                        fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    getTranslated(context, 'DELIVERY_CHARGE')!,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2),
-                  ),
-                  Text(
-                    CUR_CURRENCY! + " " + dCharge.toStringAsFixed(2),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.fontColor,
-                        fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
+              if (cgstAmount > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'CGST',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    ),
+                    Text(
+                      CUR_CURRENCY! + " " + cgstAmount.toStringAsFixed(2),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.fontColor,
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+              if (sgstAmount > 0)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'SGST',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    ),
+                    Text(
+                      CUR_CURRENCY! + " " + sgstAmount.toStringAsFixed(2),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.fontColor,
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       'Tax Amount',
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.lightBlack2),
+              //     ),
+              //     Text(
+              //       CUR_CURRENCY! + " " + taxAmount.toStringAsFixed(2),
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.fontColor,
+              //           fontWeight: FontWeight.bold),
+              //     )
+              //   ],
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       getTranslated(context, 'DELIVERY_CHARGE')!,
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.lightBlack2),
+              //     ),
+              //     Text(
+              //       CUR_CURRENCY! + " " + dCharge.toStringAsFixed(2),
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.fontColor,
+              //           fontWeight: FontWeight.bold),
+              //     )
+              //   ],
+              // ),
               isPromoValid!
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3787,64 +3919,80 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                   )
                                 ],
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Tax Amount',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .lightBlack2),
-                                  ),
-                                  Text(
-                                      CUR_CURRENCY! +
-                                          " " +
-                                          taxAmount.toStringAsFixed(2),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .fontColor,
-                                              fontWeight: FontWeight.bold))
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    getTranslated(context, 'DELIVERY_CHARGE')!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .lightBlack2),
-                                  ),
-                                  Text(
+                              // Row(
+                              //   mainAxisAlignment:
+                              //       MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Text(
+                              //       'Tax Amount',
+                              //       style: Theme.of(context)
+                              //           .textTheme
+                              //           .titleMedium!
+                              //           .copyWith(
+                              //               color: Theme.of(context)
+                              //                   .colorScheme
+                              //                   .lightBlack2),
+                              //     ),
+                              //     Text(
+                              //         CUR_CURRENCY! +
+                              //             " " +
+                              //             taxAmount.toStringAsFixed(2),
+                              //         style: Theme.of(context)
+                              //             .textTheme
+                              //             .titleMedium!
+                              //             .copyWith(
+                              //                 color: Theme.of(context)
+                              //                     .colorScheme
+                              //                     .fontColor,
+                              //                 fontWeight: FontWeight.bold))
+                              //   ],
+                              // ),
+                              if (cgstAmount > 0)
+                                _buildSummaryRow(
+                                    context,
+                                    'CGST',
                                     CUR_CURRENCY! +
                                         " " +
-                                        dCharge.toStringAsFixed(2),
-                                    // dCharge.toStringAsFixed(2),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .fontColor,
-                                            fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
+                                        cgstAmount.toStringAsFixed(2)),
+
+                              if (sgstAmount > 0)
+                                _buildSummaryRow(
+                                    context,
+                                    'SGST',
+                                    CUR_CURRENCY! +
+                                        " " +
+                                        sgstAmount.toStringAsFixed(2)),
+
+                              // Row(
+                              //   mainAxisAlignment:
+                              //       MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Text(
+                              //       getTranslated(context, 'DELIVERY_CHARGE')!,
+                              //       style: Theme.of(context)
+                              //           .textTheme
+                              //           .titleMedium!
+                              //           .copyWith(
+                              //               color: Theme.of(context)
+                              //                   .colorScheme
+                              //                   .lightBlack2),
+                              //     ),
+                              //     Text(
+                              //       CUR_CURRENCY! +
+                              //           " " +
+                              //           dCharge.toStringAsFixed(2),
+                              //       // dCharge.toStringAsFixed(2),
+                              //       style: Theme.of(context)
+                              //           .textTheme
+                              //           .titleMedium!
+                              //           .copyWith(
+                              //               color: Theme.of(context)
+                              //                   .colorScheme
+                              //                   .fontColor,
+                              //               fontWeight: FontWeight.bold),
+                              //     )
+                              //   ],
+                              // ),
                               isPromoValid!
                                   ? Row(
                                       mainAxisAlignment:
@@ -4013,6 +4161,28 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
         pageBuilder: (context, animation1, animation2) {
           return Container();
         });
+  }
+
+  Widget _buildSummaryRow(BuildContext context, String label, String value,
+      {bool isDiscount = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .copyWith(color: Theme.of(context).colorScheme.lightBlack2),
+        ),
+        Text(value,
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: isDiscount
+                    ? Colors.green
+                    : Theme.of(context).colorScheme.fontColor,
+                fontWeight: FontWeight.bold))
+      ],
+    );
   }
 
   void bankTransfer() {

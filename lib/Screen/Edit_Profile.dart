@@ -497,11 +497,19 @@ class _EditProfileState extends State<EditProfile> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
-                    child: Text(
-                      getTranslated(context, 'CITYSELECT_LBL') ?? 'Select City',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface),
+                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+                    child: Center(
+                      child: Text(
+                        getTranslated(context, 'CITYSELECT_LBL') ??
+                            'Select City',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                      ),
                     ),
                   ),
                   Divider(color: Theme.of(context).colorScheme.onSurface),

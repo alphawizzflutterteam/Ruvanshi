@@ -160,6 +160,8 @@ const String PRODUCT_VARIENT_ID = 'product_variant_id';
 const String QTY = 'qty';
 const String CART_COUNT = 'cart_count';
 const String DEL_CHARGE = 'delivery_charge';
+const String CGST_AMOUNT = 'cgst_amount';
+const String SGST_AMOUNT = 'sgst_amount';
 const String SUB_TOTAL = 'sub_total';
 const String TAX_AMT = 'tax_amount';
 const String TAX_PER = 'tax_percentage';
@@ -292,6 +294,7 @@ const String SELLER_NAME = 'seller_name';
 const String SELLER_PROFILE = 'seller_profile';
 const String SELLER_RATING = 'seller_rating';
 const String STORE_DESC = 'store_description';
+const String HSNCODE = 'hsn_code';
 const String STORE_NAME = 'store_name';
 
 const String MIN_CART_AMT = 'minimum_cart_amt';

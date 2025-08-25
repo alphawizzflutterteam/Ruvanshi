@@ -18,8 +18,16 @@ import '../Helper/AppBtn.dart';
 import '../Helper/Color.dart';
 import '../Helper/Constant.dart';
 import '../Helper/Session.dart';
+import 'Verify_Otp.dart';
 
 class Login extends StatefulWidget {
+  final String? countryCode;
+
+  Login({
+    Key? key,
+    this.countryCode,
+  }) : super(key: key);
+
   @override
   _LoginPageState createState() => new _LoginPageState();
 }
@@ -29,6 +37,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
   final mobileController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  String? countrycode;
 
   String? countryName;
   FocusNode? passFocus, monoFocus = FocusNode(), emailFocus = FocusNode();
@@ -143,7 +152,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
         final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
         return Positioned(
-          bottom: bottomInset + 400,
+          bottom: bottomInset + 700,
           left: 24,
           right: 24,
           child: Material(
@@ -205,53 +214,97 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
   }
 
   Future<void> getLoginUser() async {
-    print("this is fcm Token $fcmToken");
-    var data = {
-      isnumberLogin ? MOBILE : EMAIL: isnumberLogin ? mobile : email,
-      PASSWORD: password,
-      "fcm_id": fcmToken
-    };
-    print('PrintData:_____${data}______');
-    print(data);
-    Response response =
-        await post(getUserLoginApi, body: data, headers: headers)
-            .timeout(Duration(seconds: timeOut));
-    var getdata = json.decode(response.body);
-    bool error = getdata["error"];
-    String? msg = getdata["message"];
-    await labelLargeController!.reverse();
-    if (!error) {
-      setSnackbar(msg!);
-      var i = getdata["data"][0];
-      id = i[ID];
-      username = i[USERNAME];
-      email = i[EMAIL];
-      mobile = i[MOBILE];
-      city = i[CITY];
-      area = i[AREA];
-      address = i[ADDRESS];
-      pincode = i[PINCODE];
-      latitude = i[LATITUDE];
-      longitude = i[LONGITUDE];
-      image = i[IMAGE];
-
-      CUR_USERID = id;
-
-      UserProvider userProvider =
-          Provider.of<UserProvider>(this.context, listen: false);
-      userProvider.setName(username ?? "");
-      userProvider.setEmail(email ?? "");
-      userProvider.setProfilePic(image ?? "");
-
-      SettingProvider settingProvider =
-          Provider.of<SettingProvider>(context, listen: false);
-
-      settingProvider.saveUserDetail(id!, username, email, mobile, city, area,
-          address, pincode, latitude, longitude, image, city, '', context);
-
-      Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
+    Map<String, dynamic> data;
+    if (isnumberLogin) {
+      data = {
+        MOBILE: mobile,
+        "fcm_id": fcmToken,
+      };
     } else {
-      setSnackbar(msg!);
+      data = {
+        EMAIL: email,
+        PASSWORD: password ?? "",
+        "fcm_id": fcmToken,
+      };
+    }
+    try {
+      Response response = await post(
+        getUserLoginApi,
+        body: data,
+        headers: headers,
+      ).timeout(Duration(seconds: timeOut));
+
+      var getdata = json.decode(response.body);
+      bool error = getdata["error"];
+      String? msg = getdata["message"];
+
+      await labelLargeController!.reverse();
+
+      if (!error) {
+        setSnackbar(msg ?? "");
+
+        var i = getdata["data"][0];
+        id = i[ID];
+        username = i[USERNAME];
+        email = i[EMAIL];
+        mobile = i[MOBILE];
+        city = i[CITY];
+        area = i[AREA];
+        address = i[ADDRESS];
+        pincode = i[PINCODE];
+        latitude = i[LATITUDE];
+        longitude = i[LONGITUDE];
+        image = i[IMAGE];
+        CUR_USERID = id;
+        int? otp = getdata["otp"];
+        UserProvider userProvider =
+            Provider.of<UserProvider>(context, listen: false);
+        userProvider.setName(username ?? "");
+        userProvider.setEmail(email ?? "");
+        userProvider.setProfilePic(image ?? "");
+
+        SettingProvider settingProvider =
+            Provider.of<SettingProvider>(context, listen: false);
+        // settingsProvider.setPrefrence(COUNTRY_CODE, countrycode!);
+
+        settingProvider.saveUserDetail(
+          id!,
+          username,
+          email,
+          mobile,
+          city,
+          area,
+          address,
+          pincode,
+          latitude,
+          longitude,
+          image,
+          city,
+          '',
+          context,
+        );
+
+        if (isnumberLogin) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerifyOtp(
+                otp: otp,
+                mobileNumber: mobileController.text,
+                countryCode: widget.countryCode,
+                title: 'login',
+              ),
+            ),
+          );
+        } else {
+          Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
+        }
+      } else {
+        setSnackbar(msg ?? "Something went wrong!");
+      }
+    } catch (e) {
+      print("Login error: $e");
+      setSnackbar("Login failed. Please try again.");
     }
   }
 
@@ -277,80 +330,69 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  isnumberLogin = true;
-                });
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<bool>(
-                    value: true,
-                    groupValue: isnumberLogin,
-                    onChanged: (value) {
-                      setState(() {
-                        isnumberLogin = value!;
-                      });
-                    },
-                    activeColor: Color(0xFFD4AF37),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isnumberLogin = true;
+              });
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Radio<bool>(
+                  value: true,
+                  groupValue: isnumberLogin,
+                  onChanged: (value) {
+                    setState(() {
+                      isnumberLogin = value!;
+                    });
+                  },
+                  activeColor: Color(0xFFD4AF37),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Text(
+                  'Mobile Number',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
-                  Flexible(
-                    child: Text(
-                      'Mobile Number',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          SizedBox(
-            width: 20,
-          ),
-          Expanded(
-            flex: 3,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  isnumberLogin = false;
-                });
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<bool>(
-                    value: false,
-                    groupValue: isnumberLogin,
-                    onChanged: (value) {
-                      setState(() {
-                        isnumberLogin = value!;
-                      });
-                    },
-                    activeColor: Color(0xFFD4AF37),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          SizedBox(width: 20),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                isnumberLogin = false;
+              });
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Radio<bool>(
+                  value: false,
+                  groupValue: isnumberLogin,
+                  onChanged: (value) {
+                    setState(() {
+                      isnumberLogin = value!;
+                    });
+                  },
+                  activeColor: Color(0xFFD4AF37),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Text(
+                  'Email',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
-                  Flexible(
-                    child: Text(
-                      'Email',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

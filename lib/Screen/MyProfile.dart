@@ -954,10 +954,14 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                       Provider.of<SettingProvider>(context, listen: false);
                   settingProvider.clearUserSession(context);
                   //favList.clear();
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => Login()),
-                    (Route<dynamic> route) => false,
-                  ); //Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      // '/home', (Route<dynamic> route) => false);
+                      '/login',
+                      (Route<dynamic> route) => false
+                      // Navigator.of(context).pushAndRemoveUntil(
+                      //   MaterialPageRoute(builder: (context) => Login()),
+                      //   (Route<dynamic> route) => false,
+                      ); //Navigator.of(context).pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
                 })
           ],
         );
@@ -983,7 +987,7 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       getTranslated(context, 'DARK_THEME')
     ];
 
-    themeNotifier = Provider.of<ThemeNotifier>(context);
+    // themeNotifier = Provider.of<ThemeNotifier>(context);
 
     return Scaffold(
       backgroundColor: colors.white30,
@@ -1813,6 +1817,5 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
     setState(() {
       bankPass = file;
     });
-    //  Navigator.pop(context);
   }
 }

@@ -86,17 +86,6 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  // setSnackbar(String msg) {
-  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //     content: Text(
-  //       msg,
-  //       textAlign: TextAlign.center,
-  //       style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
-  //     ),
-  //     backgroundColor: Theme.of(context).colorScheme.lightWhite,
-  //     elevation: 1.0,
-  //   ));
-  // }
   void setSnackbar(String msg) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
@@ -104,7 +93,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
         final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
         return Positioned(
-          bottom: bottomInset + 400, // keyboard ke upar 20px
+          bottom: bottomInset + 600,
           left: 24,
           right: 24,
           child: Material(
@@ -176,7 +165,6 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
       Response response =
           await post(getVerifyUserApi, body: data, headers: headers)
               .timeout(Duration(seconds: timeOut));
-
       var getdata = json.decode(response.body);
       bool? error = getdata["error"];
       String? msg = getdata["message"];
@@ -195,7 +183,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
             // );
             // setSnackbar(msg!);
             settingsProvider.setPrefrence(MOBILE, mobileController.text);
-            settingsProvider.setPrefrence(COUNTRY_CODE, countrycode!);
+            // settingsProvider.setPrefrence(COUNTRY_CODE, countrycode!);
 
             Future.delayed(Duration(seconds: 1)).then((_) {
               Navigator.pushReplacement(
@@ -204,7 +192,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
                       builder: (context) => VerifyOtp(
                             otp: otp,
                             mobileNumber: mobileController.text,
-                            countryCode: countrycode,
+                            // countryCode: countrycode,
                             title: getTranslated(context, 'SEND_OTP_TITLE'),
                           )));
             });
@@ -221,7 +209,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
             // );
             // setSnackbar(otp.toString());
             settingsProvider.setPrefrence(MOBILE, mobileController.text);
-            settingsProvider.setPrefrence(COUNTRY_CODE, countrycode!);
+            settingsProvider.setPrefrence(COUNTRY_CODE, countrycode ?? '+91');
             Future.delayed(Duration(seconds: 1)).then((_) {
               Navigator.pushReplacement(
                   context,
@@ -284,21 +272,21 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
   Widget setCodeWithMono() {
     return Container(
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(8)),
+        // decoration: BoxDecoration(
+        //     color: Colors.grey.shade100,
+        //     borderRadius: BorderRadius.circular(8)),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: setCountryCode(),
-            ),
-            Container(
-              width: 1,
-              height: 30,
-              color: Colors.black,
-            ),
+            // Expanded(
+            //   flex: 2,
+            //   child: setCountryCode(),
+            // ),
+            // Container(
+            //   width: 1,
+            //   height: 30,
+            //   color: Colors.black,
+            // ),
             Expanded(
               flex: 4,
               child: setMono(),
@@ -338,19 +326,57 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
     );
   }
 
+  // Widget setMono() {
+  //   return TextFormField(
+  //       maxLength: 10,
+  //       keyboardType: TextInputType.number,
+  //       controller: mobileController,
+  //       style: Theme.of(context).textTheme.titleSmall!.copyWith(
+  //           color: Theme.of(context).colorScheme.fontColor,
+  //           fontWeight: FontWeight.normal),
+  //       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+  //       validator: (val) => validateMob(
+  //           val!,
+  //           getTranslated(context, 'MOB_REQUIRED'),
+  //           getTranslated(context, 'VALID_MOB')),
+  //       onSaved: (String? value) {
+  //         mobile = value;
+  //       },
+  //       decoration: InputDecoration(
+  //         counterText: '',
+  //         hintText: getTranslated(context, 'MOBILEHINT_LBL'),
+  //         hintStyle: Theme.of(context).textTheme.titleSmall!.copyWith(
+  //             color: Theme.of(context).colorScheme.fontColor,
+  //             fontWeight: FontWeight.normal),
+  //         contentPadding:
+  //             const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+  //         focusedBorder: UnderlineInputBorder(
+  //           borderSide: BorderSide(color: Colors.transparent),
+  //           borderRadius: BorderRadius.circular(7.0),
+  //         ),
+  //         enabledBorder: UnderlineInputBorder(
+  //           borderSide:
+  //               BorderSide(color: Theme.of(context).colorScheme.lightWhite),
+  //         ),
+  //       ));
+  // }
   Widget setMono() {
-    return TextFormField(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: TextFormField(
         maxLength: 10,
         keyboardType: TextInputType.number,
         controller: mobileController,
         style: Theme.of(context).textTheme.titleSmall!.copyWith(
-            color: Theme.of(context).colorScheme.fontColor,
-            fontWeight: FontWeight.normal),
+              color: Theme.of(context).colorScheme.fontColor,
+              fontWeight: FontWeight.normal,
+            ),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         validator: (val) => validateMob(
-            val!,
-            getTranslated(context, 'MOB_REQUIRED'),
-            getTranslated(context, 'VALID_MOB')),
+          val!,
+          getTranslated(context, 'MOB_REQUIRED'),
+          getTranslated(context, 'VALID_MOB'),
+        ),
         onSaved: (String? value) {
           mobile = value;
         },
@@ -358,23 +384,82 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
           counterText: '',
           hintText: getTranslated(context, 'MOBILEHINT_LBL'),
           hintStyle: Theme.of(context).textTheme.titleSmall!.copyWith(
-              color: Theme.of(context).colorScheme.fontColor,
-              fontWeight: FontWeight.normal),
+                color: Theme.of(context).colorScheme.fontColor.withOpacity(0.6),
+                fontWeight: FontWeight.normal,
+              ),
+          prefixIcon: Icon(
+            Icons.phone_android,
+            color: Colors.grey[600],
+          ),
+          prefixIconConstraints: BoxConstraints(
+            minWidth: 40,
+            minHeight: 40,
+          ),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-          // focusedBorder: OutlineInputBorder(
-          //   borderSide: BorderSide(color: Theme.of(context).colorScheme.lightWhite),
-          // ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
+              const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: colors.secondary),
             borderRadius: BorderRadius.circular(7.0),
           ),
-          enabledBorder: UnderlineInputBorder(
+          enabledBorder: OutlineInputBorder(
             borderSide:
                 BorderSide(color: Theme.of(context).colorScheme.lightWhite),
+            borderRadius: BorderRadius.circular(7.0),
           ),
-        ));
+        ),
+      ),
+    );
   }
+
+  // Widget setMono() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(
+  //       horizontal: 12,
+  //     ),
+  //     child: TextFormField(
+  //       maxLength: 10,
+  //       keyboardType: TextInputType.number,
+  //       controller: mobileController,
+  //       style: Theme.of(context).textTheme.titleSmall!.copyWith(
+  //             color: Theme.of(context).colorScheme.fontColor,
+  //             fontWeight: FontWeight.normal,
+  //           ),
+  //       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+  //       validator: (val) => validateMob(
+  //         val!,
+  //         getTranslated(context, 'MOB_REQUIRED'),
+  //         getTranslated(context, 'VALID_MOB'),
+  //       ),
+  //       onSaved: (String? value) {
+  //         mobile = value;
+  //       },
+  //       decoration: InputDecoration(
+  //         counterText: '',
+  //         hintText: getTranslated(context, 'MOBILEHINT_LBL'),
+  //         hintStyle: Theme.of(context).textTheme.titleSmall!.copyWith(
+  //               color: Theme.of(context).colorScheme.fontColor.withOpacity(0.6),
+  //               fontWeight: FontWeight.normal,
+  //             ),
+  //         prefixIcon: Icon(
+  //           Icons.phone_android,
+  //           color: Colors.grey[600],
+  //         ),
+  //         contentPadding:
+  //             const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+  //         focusedBorder: OutlineInputBorder(
+  //           borderSide:
+  //               BorderSide(color: Theme.of(context).colorScheme.secondary),
+  //           borderRadius: BorderRadius.circular(7.0),
+  //         ),
+  //         enabledBorder: OutlineInputBorder(
+  //           borderSide:
+  //               BorderSide(color: Theme.of(context).colorScheme.lightWhite),
+  //           borderRadius: BorderRadius.circular(7.0),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget verifyBtn() {
     return AppBtn(

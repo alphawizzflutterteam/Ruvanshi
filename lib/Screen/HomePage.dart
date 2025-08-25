@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _controller = PageController(
-      viewportFraction: 0.9, // 👈 dono side gap ke liye
+      viewportFraction: 0.9,
     );
     getCities();
     callApi();
@@ -264,74 +264,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  // Widget _slider() {
-  //   double height = deviceWidth! / 2.0;
-  //
-  //   return Selector<HomeProvider, bool>(
-  //     builder: (context, data, child) {
-  //       return data
-  //           ? sliderLoading()
-  //           : Column(
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.symmetric(horizontal: 2.0),
-  //                   child: ClipRRect(
-  //                     borderRadius: BorderRadius.circular(20),
-  //                     child: Container(
-  //                       height: height,
-  //                       width: double.infinity,
-  //                       decoration: BoxDecoration(
-  //                         // color: Colors.white,
-  //                         borderRadius: BorderRadius.circular(20),
-  //                       ),
-  //                       child: PageView.builder(
-  //                         itemCount: homeSliderList.length,
-  //                         scrollDirection: Axis.horizontal,
-  //                         controller: _controller,
-  //                         physics: AlwaysScrollableScrollPhysics(),
-  //                         onPageChanged: (index) {
-  //                           context.read<HomeProvider>().setCurSlider(index);
-  //                         },
-  //                         itemBuilder: (BuildContext context, int index) {
-  //                           return pages[index];
-  //                         },
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 // SizedBox(height: 10), // Adjusted gap
-  //                 Row(
-  //                   mainAxisSize: MainAxisSize.max,
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: map<Widget>(
-  //                     homeSliderList,
-  //                     (index, url) {
-  //                       return Consumer<HomeProvider>(
-  //                         builder: (context, val, _) {
-  //                           return Container(
-  //                             width: 8.0,
-  //                             height: 10.0,
-  //                             margin: const EdgeInsets.symmetric(
-  //                                 vertical: 10.0,
-  //                                 horizontal: 4.0), // Adjust spacing
-  //                             decoration: BoxDecoration(
-  //                               shape: BoxShape.circle,
-  //                               color: val.curSlider == index
-  //                                   ? colors.primary
-  //                                   : Colors.grey.shade400,
-  //                             ),
-  //                           );
-  //                         },
-  //                       );
-  //                     },
-  //                   ),
-  //                 ),
-  //               ],
-  //             );
-  //     },
-  //     selector: (_, homeProvider) => homeProvider.sliderLoading,
-  //   );
-  // }
   Widget _slider() {
     double height = deviceWidth! / 2.0;
 
@@ -361,9 +293,8 @@ class _HomePageState extends State<HomePage>
                           },
                           itemBuilder: (BuildContext context, int index) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal:
-                                      6), // 👈 thoda extra gap smoothness ke liye
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
                               child: pages[index],
                             );
                           },
@@ -440,7 +371,7 @@ class _HomePageState extends State<HomePage>
         }
 
         return SizedBox(
-          height: 120, // Increased height for square design
+          height: 120,
           child: ListView.builder(
             padding: const EdgeInsets.only(top: 10, left: 10),
             itemCount: catList.length,
@@ -584,29 +515,32 @@ class _HomePageState extends State<HomePage>
   Widget _buildSectionHeader(String title, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          if ((sectionList[index].shortDesc ?? "").isNotEmpty)
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Text(
-              sectionList[index].shortDesc!,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                    fontSize: 14,
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-        ],
+            const SizedBox(height: 4),
+            if ((sectionList[index].shortDesc ?? "").isNotEmpty)
+              Text(
+                sectionList[index].shortDesc!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                    ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -699,24 +633,24 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Text(
                 product.name!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 6),
               child: Text(
                 product.shortDescription!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -812,7 +746,7 @@ class _HomePageState extends State<HomePage>
       getSetting();
       getSlider();
       getCat();
-      getSeller();
+      // getSeller();
       getSection();
       getOfferImages();
     } else {

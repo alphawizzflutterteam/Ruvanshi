@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -82,8 +81,10 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
   }
 
   Future<void> getVerifyUser() async {
+    print("ffgfgfgf ${widget.title}");
     try {
       var data = {MOBILE: widget.mobileNumber, "forgot_otp": "false"};
+      print('PrintDsfafata:_____${data}______');
       Response response =
           await post(getVerifyUserApi, body: data, headers: headers)
               .timeout(Duration(seconds: timeOut));
@@ -145,6 +146,9 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
           } else {
             setSnackbar(getTranslated(context, 'FIRSTSIGNUP_MSG')!);
           }
+        }
+        if (widget.title == 'login') {
+          Navigator.pushNamedAndRemoveUntil(context, "/home", (r) => false);
         }
       }
     } on TimeoutException catch (_) {
@@ -220,7 +224,7 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
         final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
         return Positioned(
-          bottom: bottomInset + 400,
+          bottom: bottomInset + 700,
           left: 24,
           right: 24,
           child: Material(
@@ -265,7 +269,7 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
           msg: getTranslated(context, 'OTPMSG')!,
           backgroundColor: colors.primary);
       settingsProvider.setPrefrence(MOBILE, widget.mobileNumber!);
-      settingsProvider.setPrefrence(COUNTRY_CODE, widget.countryCode!);
+      // settingsProvider.setPrefrence(COUNTRY_CODE, widget.countryCode!);
       await labelLargeController!.reverse();
 
       if (widget.title == getTranslated(context, 'SEND_OTP_TITLE')) {
@@ -284,6 +288,11 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       } else if (widget.title == "isloging") {
         Future.delayed(Duration(seconds: 2)).then((_) {
           verifyotpforLogin();
+        });
+      } else if (widget.title == "login") {
+        Future.delayed(Duration(seconds: 2)).then((_) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/home", (Route<dynamic> route) => false);
         });
       }
     } else {
@@ -468,7 +477,8 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       padding: EdgeInsetsDirectional.only(
           bottom: 10.0, start: 20.0, end: 20.0, top: 10.0),
       child: Center(
-        child: Text("+${widget.countryCode}-${widget.mobileNumber}",
+        // child: Text("+${widget.countryCode}-${widget.mobileNumber}",
+        child: Text("Mobile Number : ${widget.mobileNumber}",
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: Theme.of(context).colorScheme.fontColor,
                 fontWeight: FontWeight.normal)),
@@ -698,6 +708,7 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
   }
 
   Future<void> verifyotpforLogin() async {
+    print("dsaaaaaaa ${widget.title}");
     await labelLargeController!.forward();
     var headers = {
       'Cookie': 'ci_session=c32369b36aac3982f15636a4d733087d06d9a11d'
@@ -708,7 +719,7 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       'mobile': widget.mobileNumber.toString(),
       'otp': otp.toString(),
     });
-    print('PrintData:_____${request.fields}______');
+    print('verify PrintData:_____${request.fields}______');
 
     request.headers.addAll(headers);
 

@@ -58,8 +58,13 @@ class _SplashScreen extends State<Splash> {
         Provider.of<SettingProvider>(this.context, listen: false);
 
     bool isFirstTime = await settingsProvider.getPrefrenceBool(ISFIRSTTIME);
+    String? userId = await settingsProvider.getPrefrence(ID);
     if (isFirstTime) {
-      Navigator.pushReplacementNamed(context, "/home");
+      if (userId != null) {
+        Navigator.pushReplacementNamed(context, "/home");
+      } else {
+        Navigator.pushReplacementNamed(context, "/login");
+      }
     } else {
       Navigator.pushReplacement(
           context,
@@ -68,6 +73,22 @@ class _SplashScreen extends State<Splash> {
           ));
     }
   }
+
+  // Future<void> navigationPage() async {
+  //   SettingProvider settingsProvider =
+  //       Provider.of<SettingProvider>(this.context, listen: false);
+  //
+  //   bool isFirstTime = await settingsProvider.getPrefrenceBool(ISFIRSTTIME);
+  //   if (isFirstTime) {
+  //     Navigator.pushReplacementNamed(context, "/home");
+  //   } else {
+  //     Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => IntroSlider(),
+  //         ));
+  //   }
+  // }
 
   setSnackbar(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(new SnackBar(

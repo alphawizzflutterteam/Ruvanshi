@@ -265,8 +265,46 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
       actions: [
         IconButton(
           icon: SvgPicture.asset(
+            imagePath + "desel_fav.svg",
+            height: 22,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            CUR_USERID != null
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Favorite()),
+                  )
+                : Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                  );
+          },
+        ),
+        IconButton(
+          icon: SvgPicture.asset(
+            imagePath + "desel_notification.svg",
+            height: 22,
+            color: Colors.black, // <-- changed to black
+          ),
+          onPressed: () {
+            CUR_USERID != null
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationList()),
+                  )
+                : Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                  );
+          },
+        ),
+
+        /// Search Icon
+        IconButton(
+          icon: SvgPicture.asset(
             imagePath + "search.svg",
-            height: 20,
+            height: 22,
             color: Colors.black,
           ),
           onPressed: () {

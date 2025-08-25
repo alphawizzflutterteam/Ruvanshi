@@ -199,11 +199,12 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
       var request = MultipartRequest("POST", (getUserSignUpApi));
       request.headers.addAll(headers);
       request.fields[MOBILE] = mobile!;
-      request.fields[COUNTRY_CODE] = countrycode!;
+      // request.fields[COUNTRY_CODE] = countrycode!;
       request.fields[NAME] = name!;
       request.fields[EMAIL] = email!;
       request.fields[PASSWORD] = password!;
       request.fields[CITY] = cityId.toString()!;
+      // request.fields["gender"] = genderSelect ?? "male";
       request.fields["gender"] = genderSelect ?? "male";
       // request.fields["dob"] = "${date.day}-${date.month}-${date.year}";
       request.fields[FRNDCODE] = referController.text.toString();
@@ -665,11 +666,10 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          getTranslated(context, 'CITYSELECT_LBL') ??
-                              'Select City',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
+                        // Text(
+                        //   getTranslated(context, 'CITYSELECT_LBL') ?? '',
+                        //   style: Theme.of(context).textTheme.bodySmall,
+                        // ),
                         Text(
                           selCityPos != null && selCityPos != -1
                               ? cityList[selCityPos!].name ?? ""
@@ -696,82 +696,7 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
     );
   }
 
-  // cityDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (BuildContext context, StateSetter setStater) {
-  //           cityState = setStater;
-  //           return AlertDialog(
-  //             contentPadding: const EdgeInsets.all(0.0),
-  //             // shape: RoundedRectangleBorder(
-  //             //   borderRadius: BorderRadius.all(
-  //             //     Radius.circular(5.0),
-  //             //   ),
-  //             // ),
-  //             content: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 Padding(
-  //                   padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
-  //                   child: Text(
-  //                     getTranslated(context, 'CITYSELECT_LBL') ?? 'Select City',
-  //                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-  //                         color: Theme.of(context).colorScheme.onSurface),
-  //                   ),
-  //                 ),
-  //                 Divider(color: Theme.of(context).colorScheme.onSurface),
-  //                 Flexible(
-  //                   child: SingleChildScrollView(
-  //                     child: Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: cityList.map((city) {
-  //                         return InkWell(
-  //                           onTap: () {
-  //                             selCityPos = cityList.indexOf(city);
-  //                             Navigator.pop(context);
-  //                             setState(() {});
-  //                           },
-  //                           child: Container(
-  //                             margin: EdgeInsets.symmetric(
-  //                                 vertical: 5, horizontal: 10),
-  //                             padding: EdgeInsets.all(10),
-  //                             // decoration: BoxDecoration(
-  //                             //   color: Colors.grey[200],
-  //                             //   borderRadius: BorderRadius.circular(8),
-  //                             //   boxShadow: [
-  //                             //     BoxShadow(
-  //                             //       color: Colors.grey.withOpacity(0.5),
-  //                             //       spreadRadius: 1,
-  //                             //       blurRadius: 3,
-  //                             //       offset: Offset(0, 2),
-  //                             //     ),
-  //                             //   ],
-  //                             // ),
-  //                             child: Text(
-  //                               city.name ?? '',
-  //                               style: TextStyle(
-  //                                   fontSize: 16, fontWeight: FontWeight.w500),
-  //                             ),
-  //                           ),
-  //                         );
-  //                       }).toList(),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   cityDialog() {
-    // Start with full city list
     List filteredCities = List.from(cityList);
 
     showDialog(
@@ -791,56 +716,67 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
 
             return AlertDialog(
               contentPadding: const EdgeInsets.all(0.0),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
-                    child: Text(
-                      getTranslated(context, 'CITYSELECT_LBL') ?? 'Select City',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface),
-                    ),
-                  ),
-                  Divider(color: Theme.of(context).colorScheme.onSurface),
-                  // 🔍 Search field
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: getTranslated(context, 'SEARCH_CITY') ??
-                            'Search city',
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: MediaQuery.of(context).size.height *
+                    0.6, // Dialog height limit
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+                      child: Center(
+                        child: Text(
+                          getTranslated(context, 'CITYSELECT_LBL') ??
+                              'Select City',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
                         ),
                       ),
-                      onChanged: filterCities,
                     ),
-                  ),
-                  Flexible(
-                    child: filteredCities.isEmpty
-                        ? Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                getTranslated(context, 'NO_CITY_FOUND') ??
-                                    'No city found',
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                    Divider(color: Theme.of(context).colorScheme.onSurface),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: getTranslated(context, 'SEARCH_CITY') ??
+                              'Search city',
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onChanged: filterCities,
+                      ),
+                    ),
+                    Expanded(
+                      child: filteredCities.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  getTranslated(context, 'NO_CITY_FOUND') ??
+                                      'No city found',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                        : SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: filteredCities.map((city) {
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: filteredCities.length,
+                              itemBuilder: (context, index) {
+                                final city = filteredCities[index];
                                 return InkWell(
                                   onTap: () {
                                     selCityPos = cityList.indexOf(city);
@@ -859,11 +795,11 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                                     ),
                                   ),
                                 );
-                              }).toList(),
+                              },
                             ),
-                          ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -1143,7 +1079,6 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
     return Column(
       children: [
         Row(
-          // mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
@@ -1161,6 +1096,16 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
             Text("Female"),
             Radio(
                 value: "female",
+                groupValue: genderSelect,
+                onChanged: (val) {
+                  setState(() {
+                    print(genderSelect);
+                    genderSelect = val;
+                  });
+                }),
+            Text("Others"),
+            Radio(
+                value: "Others",
                 groupValue: genderSelect,
                 onChanged: (val) {
                   setState(() {

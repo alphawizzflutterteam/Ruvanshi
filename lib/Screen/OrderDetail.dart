@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:html_to_pdf_plus/html_to_pdf_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -22,7 +23,6 @@ import '../Helper/Session.dart';
 import '../Helper/String.dart';
 import '../Model/Order_Model.dart';
 import '../Model/User.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'Seller_Details.dart';
 
 class OrderDetail extends StatefulWidget {
@@ -391,15 +391,43 @@ class StateOrder extends State<OrderDetail>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(getTranslated(context, 'DELIVERY_CHARGE')! + " " + ":",
+                    Text(getTranslated(context, 'CGST')! + " " + ":",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: Theme.of(context).colorScheme.lightBlack2)),
-                    Text("+ " + CUR_CURRENCY! + " " + widget.model!.delCharge!,
+                    Text("+ " + CUR_CURRENCY! + " " + widget.model!.cgstAmount!,
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: Theme.of(context).colorScheme.lightBlack2))
                   ],
                 ),
               ),
+              Padding(
+                padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(getTranslated(context, 'SGST')! + " " + ":",
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.lightBlack2)),
+                    Text("+ " + CUR_CURRENCY! + " " + widget.model!.sgstAmount!,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.lightBlack2))
+                  ],
+                ),
+              ),
+              // Padding(
+              //   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(getTranslated(context, 'DELIVERY_CHARGE')! + " " + ":",
+              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              //               color: Theme.of(context).colorScheme.lightBlack2)),
+              //       Text("+ " + CUR_CURRENCY! + " " + widget.model!.delCharge!,
+              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              //               color: Theme.of(context).colorScheme.lightBlack2))
+              //     ],
+              //   ),
+              // ),
               Padding(
                 padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                 child: Row(
@@ -1455,6 +1483,7 @@ class StateOrder extends State<OrderDetail>
     if (_isNetworkAvail) {
       try {
         var parameter = {ORDERID: id, STATUS: status};
+        print('ordercencel:_____${parameter}______');
         var response = await post(api, body: parameter, headers: headers)
             .timeout(Duration(seconds: timeOut));
 
@@ -1502,95 +1531,119 @@ class StateOrder extends State<OrderDetail>
     return Card(
       elevation: 0,
       child: InkWell(
-        child: ListTile(
-          dense: true,
-          trailing: const Icon(
-            Icons.keyboard_arrow_right,
-            color: colors.primary,
+          child: ListTile(
+            dense: true,
+            trailing: const Icon(
+              Icons.keyboard_arrow_right,
+              color: colors.primary,
+            ),
+            leading: Icon(
+              Icons.receipt,
+              color: colors.primary,
+            ),
+            title: Text(
+              getTranslated(context, 'DWNLD_INVOICE')!,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall!
+                  .copyWith(color: Theme.of(context).colorScheme.lightBlack),
+            ),
           ),
-          leading: Icon(
-            Icons.receipt,
-            color: colors.primary,
-          ),
-          title: Text(
-            getTranslated(context, 'DWNLD_INVOICE')!,
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall!
-                .copyWith(color: Theme.of(context).colorScheme.lightBlack),
-          ),
-        ),
-        onTap: () async {
-          final plugin = DeviceInfoPlugin();
-          final android = await plugin.androidInfo;
-          var status = android.version.sdkInt < 33
-              ? await Permission.storage.request()
-              : await Permission.photos.request();
+          onTap: () async {
+            final plugin = DeviceInfoPlugin();
+            final android = await plugin.androidInfo;
+            print("++++++++++++");
+            var status = android.version.sdkInt < 33
+                ? await Permission.storage.request()
+                : PermissionStatus.granted;
+            //await Permission.storage.request();
+            print("++++++++++++${status}");
+            if (status == PermissionStatus.granted) {
+              if (mounted) {
+                setState(() {
+                  _isProgress = true;
+                });
+              }
+              var targetPath;
 
-          if (status == PermissionStatus.granted) {
-            if (mounted) {
-              setState(() {
-                _isProgress = true;
-              });
-            }
+              if (Platform.isIOS) {
+                var target = await getApplicationDocumentsDirectory();
+                targetPath = target.path.toString();
+              } else {
+                // var downloadsDirectory =
+                // await DownloadsPathProvider.downloadsDirectory;
+                Directory? downloadsDirectory = await getDownloadsDirectory();
+                if (downloadsDirectory == null) {
+                  downloadsDirectory = await getExternalStorageDirectory();
+                }
 
-            Directory targetDir;
-            if (Platform.isIOS) {
-              targetDir = await getApplicationDocumentsDirectory();
-            } else {
-              targetDir = await getExternalStorageDirectory() ??
-                  await getApplicationDocumentsDirectory();
-            }
+                targetPath = downloadsDirectory!.path.toString();
+              }
 
-            var targetPath = targetDir.path;
-            var targetFileName = "Invoice_${widget.model!.id}.pdf";
-
-            final pdf = pw.Document();
-
-            // Note: If the invoice is plain HTML or contains only text info,
-            // we're embedding it as plain text.
-            pdf.addPage(
-              pw.Page(
-                build: (context) => pw.Padding(
-                  padding: const pw.EdgeInsets.all(16),
-                  child: pw.Text(
-                    widget.model!.invoice!
-                        .replaceAll(RegExp(r'<[^>]*>'), '') // Remove HTML tags
-                        .trim(),
-                    style: pw.TextStyle(fontSize: 14),
+              var targetFileName = "Invoice_${widget.model!.id}";
+              var generatedPdfFile, filePath;
+              try {
+                generatedPdfFile = await HtmlToPdf.convertFromHtmlContent(
+                  htmlContent: widget.model!.invoice!,
+                  configuration: PdfConfiguration(
+                    targetDirectory: targetPath,
+                    targetName: targetFileName,
+                    printSize: PrintSize.A4,
+                    printOrientation: PrintOrientation.Portrait,
+                    linksClickable: true,
                   ),
+                );
+                filePath = generatedPdfFile.path;
+              } on Exception {
+                //  filePath = targetPath + "/" + targetFileName + ".html";
+                generatedPdfFile = await HtmlToPdf.convertFromHtmlContent(
+                  htmlContent: widget.model!.invoice!,
+                  configuration: PdfConfiguration(
+                    targetDirectory: targetPath,
+                    targetName: targetFileName,
+                    printSize: PrintSize.A4,
+                    printOrientation: PrintOrientation.Portrait,
+                    linksClickable: true,
+                  ),
+                );
+                filePath = generatedPdfFile.path;
+              }
+
+              // try {
+              //   generatedPdfFile =
+              //       await FlutterHtmlToPdf.convertFromHtmlContent(
+              //           widget.model!.invoice!, targetPath, targetFileName);
+              //   filePath = generatedPdfFile.path;
+              // } on Exception {
+              //   //  filePath = targetPath + "/" + targetFileName + ".html";
+              //   generatedPdfFile =
+              //       await FlutterHtmlToPdf.convertFromHtmlContent(
+              //           widget.model!.invoice!, targetPath, targetFileName);
+              //   filePath = generatedPdfFile.path;
+              // }
+
+              if (mounted) {
+                setState(() {
+                  _isProgress = false;
+                });
+              }
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  "${getTranslated(context, 'INVOICE_PATH')} $targetFileName",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).colorScheme.black),
                 ),
-              ),
-            );
-
-            final outputFile = File('$targetPath/$targetFileName');
-            await outputFile.writeAsBytes(await pdf.save());
-
-            if (mounted) {
-              setState(() {
-                _isProgress = false;
-              });
+                action: SnackBarAction(
+                    label: getTranslated(context, 'VIEW')!,
+                    textColor: Theme.of(context).colorScheme.fontColor,
+                    onPressed: () async {
+                      final result = await OpenFilex.open(filePath);
+                    }),
+                backgroundColor: Theme.of(context).colorScheme.white,
+                elevation: 1.0,
+              ));
             }
-
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                "${getTranslated(context, 'INVOICE_PATH')} $targetFileName",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Theme.of(context).colorScheme.black),
-              ),
-              action: SnackBarAction(
-                label: getTranslated(context, 'VIEW')!,
-                textColor: Theme.of(context).colorScheme.fontColor,
-                onPressed: () async {
-                  final result = await OpenFilex.open(outputFile.path);
-                },
-              ),
-              backgroundColor: Theme.of(context).colorScheme.white,
-              elevation: 1.0,
-            ));
-          }
-        },
-      ),
+          }),
     );
   }
 
@@ -2158,7 +2211,7 @@ class StateOrder extends State<OrderDetail>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "${getTranslated(context, "ORDER_ID_LBL")!} - ${model.id}",
+                  "${getTranslated(context, "ORDER_ID_LBL")!} - RU${model.id}",
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.lightBlack2),
                 ),

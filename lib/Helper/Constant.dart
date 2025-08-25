@@ -14,7 +14,6 @@ final int timeOut = 50;
 const int perPage = 10;
 
 final String baseUrl = 'https://developmentalphawizz.com/ruvanshi/app/v1/api/';
-// final String baseUrl = 'https://developmentalphawizz.com/tg_sawdesi/app/v1/api/';
 
 final String imageUrl = 'https://developmentalphawizz.com/ruvanshi/';
 
