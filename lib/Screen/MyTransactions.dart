@@ -58,6 +58,7 @@ class _TransactionHistoryState extends State<TransactionHistory>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: colors.grad1Color1,
         key: _scaffoldKey,
         appBar: getAppBar(getTranslated(context, 'MYTRANSACTION')!, context),
         body: _isNetworkAvail

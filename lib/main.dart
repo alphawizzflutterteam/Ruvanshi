@@ -163,6 +163,7 @@ class _MyAppState extends State<MyApp> {
             useMaterial3: false,
             canvasColor: Theme.of(context).colorScheme.lightWhite,
             cardColor: Theme.of(context).colorScheme.white,
+            scaffoldBackgroundColor: colors.grad1Color1,
             dialogBackgroundColor: Theme.of(context).colorScheme.white,
             iconTheme:
                 Theme.of(context).iconTheme.copyWith(color: colors.primary),

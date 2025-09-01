@@ -47,6 +47,7 @@ import 'Review_Gallary.dart';
 import 'Review_Preview.dart';
 import 'Search.dart';
 import 'Seller_Details.dart';
+import 'image_popup.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product? model;
@@ -327,126 +328,185 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     return result;
   }
 
-//   Widget _slider() {
-//     double height = MediaQuery.of(context).size.height * .48;
-//     double statusBarHeight = MediaQuery.of(context).padding.top;
-//
-//     return InkWell(
-//       onTap: () {
-//         // Navigator.push(
-//         //     context,
-//         //     PageRouteBuilder(
-//         //       // transitionDuration: Duration(seconds: 1),
-//         //       pageBuilder: (_, __, ___) => ProductPreview(
-//         //         pos: _curSlider,
-//         //         secPos: widget.secPos,
-//         //         index: widget.index,
-//         //         id: widget.model!.id,
-//         //         imgList: sliderList,
-//         //         list: widget.list,
-//         //         video: widget.model!.video,
-//         //         videoType: widget.model!.videType,
-//         //         from: true,
-//         //         screenSize: MediaQuery.of(context).size,
-//         //       ),
-//         //     )
-//         // );
-//       },
-//       child: Stack(
-//         children: <Widget>[
-//           Hero(
-//             tag: widget.list!
-//                 ? "${widget.index}${widget.model!.id}"
-//                 : "${widget.index}",
-//             child: Container(
-//               padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
-//               height: height,
-//               width: double.infinity,
-//               child: PageView.builder(
-//                 itemCount: sliderList.length,
-//                 scrollDirection: Axis.horizontal,
-//                 controller: _pageController,
-//                 reverse: false,
-//                 onPageChanged: (index) {
-//                   /*   if (mounted)
-//                       setState(() {
-//                         _curSlider = index;
-//                       });*/
-//                   //index i starts from 0!
-//                   _curSlider = index;
-//                   _progressAnimcontroller.reset(); //reset the animation first
-//                   _setProgressAnim(deviceWidth!, index + 1);
-//                   // context.read<ProductDetailProvider>().setCurSlider(index);
-//                 },
-//                 itemBuilder: (BuildContext context, int index) {
-//                   return Stack(
-//                     children: [
-//                       FadeInImage(
-//                         image: CachedNetworkImageProvider(sliderList[index]!),
-//                         placeholder: AssetImage(
-//                           "assets/images/sliderph.png",
-//                         ),
-//                         height: height,
-//                         width: double.maxFinite,
-//                         // fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
-//
-//                         imageErrorBuilder: (context, error, stackTrace) =>
-//                             erroWidget(height),
-//
-//                         //  fit: extendImg ? BoxFit.fill : BoxFit.contain,
-//                       ),
-//                       // index == 1 ? playIcon() : Container()
-//                     ],
-//                   );
-//                 },
-//               ),
-//             ),
-//           ),
-//           Positioned.fill(
-//               child: Align(
-//                   alignment: Alignment.bottomCenter,
-//                   child: Row(
-//                     children: <Widget>[
-//                       AnimatedProgressBar(
-//                         animation: _progressAnimation,
-//                       ),
-//                       Expanded(
-//                         child: Container(
-//                           height: 5.0,
-//                           width: double.infinity,
-//                           decoration: BoxDecoration(
-//                               color: Theme.of(context).colorScheme.white),
-//                         ),
-//                       )
-//                     ],
-//                   ))),
-//           /*  Positioned.fill(
-//             child: Align(
-//                 alignment: Alignment.bottomCenter,
-//                 child: Container(
-//                   margin: EdgeInsetsDirectional.only(bottom: 5),
-//                   child: Text(
-//                     "${_curSlider + 1}/${sliderList.length}",
-//                     style: Theme.of(context)
-//                         .textTheme
-//                         .bodySmall!
-//                         .copyWith(color: colors.primary),
-//                   ),
-//                   decoration: BoxDecoration(
-//                       color: Theme.of(context).colorScheme.lightWhite,
-//                       borderRadius: BorderRadius.circular(5)),
-//                   padding: EdgeInsets.symmetric(horizontal: 5),
-//                 )),
-//           ),
-// */
-//           favImg(),
-//           indicatorImage(),
-//         ],
-//       ),
-//     );
-//   }
-
-  //main
+  // Widget _slider() {
+  //   double height = MediaQuery.of(context).size.height * .48;
+  //   double statusBarHeight = MediaQuery.of(context).padding.top;
+  //
+  //   return InkWell(
+  //     onTap: () {},
+  //     child: Stack(
+  //       children: <Widget>[
+  //         Hero(
+  //           tag: widget.list == true
+  //               ? "${widget.index}${widget.model?.id ?? ''}"
+  //               : "${widget.index}",
+  //           child: Container(
+  //             padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
+  //             height: height,
+  //             width: double.infinity,
+  //             child: PageView.builder(
+  //               itemCount: (widget.model?.videType != null &&
+  //                       widget.model?.video != null &&
+  //                       widget.model!.video!.isNotEmpty)
+  //                   ? sliderList.length + 1
+  //                   : sliderList.length,
+  //               scrollDirection: Axis.horizontal,
+  //               controller: _pageController,
+  //               reverse: false,
+  //               onPageChanged: (index) {
+  //                 if (mounted) {
+  //                   setState(() {
+  //                     _curSlider = index;
+  //                   });
+  //                 }
+  //                 _curSlider = index;
+  //                 _progressAnimcontroller.reset();
+  //                 if (deviceWidth != null) {
+  //                   _setProgressAnim(deviceWidth!, index + 1);
+  //                 }
+  //               },
+  //               itemBuilder: (BuildContext context, int index) {
+  //                 // Check if this is the video item
+  //                 if (index == sliderList.length &&
+  //                     widget.model?.videType != null &&
+  //                     widget.model?.video != null &&
+  //                     widget.model!.video!.isNotEmpty) {
+  //                   if (widget.model!.videType == "vimeo") {
+  //                     print("testing2");
+  //                     String videoUrl = widget.model!.video!;
+  //                     if (videoUrl.contains("https://vimeo.com/")) {
+  //                       List<String> id = videoUrl.split("https://vimeo.com/");
+  //                       if (id.length > 1 && id[1].isNotEmpty) {
+  //                         return SafeArea(
+  //                           child: Container(
+  //                             width: double.maxFinite,
+  //                             height: double.maxFinite,
+  //                             child: Center(
+  //                               child: VimeoPlayer(
+  //                                 id: id[1],
+  //                                 autoPlay: true,
+  //                                 looping: false,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         );
+  //                       }
+  //                     }
+  //                     return Container(
+  //                       child: Center(
+  //                         child: Text("Invalid Vimeo URL"),
+  //                       ),
+  //                     );
+  //                   } else {
+  //                     print("testing3");
+  //                     return (_videoController?.value.isInitialized == true)
+  //                         ? AspectRatio(
+  //                             aspectRatio:
+  //                                 MediaQuery.of(context).size.aspectRatio,
+  //                             child: Container(
+  //                               color: Colors.red,
+  //                               width: MediaQuery.of(context).size.width,
+  //                               height: _videoController!.value.size.height,
+  //                               child: Stack(
+  //                                 alignment: Alignment.bottomCenter,
+  //                                 children: <Widget>[
+  //                                   VideoPlayer(_videoController!),
+  //                                   _ControlsOverlay(
+  //                                       controller: _videoController),
+  //                                   VideoProgressIndicator(
+  //                                     _videoController!,
+  //                                     allowScrubbing: true,
+  //                                     colors: VideoProgressColors(
+  //                                       playedColor: Theme.of(context)
+  //                                           .colorScheme
+  //                                           .primary,
+  //                                     ),
+  //                                     padding:
+  //                                         EdgeInsets.symmetric(vertical: 8.0),
+  //                                     // Set minHeight for progress bar thickness
+  //                                     // minHeight is available in video_player >=2.2.7
+  //                                     // minHeight: 8.0,
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           )
+  //                         : Container(
+  //                             child: Center(
+  //                               child: CircularProgressIndicator(
+  //                                 valueColor: AlwaysStoppedAnimation<Color>(
+  //                                     Theme.of(context).colorScheme.primary),
+  //                               ),
+  //                             ),
+  //                           );
+  //                   }
+  //                 }
+  //                 if (index < sliderList.length && sliderList[index] != null) {
+  //                   return Stack(
+  //                     children: [
+  //                       InkWell(onTap: () {
+  //                         showDialog(
+  //                             context: context,
+  //                             builder: (_) => ImagePopUp(
+  //                                   index: index,
+  //                                   attachmentUrls: sliderList ?? [],
+  //                                 ));
+  //
+  //                         child:
+  //                         FadeInImage(
+  //                           image:
+  //                               CachedNetworkImageProvider(sliderList[index]!),
+  //                           placeholder: AssetImage(
+  //                             "assets/images/sliderph.png",
+  //                           ),
+  //                           height: height,
+  //                           width: double.maxFinite,
+  //                           fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
+  //                           imageErrorBuilder: (context, error, stackTrace) =>
+  //                               erroWidget(height),
+  //                         );
+  //                       }),
+  //                       // index == 1 ? playIcon() : Container()
+  //                     ],
+  //                   );
+  //                 }
+  //
+  //                 // Fallback for invalid index
+  //                 return Container(
+  //                   child: Center(
+  //                     child: Text("No content available"),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           ),
+  //         ),
+  //         Positioned.fill(
+  //           child: Align(
+  //             alignment: Alignment.bottomCenter,
+  //             child: Row(
+  //               children: <Widget>[
+  //                 AnimatedProgressBar(
+  //                   animation: _progressAnimation,
+  //                 ),
+  //                 Expanded(
+  //                   child: Container(
+  //                     height: 5.0,
+  //                     width: double.infinity,
+  //                     decoration: BoxDecoration(
+  //                         color: Theme.of(context).colorScheme.surface),
+  //                   ),
+  //                 )
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //         favImg(),
+  //         indicatorImage(),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _slider() {
     double height = MediaQuery.of(context).size.height * .48;
     double statusBarHeight = MediaQuery.of(context).padding.top;
@@ -511,7 +571,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                           );
                         }
                       }
-                      // Fallback for invalid Vimeo URL
                       return Container(
                         child: Center(
                           child: Text("Invalid Vimeo URL"),
@@ -543,9 +602,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                       ),
                                       padding:
                                           EdgeInsets.symmetric(vertical: 8.0),
-                                      // Set minHeight for progress bar thickness
-                                      // minHeight is available in video_player >=2.2.7
-                                      // minHeight: 8.0,
                                     ),
                                   ],
                                 ),
@@ -561,23 +617,32 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                             );
                     }
                   }
-
-                  // Regular image slider item
                   if (index < sliderList.length && sliderList[index] != null) {
                     return Stack(
                       children: [
-                        FadeInImage(
-                          image: CachedNetworkImageProvider(sliderList[index]!),
-                          placeholder: AssetImage(
-                            "assets/images/sliderph.png",
+                        InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => ImagePopUp(
+                                index: index,
+                                attachmentUrls: sliderList ?? [],
+                              ),
+                            );
+                          },
+                          child: FadeInImage(
+                            image:
+                                CachedNetworkImageProvider(sliderList[index]!),
+                            placeholder: AssetImage(
+                              "assets/images/sliderph.png",
+                            ),
+                            height: height,
+                            width: double.maxFinite,
+                            fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
+                            imageErrorBuilder: (context, error, stackTrace) =>
+                                erroWidget(height),
                           ),
-                          height: height,
-                          width: double.maxFinite,
-                          fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
-                          imageErrorBuilder: (context, error, stackTrace) =>
-                              erroWidget(height),
                         ),
-                        // index == 1 ? playIcon() : Container()
                       ],
                     );
                   }
@@ -618,150 +683,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
       ),
     );
   }
-  // Widget _slider() {
-  //   double height = MediaQuery.of(context).size.height * .48;
-  //   double statusBarHeight = MediaQuery.of(context).padding.top;
-  //
-  //   return InkWell(
-  //     onTap: () {},
-  //     child: Stack(
-  //       children: <Widget>[
-  //         Hero(
-  //           tag: widget.list!
-  //               ? "${widget.index}${widget.model!.id}"
-  //               : "${widget.index}",
-  //           child: Container(
-  //             padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
-  //             height: height,
-  //             width: double.infinity,
-  //             child: PageView.builder(
-  //               itemCount:
-  //                   widget.model!.videType != null && widget.model!.video != ""
-  //                       ? sliderList.length + 1
-  //                       : sliderList.length,
-  //               scrollDirection: Axis.horizontal,
-  //               controller: _pageController,
-  //               reverse: false,
-  //               onPageChanged: (index) {
-  //                 if (mounted)
-  //                   setState(() {
-  //                     _curSlider = index;
-  //                   });
-  //                 _curSlider = index;
-  //                 _progressAnimcontroller.reset();
-  //                 _setProgressAnim(deviceWidth!, index + 1);
-  //               },
-  //               itemBuilder: (BuildContext context, int index) {
-  //                 if (index == sliderList.length &&
-  //                     widget.model!.videType != null &&
-  //                     widget.model!.video != "") {
-  //                   if (widget.model!.videType == "vimeo") {
-  //                     print("testing2");
-  //                     List<String> id =
-  //                         widget.model!.video!.split("https://vimeo.com/");
-  //                     return SafeArea(
-  //                         child: Container(
-  //                       width: double.maxFinite,
-  //                       height: double.maxFinite,
-  //                       child: Center(
-  //                         child: VimeoPlayer(
-  //                           id: id[1],
-  //                           autoPlay: true,
-  //                           looping: false,
-  //                         ),
-  //                       ),
-  //                     ));
-  //                   } else {
-  //                     print("testing3");
-  //                     return _videoController!.value.isInitialized
-  //                         ? AspectRatio(
-  //                             aspectRatio:
-  //                                 MediaQuery.of(context).size.aspectRatio,
-  //                             child: Container(
-  //                               color: Colors.red,
-  //                               width: MediaQuery.of(context).size.width,
-  //                               height: _videoController!.value.size.height,
-  //                               child: Stack(
-  //                                 alignment: Alignment.bottomCenter,
-  //                                 children: <Widget>[
-  //                                   VideoPlayer(_videoController!),
-  //                                   _ControlsOverlay(
-  //                                       controller: _videoController),
-  //                                   VideoProgressIndicator(
-  //                                     _videoController!,
-  //                                     allowScrubbing: true,
-  //                                     colors: VideoProgressColors(
-  //                                       playedColor: Theme.of(context)
-  //                                           .colorScheme
-  //                                           .primary,
-  //                                     ),
-  //                                     padding:
-  //                                         EdgeInsets.symmetric(vertical: 8.0),
-  //                                     // Set minHeight for progress bar thickness
-  //                                     // minHeight is available in video_player >=2.2.7
-  //                                     // minHeight: 8.0,
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                           )
-  //                         : Container(
-  //                             child: Center(
-  //                               child: CircularProgressIndicator(
-  //                                 valueColor: AlwaysStoppedAnimation<Color>(
-  //                                     Theme.of(context).colorScheme.primary),
-  //                               ),
-  //                             ),
-  //                           );
-  //                   }
-  //                 }
-  //                 return Stack(
-  //                   children: [
-  //                     FadeInImage(
-  //                       image: CachedNetworkImageProvider(sliderList[index]!),
-  //                       placeholder: AssetImage(
-  //                         "assets/images/sliderph.png",
-  //                       ),
-  //                       height: height,
-  //                       width: double.maxFinite,
-  //                       fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
-  //
-  //                       imageErrorBuilder: (context, error, stackTrace) =>
-  //                           erroWidget(height),
-  //
-  //                       // fit: extendImg ? BoxFit.fill : BoxFit.contain,
-  //                     ),
-  //                     // index == 1 ? playIcon() : Container()
-  //                   ],
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //         ),
-  //         Positioned.fill(
-  //             child: Align(
-  //                 alignment: Alignment.bottomCenter,
-  //                 child: Row(
-  //                   children: <Widget>[
-  //                     AnimatedProgressBar(
-  //                       animation: _progressAnimation,
-  //                     ),
-  //                     Expanded(
-  //                       child: Container(
-  //                         height: 5.0,
-  //                         width: double.infinity,
-  //                         decoration: BoxDecoration(
-  //                             color: Theme.of(context).colorScheme.white),
-  //                       ),
-  //                     )
-  //                   ],
-  //                 ))),
-  //         favImg(),
-  //         indicatorImage(),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget favImg() {
     return Positioned.directional(

@@ -104,6 +104,7 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: colors.grad1Color1,
         appBar: getAppBar(getTranslated(context, 'FAVORITE')!, context),
         body: _isNetworkAvail
             ? Stack(

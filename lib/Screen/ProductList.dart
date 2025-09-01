@@ -60,8 +60,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
   String selId = "";
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
-  Animation? labelLargeSqueezeanimation;
-  AnimationController? labelLargeController;
+  Animation? buttonSqueezeanimation;
+  AnimationController? buttonController;
   bool listType = true;
   bool isOnOff = false;
   List<TextEditingController> _controller = [];
@@ -86,14 +86,14 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
     controller.addListener(_scrollListener);
     getProduct("0");
 
-    labelLargeController = new AnimationController(
+    buttonController = new AnimationController(
         duration: new Duration(milliseconds: 2000), vsync: this);
 
-    labelLargeSqueezeanimation = new Tween(
+    buttonSqueezeanimation = new Tween(
       begin: deviceWidth! * 0.7,
       end: 50.0,
     ).animate(new CurvedAnimation(
-      parent: labelLargeController!,
+      parent: buttonController!,
       curve: new Interval(
         0.0,
         0.150,
@@ -118,7 +118,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    labelLargeController!.dispose();
+    buttonController!.dispose();
     controller.removeListener(() {});
     for (int i = 0; i < _controller.length; i++) _controller[i].dispose();
     super.dispose();
@@ -126,7 +126,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
 
   Future<Null> _playAnimation() async {
     try {
-      await labelLargeController!.forward();
+      await buttonController!.forward();
     } on TickerCanceled {}
   }
 
@@ -157,8 +157,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
           noIntDec(context),
           AppBtn(
             title: getTranslated(context, 'TRY_AGAIN_INT_LBL'),
-            btnAnim: labelLargeSqueezeanimation,
-            btnCntrl: labelLargeController,
+            btnAnim: buttonSqueezeanimation,
+            btnCntrl: buttonController,
             onBtnSelected: () async {
               _playAnimation();
               Future.delayed(Duration(seconds: 2)).then((_) async {
@@ -168,7 +168,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                   total = 0;
                   getProduct("0");
                 } else {
-                  await labelLargeController!.reverse();
+                  await buttonController!.reverse();
                   if (mounted) setState(() {});
                 }
               });
@@ -536,6 +536,13 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                                                 model.id)]
                                                                             .toString()
                                                                         : "0";
+
+                                                                    ///here we have fixed the remove quantity value
+                                                                    _controller[index].text = model
+                                                                        .prVarientList!
+                                                                        .first
+                                                                        .cartCount
+                                                                        .toString();
                                                                     return TextField(
                                                                       textAlign:
                                                                           TextAlign
@@ -567,7 +574,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                                           provider
                                                                               .qtyList),
                                                                 ),
-                                                                // PopupMenulabelLarge<
+                                                                // PopupMenuButton<
                                                                 //     String>(
                                                                 //   tooltip: '',
                                                                 //   icon:
@@ -654,7 +661,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                   //     ? Text(getTranslated(context, 'OUT_OF_STOCK_LBL')!,
                   //         style: Theme.of(context)
                   //             .textTheme
-                  //             .titleSmall!
+                  //             .subtitle2!
                   //             .copyWith(
                   //                 color: Colors.red,
                   //                 fontWeight: FontWeight.bold))
@@ -1010,13 +1017,12 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
       OFFSET: offset.toString(),
       TOP_RETAED: top,
     };
-    print("product params_____${parameter}");
     if (selId != null && selId != "") {
       parameter[ATTRIBUTE_VALUE_ID] = selId;
     }
     if (widget.tag!) parameter[TAG] = widget.name!;
     if (widget.fromSeller!) {
-      parameter["seller_id"] = widget.id ?? '';
+      parameter["seller_id"] = widget.id!;
     } else {
       parameter[CATID] = widget.id ?? '';
     }
@@ -1103,6 +1109,191 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
     }
     productList.addAll(tempList);
   }
+
+/*  getAppbar() {
+    String cartCount =
+        Provider.of<UserProvider>(context, listen: false).curCartCount;
+    return AppBar(
+      titleSpacing: 0,
+      iconTheme: IconThemeData(color: colors.primary),
+      title: Text(
+        widget.name!,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.fontColor,
+        ),
+      ),
+      elevation: 5,
+      backgroundColor: Theme.of(context).colorScheme.white,
+      leading: Builder(builder: (BuildContext context) {
+        return Container(
+          margin: EdgeInsets.all(10),
+
+          child: InkWell(
+            borderRadius: BorderRadius.circular(4),
+            onTap: () => Navigator.of(context).pop(),
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: 4.0),
+              child: Icon( Icons.arrow_back_ios_rounded, color: colors.primary),
+            ),
+          ),
+        );
+      }),
+      actions: <Widget>[
+        */
+  /*  Container(
+          margin: EdgeInsets.symmetric(vertical: 10),
+          decoration: shadow(),
+          child: Card(
+            elevation: 0,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Search(),
+                    ));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Icon(
+                  Icons.search,
+                  color: colors.primary,
+                  size: 22,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            decoration: shadow(),
+            child: Card(
+                elevation: 0,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          listType ? Icons.grid_view : Icons.list,
+                          color: colors.primary,
+                          size: 22,
+                        ),
+                      ),
+                      onTap: () {
+                        productList.length != 0
+                            ? setState(() {
+                                listType = !listType;
+                              })
+                            : null;
+                      }),
+                ))),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 10),
+          decoration: shadow(),
+          child: Card(
+            elevation: 0,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () {
+                CUR_USERID == null
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Login(),
+                        ))
+                    : Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Cart(),
+                        ));
+              },
+              child: new Stack(children: <Widget>[
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: SvgPicture.asset(
+                      'assets/images/noti_cart.svg',
+                    ),
+                  ),
+                ),
+                (cartCount.isNotEmpty && cartCount != "0")
+                    ? new Positioned(
+                        top: 0.0,
+                        right: 5.0,
+                        bottom: 10,
+                        child: Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: colors.primary.withOpacity(0.5)),
+                            child: new Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(3),
+                                child: new Text(
+                                  cartCount,
+                                  style: TextStyle(
+                                      fontSize: 7, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            )),
+                      )
+                    : Container()
+              ]),
+            ),
+          ),
+        ),
+        Container(
+            width: 40,
+            margin: EdgeInsetsDirectional.only(top: 10, bottom: 10, end: 5),
+            decoration: shadow(),
+            child: Card(
+                elevation: 0,
+                child: Material(
+                    color: Colors.transparent,
+                    child: PopupMenuButton(
+                      padding: EdgeInsets.zero,
+                      onSelected: (dynamic value) {
+                        switch (value) {
+                          case 0:
+                            return filterDialog();
+
+                          case 1:
+                            return sortDialog();
+                        }
+                      },
+                      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                        PopupMenuItem(
+                          value: 0,
+                          child: ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsetsDirectional.only(
+                                start: 0.0, end: 0.0),
+                            leading: Icon(
+                              Icons.tune,
+                              color: Theme.of(context).colorScheme.fontColor,
+                              size: 20,
+                            ),
+                            title: Text('Filter'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 1,
+                          child: ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsetsDirectional.only(
+                                start: 0.0, end: 0.0),
+                            leading: Icon(Icons.sort,
+                                color: Theme.of(context).colorScheme.fontColor, size: 20),
+                            title: Text('Sort'),
+                          ),
+                        ),
+                      ],
+                    )))),*/ /*
+      ],
+    );
+  }*/
 
   Widget productItem(int index, bool pad) {
     if (index < productList.length) {
@@ -1197,7 +1388,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                     //       ? Text(getTranslated(context, 'OUT_OF_STOCK_LBL')!,
                     //           style: Theme.of(context)
                     //               .textTheme
-                    //               .titleSmall!
+                    //               .subtitle2!
                     //               .copyWith(
                     //                   color: Colors.red,
                     //                   fontWeight: FontWeight.bold))
@@ -1361,7 +1552,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                           provider.cartIdList,
                                                           provider.qtyList),
                                                 ),
-                                                // PopupMenulabelLarge<String>(
+                                                // PopupMenuButton<String>(
                                                 //   tooltip: '',
                                                 //   icon: const Icon(
                                                 //     Icons.arrow_drop_down,
@@ -1830,121 +2021,23 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
     );
   }
 
-  // Future<void> addToCart(int index, String qty) async {
-  //   _isNetworkAvail = await isNetworkAvailable();
-  //   if (_isNetworkAvail) {
-  //     if (CUR_USERID != null) {
-  //       if (mounted)
-  //         setState(() {
-  //           _isProgress = true;
-  //         });
-  //
-  //       if (int.parse(qty) < productList[index].minOrderQuntity!) {
-  //         qty = productList[index].minOrderQuntity.toString();
-  //         setSnackbar("${getTranslated(context, 'MIN_MSG')}$qty", context);
-  //       }
-  //
-  //       var parameter = {
-  //         USER_ID: CUR_USERID,
-  //         PRODUCT_VARIENT_ID: productList[index]
-  //             .prVarientList![productList[index].selVarient!]
-  //             .id,
-  //         QTY: qty
-  //       };
-  //       print(parameter.toString());
-  //       print(manageCartApi);
-  //       apiBaseHelper.postAPICall(manageCartApi, parameter).then((getdata) {
-  //         bool error = getdata["error"];
-  //         String? msg = getdata["message"];
-  //         if (!error) {
-  //           var data = getdata["data"];
-  //
-  //           String? qty = data['total_quantity'];
-  //           // CUR_CART_COUNT = data['cart_count'];
-  //
-  //           context.read<UserProvider>().setCartCount(data['cart_count']);
-  //           productList[index]
-  //               .prVarientList![productList[index].selVarient!]
-  //               .cartCount = qty.toString();
-  //
-  //           var cart = getdata["cart"];
-  //           List<SectionModel> cartList = (cart as List)
-  //               .map((cart) => new SectionModel.fromCart(cart))
-  //               .toList();
-  //           context.read<CartProvider>().setCartlist(cartList);
-  //         } else {
-  //           setSnackbar(msg!, context);
-  //         }
-  //         if (mounted)
-  //           setState(() {
-  //             _isProgress = false;
-  //           });
-  //       }, onError: (error) {
-  //         setSnackbar(error.toString(), context);
-  //         if (mounted)
-  //           setState(() {
-  //             _isProgress = false;
-  //           });
-  //       });
-  //     } else {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => Login()),
-  //       );
-  //     }
-  //   } else {
-  //     if (mounted)
-  //       setState(() {
-  //         _isNetworkAvail = false;
-  //       });
-  //   }
-  // }
+/*  _scrollListener() {
+    if (controller.offset >= controller.position.maxScrollExtent &&
+        !controller.position.outOfRange) {
+      if (this.mounted) {
+        if (mounted)
+          setState(() {
+            isLoadingmore = true;
+
+            if (offset < total) getProduct("0");
+          });
+      }
+    }
+  }*/
+
   Future<void> addToCart(int index, String qty) async {
     _isNetworkAvail = await isNetworkAvailable();
     if (_isNetworkAvail) {
-      Product model = productList[index];
-
-      if (await checkVenderIdExistOrNot(model.seller_id ?? '')) {
-        var result = await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext buildContext) {
-              return AlertDialog(
-                title: const Text("Are you sure"),
-                content: const Text("Do you went to reset the cart"),
-                actions: <Widget>[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.primary),
-                    child: const Text("YES"),
-                    onPressed: () {
-                      Navigator.of(buildContext).pop(true);
-                    },
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.primary),
-                    child: Text("NO"),
-                    onPressed: () {
-                      Navigator.of(buildContext).pop(false);
-                    },
-                  )
-                ],
-              );
-            });
-        print('PrintData:_____${result}______');
-
-        if (result == true) {
-          // await removeFromCart(index);
-          // // await _getCart('0');
-          // addToCart(index, qty == '0' ? '1' : qty);
-          // //await cleanCartValue(qty, intent);
-
-          // return;
-        } else {
-          return;
-        }
-      }
       if (CUR_USERID != null) {
         if (mounted)
           setState(() {
@@ -1956,15 +2049,13 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
 
           setSnackbar("${getTranslated(context, 'MIN_MSG')}$qty", context);
         }
-        // int masterCategoryId = context.read<HomeProvider>().masterCategory;
+
         var parameter = {
           USER_ID: CUR_USERID,
           PRODUCT_VARIENT_ID: productList[index]
               .prVarientList![productList[index].selVarient!]
               .id,
-          QTY: qty,
-          'seller_id': productList[index].seller_id ?? '',
-          // MASTER_TAB: masterCategoryId.toString()
+          QTY: qty
         };
         print(parameter.toString());
         print(manageCartApi);
@@ -1982,7 +2073,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
             productList[index]
                 .prVarientList![productList[index].selVarient!]
                 .cartCount = qty.toString();
-            print("cart count____________> :$data");
+
             var cart = getdata["cart"];
             List<SectionModel> cartList = (cart as List)
                 .map((cart) => new SectionModel.fromCart(cart))
@@ -2016,65 +2107,19 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
     }
   }
 
-  Future<bool> checkVenderIdExistOrNot(String sellerID) async {
-    await _getCart('0');
-    List<SectionModel> cartList = context.read<CartProvider>().cartList;
+/*  Future<Null>  _refresh() {
 
-    bool isThere = false;
+ */ /*   if (mounted)
+      setState(() {
+        _isLoading = true;
+        isLoadingmore = true;
+        offset = 0;
+        total = 0;
+        productList.clear();
+      });
+    getProduct("0");*/ /*
 
-    if (cartList.isEmpty) {
-      return false;
-    }
-
-    for (var i = 0; i < cartList.length; i++) {
-      if (cartList[i].productList != null) {
-        for (var j = 0; j < cartList[i].productList!.length; j++) {
-          if (sellerID != cartList[i].productList![j].seller_id) {
-            isThere = true;
-            return isThere;
-          }
-        }
-      }
-    }
-
-    return isThere;
-  }
-
-  Future<void> _getCart(String save) async {
-    _isNetworkAvail = await isNetworkAvailable();
-    // int masterCategoryId = context.read<HomeProvider>().masterCategory;
-    if (_isNetworkAvail) {
-      try {
-        var parameter = {
-          USER_ID: CUR_USERID,
-          SAVE_LATER: save,
-          // MASTER_TAB: masterCategoryId.toString()
-        };
-
-        Response response =
-            await post(getCartApi, body: parameter, headers: headers)
-                .timeout(Duration(seconds: timeOut));
-
-        var getdata = json.decode(response.body);
-        bool error = getdata["error"];
-        String? msg = getdata["message"];
-        if (!error) {
-          var data = getdata["data"];
-
-          List<SectionModel> cartList = (data as List)
-              .map((data) => SectionModel.fromCart(data))
-              .toList();
-          context.read<CartProvider>().setCartlist(cartList);
-        }
-      } on TimeoutException catch (_) {}
-    } else {
-      if (mounted) {
-        setState(() {
-          _isNetworkAvail = false;
-        });
-      }
-    }
-  }
+  }*/
 
   _showForm(BuildContext context) {
     return /*RefreshIndicator(
@@ -2446,6 +2491,44 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                       ),
                                     )
                                   : Container()
+
+                              /*    (filter == filterList[index]["name"])
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics:
+                                      NeverScrollableScrollPhysics(),
+                                  itemCount: attListId!.length,
+                                  itemBuilder: (context, i) {
+
+                                    */ /*       return CheckboxListTile(
+                                  dense: true,
+                                  title: Text(attsubList![i],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle1!
+                                          .copyWith(
+                                              color: Theme.of(context).colorScheme.lightBlack,
+                                              fontWeight:
+                                                  FontWeight.normal)),
+                                  value: selectedId
+                                      .contains(attListId![i]),
+                                  activeColor: colors.primary,
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
+                                  onChanged: (bool? val) {
+                                    if (mounted)
+                                      setState(() {
+                                        if (val == true) {
+                                          selectedId.add(attListId![i]);
+                                        } else {
+                                          selectedId
+                                              .remove(attListId![i]);
+                                        }
+                                      });
+                                  },
+                                );*/ /*
+                                  })
+                              : Container()*/
                             ],
                           );
                         }
@@ -2472,6 +2555,23 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                     getProduct("0");
                     Navigator.pop(context, 'Product Filter');
                   }),
+              // Row(children: <Widget>[
+              //   Container(
+              //     margin: EdgeInsetsDirectional.only(start: 20),
+              //     width: deviceWidth! * 0.4,
+              //     child: OutlinedButton(
+              //       onPressed: () {
+              //         if (mounted)
+              //           setState(() {
+              //             selectedId.clear();
+              //           });
+              //       },
+              //       child: Text(getTranslated(context, 'DISCARD')!),
+              //     ),
+              //   ),
+              //   Spacer(),
+              //
+              // ]),
             )
           ]);
         });

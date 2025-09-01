@@ -110,6 +110,8 @@ class _GettingStartedScreenState extends State<IntroSlider>
                   child: Image.asset(
                     slide.imageUrl,
                     fit: BoxFit.contain,
+                    cacheWidth: 800,
+                    cacheHeight: 600,
                   ),
                 ),
                 const SizedBox(height: 20),

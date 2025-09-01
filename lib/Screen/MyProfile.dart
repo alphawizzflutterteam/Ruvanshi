@@ -832,41 +832,6 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       throw 'Could not launch $url';
     }
   }
-  // WidgetBuilder builder = buildProgressIndicator;
-  //
-  // static Widget buildProgressIndicator(BuildContext context) =>
-  //     const Center(child: CircularProgressIndicator());
-
-  // requestReview(BuildContext context){
-  //   return RateMyAppBuilder(
-  //     builder: builder,
-  //     onInitialized: (context, rateMyApp) {
-  //       // setState(() =>
-  //       // builder = (context) => ContentWidget(rateMyApp: rateMyApp));
-  //       rateMyApp.conditions.forEach((condition) {
-  //         if (condition is DebuggableCondition) {
-  //           print(condition
-  //               .valuesAsString); // We iterate through our list of conditions and we print all debuggable ones.
-  //         }
-  //       });
-  //
-  //       print('Are all conditions met ? ' +
-  //           (rateMyApp.shouldOpenDialog ? 'Yes' : 'No'));
-  //
-  //       if (rateMyApp.shouldOpenDialog) {
-  //         rateMyApp.showRateDialog(context);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // requestReview();
-
-  // a
-  // //appStoreId,
-  //
-  // microsoftStoreId: 'microsoftStoreId',
-  // );
 
   deleteAccountDailog() async {
     await dialogAnimate(context,
@@ -986,24 +951,23 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       getTranslated(context, 'LIGHT_THEME'),
       getTranslated(context, 'DARK_THEME')
     ];
-
-    // themeNotifier = Provider.of<ThemeNotifier>(context);
-
     return Scaffold(
-      backgroundColor: colors.white30,
-      key: scaffoldKey,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _getHeader(),
-              _getDrawer(),
-            ],
+        backgroundColor: colors.grad1Color1,
+        key: scaffoldKey,
+        body: SafeArea(
+          child: Container(
+            color: colors.grad1Color1,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _getHeader(),
+                  _getDrawer(),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget getUserImage(String profileImage, VoidCallback? onBtnSelected) {

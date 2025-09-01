@@ -67,6 +67,7 @@ class _ChatState extends State<Chat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: colors.grad1Color1,
       appBar: getAppBar(getTranslated(context, 'CHAT')!, context),
       body: Column(
         children: <Widget>[buildListMessage(), msgRow()],

@@ -96,6 +96,7 @@ class _EditProfileState extends State<EditProfile> {
         return false;
       },
       child: Scaffold(
+        backgroundColor: colors.grad1Color1,
         body: FutureBuilder(
             future: userDetails(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -397,82 +398,6 @@ class _EditProfileState extends State<EditProfile> {
 
   String cityId = "";
 
-  // cityDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (BuildContext context, StateSetter setStater) {
-  //           cityState = setStater;
-  //           return AlertDialog(
-  //             contentPadding: const EdgeInsets.all(0.0),
-  //             // shape: RoundedRectangleBorder(
-  //             //   borderRadius: BorderRadius.all(
-  //             //     Radius.circular(5.0),
-  //             //   ),
-  //             // ),
-  //             content: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 Padding(
-  //                   padding: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
-  //                   child: Text(
-  //                     getTranslated(context, 'CITYSELECT_LBL') ?? 'Select City',
-  //                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-  //                         color: Theme.of(context).colorScheme.onSurface),
-  //                   ),
-  //                 ),
-  //                 Divider(color: Theme.of(context).colorScheme.onSurface),
-  //                 Flexible(
-  //                   child: SingleChildScrollView(
-  //                     child: Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: cityList.map((city) {
-  //                         return InkWell(
-  //                           onTap: () {
-  //                             selCityPos = cityList.indexOf(city);
-  //                             cityId = city.id ?? '';
-  //                             Navigator.pop(context);
-  //                             setState(() {});
-  //                           },
-  //                           child: Container(
-  //                             margin: EdgeInsets.symmetric(
-  //                                 vertical: 5, horizontal: 10),
-  //                             padding: EdgeInsets.all(10),
-  //                             // decoration: BoxDecoration(
-  //                             //   color: Colors.grey[200],
-  //                             //   borderRadius: BorderRadius.circular(8),
-  //                             //   boxShadow: [
-  //                             //     BoxShadow(
-  //                             //       color: Colors.grey.withOpacity(0.5),
-  //                             //       spreadRadius: 1,
-  //                             //       blurRadius: 3,
-  //                             //       offset: Offset(0, 2),
-  //                             //     ),
-  //                             //   ],
-  //                             // ),
-  //                             child: Text(
-  //                               city.name ?? '',
-  //                               style: TextStyle(
-  //                                   fontSize: 16, fontWeight: FontWeight.w500),
-  //                             ),
-  //                           ),
-  //                         );
-  //                       }).toList(),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
-  //new
   cityDialog() {
     List filteredCities = List.from(cityList);
 

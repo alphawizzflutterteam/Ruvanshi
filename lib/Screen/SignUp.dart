@@ -897,8 +897,7 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
   }
 
   Future<void> _fetchCities() async {
-    const url =
-        'https://developmentalphawizz.com/ruvanshi/app/v1/api/city'; // Replace with your API URL
+    const url = 'https://developmentalphawizz.com/ruvanshi/app/v1/api/city';
 
     try {
       final response = await http.get(Uri.parse(url));

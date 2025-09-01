@@ -130,7 +130,7 @@
   "USE_WALLET": "Use Wallet Balance",
   "TOTAL_BAL": "Total Balance",
   "REMAIN_BAL": "Remaining Balance",
-  "ORDER_ID_LBL": "Order ID",
+  "ORDER_ID_LBL": "Order Number",
   "ORDER_DATE": "Order Date",
   "ORDER_PROCESSED": "Order Proccessed",
   "ORDER_SHIPPED": "Order Shipped",

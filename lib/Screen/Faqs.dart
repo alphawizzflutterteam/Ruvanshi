@@ -119,6 +119,7 @@ class StateFaqs extends State<Faqs> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: colors.grad1Color1,
         key: _scaffoldKey,
         appBar: getSimpleAppBar(widget.title!, context),
         body: _isNetworkAvail ? _showForm(context) : noInternet(context));

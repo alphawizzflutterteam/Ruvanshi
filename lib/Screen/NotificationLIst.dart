@@ -109,6 +109,7 @@ class StateNoti extends State<NotificationList> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: colors.grad1Color1,
         appBar: getAppBar(getTranslated(context, 'NOTIFICATION')!, context),
         key: _scaffoldKey,
         body: _isNetworkAvail

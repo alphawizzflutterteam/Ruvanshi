@@ -210,6 +210,7 @@ class StateOrder extends State<OrderDetail>
         return true;
       },
       child: Scaffold(
+        backgroundColor: colors.grad1Color1,
         appBar:
             getSimpleAppBar(getTranslated(context, "ORDER_DETAIL")!, context),
         body: _isNetworkAvail
@@ -386,31 +387,76 @@ class StateOrder extends State<OrderDetail>
                   ],
                 ),
               ),
+              // Padding(
+              //   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(getTranslated(context, 'CGST')! + " " + ":",
+              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              //               color: Theme.of(context).colorScheme.lightBlack2)),
+              //       Text("+ " + CUR_CURRENCY! + " " + widget.model!.cgstAmount!,
+              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              //               color: Theme.of(context).colorScheme.lightBlack2))
+              //     ],
+              //   ),
+              // ),
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+                padding:
+                    const EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(getTranslated(context, 'CGST')! + " " + ":",
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2)),
-                    Text("+ " + CUR_CURRENCY! + " " + widget.model!.cgstAmount!,
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2))
+                    Text(
+                      (getTranslated(context, 'CGST') ?? "CGST") + " " + ":",
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    ),
+                    Text(
+                      "+ " +
+                          (CUR_CURRENCY ?? "") +
+                          " " +
+                          (widget.model?.cgstAmount ?? "0"),
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    )
                   ],
                 ),
               ),
+
+              // Padding(
+              //   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(getTranslated(context, 'SGST')! + " " + ":",
+              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              //               color: Theme.of(context).colorScheme.lightBlack2)),
+              //       Text("+ " + CUR_CURRENCY! + " " + widget.model!.sgstAmount!,
+              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              //               color: Theme.of(context).colorScheme.lightBlack2))
+              //     ],
+              //   ),
+              // ),
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+                padding:
+                    const EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(getTranslated(context, 'SGST')! + " " + ":",
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2)),
-                    Text("+ " + CUR_CURRENCY! + " " + widget.model!.sgstAmount!,
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2))
+                    Text(
+                      (getTranslated(context, 'SGST') ?? "SGST") + " " + ":",
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    ),
+                    Text(
+                      "+ " +
+                          (CUR_CURRENCY ?? "") +
+                          " " +
+                          (widget.model?.sgstAmount ?? "0"),
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    ),
                   ],
                 ),
               ),
@@ -709,12 +755,12 @@ class StateOrder extends State<OrderDetail>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "${getTranslated(context, "STORE_NAME")!} : ",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.lightBlack,
-                                fontWeight: FontWeight.bold),
-                          ),
+                          // Text(
+                          //   "${getTranslated(context, "STORE_NAME")!} : ",
+                          //   style: TextStyle(
+                          //       color: Theme.of(context).colorScheme.lightBlack,
+                          //       fontWeight: FontWeight.bold),
+                          // ),
                           Text(
                             "${getTranslated(context, "OTP")!} : ",
                             style: TextStyle(
@@ -754,26 +800,26 @@ class StateOrder extends State<OrderDetail>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          InkWell(
-                            child: Text(
-                              "${orderItem.store_name}",
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.lightBlack2,
-                                  decoration: TextDecoration.underline),
-                            ),
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SellerProfile(
-                                        sellerStoreName: orderItem.store_name,
-                                        sellerRating: orderItem.seller_rating,
-                                        sellerImage: orderItem.seller_profile,
-                                        sellerName: orderItem.seller_name,
-                                        sellerID: orderItem.seller_id,
-                                        storeDesc: orderItem.store_description,
-                                      )));
-                            },
-                          ),
+                          // InkWell(
+                          //   child: Text(
+                          //     "${orderItem.store_name}",
+                          //     style: TextStyle(
+                          //         color:
+                          //             Theme.of(context).colorScheme.lightBlack2,
+                          //         decoration: TextDecoration.underline),
+                          //   ),
+                          //   onTap: () {
+                          //     Navigator.of(context).push(MaterialPageRoute(
+                          //         builder: (context) => SellerProfile(
+                          //               sellerStoreName: orderItem.store_name,
+                          //               sellerRating: orderItem.seller_rating,
+                          //               sellerImage: orderItem.seller_profile,
+                          //               sellerName: orderItem.seller_name,
+                          //               sellerID: orderItem.seller_id,
+                          //               storeDesc: orderItem.store_description,
+                          //             )));
+                          //   },
+                          // ),
                           Text(
                             "${orderItem.item_otp} ",
                             style: TextStyle(

@@ -243,6 +243,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     return SafeArea(
       child: Scaffold(
+          backgroundColor: colors.grad1Color1,
           appBar: widget.fromBottom
               ? null
               : getSimpleAppBar(getTranslated(context, 'CART')!, context),
@@ -1422,101 +1423,6 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
   String? overallAmount;
   double cgstAmount = 0.0;
   double sgstAmount = 0.0;
-  // Future<void> _getCart(String save) async {
-  //   _isNetworkAvail = await isNetworkAvailable();
-  //
-  //   if (_isNetworkAvail) {
-  //     try {
-  //       var parameter = {
-  //         USER_ID: CUR_USERID,
-  //         ADD_ID: selAddress ?? '',
-  //         SAVE_LATER: save
-  //       };
-  //       print("jkfffffffffffff___________${parameter}");
-  //
-  //       print(parameter.toString());
-  //       Response response =
-  //           await post(getCartApi, body: parameter, headers: headers)
-  //               .timeout(Duration(seconds: timeOut));
-  //       log(response.body.toString());
-  //       log(response.body.toString());
-  //
-  //       var getdata = json.decode(response.body);
-  //       bool error = getdata["error"];
-  //       String? msg = getdata["message"];
-  //       if (!error) {
-  //         var data = getdata["data"];
-  //         setState(() {
-  //           print("Cart nEW================> : $totalamount");
-  //           totalamount = getdata['overall_amount'];
-  //           print("Cart aMOUBT================> : $totalamount");
-  //           //sellerId = data[0]["product_details"][0]["seller_id"];
-  //         });
-  //         cgstAmount = getdata.containsKey('cgst_amount')
-  //             ? double.parse(
-  //                 getdata['cgst_amount'].toString().replaceAll(",", ""))
-  //             : 0.0;
-  //         sgstAmount = getdata.containsKey('sgst_amount')
-  //             ? double.parse(
-  //                 getdata['sgst_amount'].toString().replaceAll(",", ""))
-  //             : 0.0;
-  //
-  //         print("CGST Amount: $cgstAmount");
-  //         print("SGST Amount: $sgstAmount");
-  //         // isOnOff = onOff;
-  //         // var  onOff = await checkOnOff(sellerId);
-  //         // setState(() {
-  //         //   isOnOff = onOff;
-  //         // });
-  //         //print("is On off===========> : $onOff");
-  //         // print("Seller Id-----------> $seller_id");
-  //         print("Cart Data================> : $data");
-  //         print("ssssssssssssssssssssssss$getdata['delivery_charge']");
-  //         oriPrice = double.parse(getdata[SUB_TOTAL]);
-  //         // delCharge =getdata['delivery_charge'].toString();
-  //         //double.parse(getdata['delivery_charge'].toString());
-  //         dCharge = double.parse(
-  //             getdata['delivery_charge'].toString().replaceAll(",", ""));
-  //         taxAmount = double.parse(
-  //             getdata['tax_amount'].toString().replaceAll(",", ""));
-  //
-  //         print(" charge here ${delCharge}");
-  //         taxPer = double.parse(getdata[TAX_PER]);
-  //
-  //         totalPrice = delCharge + oriPrice;
-  //         List<SectionModel> cartList = (data as List)
-  //             .map((data) => new SectionModel.fromCart(data))
-  //             .toList();
-  //         context.read<CartProvider>().setCartlist(cartList);
-  //         // overallAmount = cartList[0].finalTotal;
-  //
-  //         if (getdata.containsKey(PROMO_CODES)) {
-  //           var promo = getdata[PROMO_CODES];
-  //           promoList =
-  //               (promo as List).map((e) => new Promo.fromJson(e)).toList();
-  //         }
-  //
-  //         for (int i = 0; i < cartList.length; i++)
-  //           _controller.add(new TextEditingController());
-  //       } else {
-  //         if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
-  //       }
-  //       if (mounted)
-  //         setState(() {
-  //           _isCartLoad = false;
-  //         });
-  //
-  //       _getAddress();
-  //     } on TimeoutException catch (_) {
-  //       setSnackbar(getTranslated(context, 'somethingMSg')!, _scaffoldKey);
-  //     }
-  //   } else {
-  //     if (mounted)
-  //       setState(() {
-  //         _isNetworkAvail = false;
-  //       });
-  //   }
-  // }
   Future<void> _getCart(String save) async {
     _isNetworkAvail = await isNetworkAvailable();
 
@@ -1527,6 +1433,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           ADD_ID: selAddress ?? '',
           SAVE_LATER: save
         };
+        print('cart:_____${parameter}______');
 
         Response response =
             await post(getCartApi, body: parameter, headers: headers)
@@ -2539,15 +2446,35 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                           context, 'TOTAL_PRICE')!),
                                       Text(
                                         CUR_CURRENCY! +
-                                            " ${oriPrice.toStringAsFixed(2)}",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .fontColor),
+                                                    "${totalamount.toString()}" !=
+                                                " "
+                                            ? isPromoValid == true
+                                                ? (/*oriPrice - promoAmt+dCharge*/ double
+                                                            .parse(
+                                                                totalamount ??
+                                                                    '0.0') -
+                                                        promoAmt)
+                                                    .toString()
+                                                : (CUR_CURRENCY! +
+                                                    "${totalamount.toString()}")
+                                            : "",
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .fontColor,
+                                            fontWeight: FontWeight.bold),
                                       ),
+                                      // Text(
+                                      //   CUR_CURRENCY! +
+                                      //       " ${oriPrice.toStringAsFixed(2)}",
+                                      //   style: Theme.of(context)
+                                      //       .textTheme
+                                      //       .titleMedium!
+                                      //       .copyWith(
+                                      //           color: Theme.of(context)
+                                      //               .colorScheme
+                                      //               .fontColor),
+                                      // ),
                                     ],
                                   ),
                                   isPromoValid!
@@ -2776,8 +2703,6 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                           : (CUR_CURRENCY! +
                                                               "${totalamount.toString()}")
                                                       : "",
-                                                  // CUR_CURRENCY! +
-                                                  //     " ${oriPrice.toStringAsFixed(2)}",
                                                   style: TextStyle(
                                                       color: Theme.of(context)
                                                           .colorScheme
@@ -2791,128 +2716,193 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                               ],
                                             )),
                                         Spacer(),
-
+                                        // SimBtn(
+                                        //     size: 0.4,
+                                        //     title: getTranslated(
+                                        //         context, 'PLACE_ORDER'),
+                                        //     onBtnSelected: _placeOrder
+                                        //         ? () {
+                                        //             getSetting();
+                                        //
+                                        //             // checkoutState!(() {
+                                        //             //   _placeOrder = false;
+                                        //             // });
+                                        //             // if(
+                                        //             // cartList[0].sellerAvailable == false)
+                                        //             msg = getTranslated(
+                                        //                 context, 'Seller');
+                                        //
+                                        //             print(
+                                        //                 "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
+                                        //
+                                        //             if (selAddress == null ||
+                                        //                 selAddress!.isEmpty) {
+                                        //               msg = getTranslated(
+                                        //                   context,
+                                        //                   'addressWarning');
+                                        //               Navigator.pushReplacement(
+                                        //                   context,
+                                        //                   MaterialPageRoute(
+                                        //                     builder: (BuildContext
+                                        //                             context) =>
+                                        //                         ManageAddress(
+                                        //                       home: false,
+                                        //                     ),
+                                        //                   ));
+                                        //               checkoutState!(() {
+                                        //                 _placeOrder = true;
+                                        //               });
+                                        //             } else if (double.parse(
+                                        //                     MIN_ALLOW_CART_AMT!) >
+                                        //                 oriPrice) {
+                                        //               print(
+                                        //                   "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
+                                        //               setSnackbar(
+                                        //                   "${getTranslated(context, 'MIN_CART_AMT')!} \u{20B9}${MIN_ALLOW_CART_AMT}",
+                                        //                   _checkscaffoldKey);
+                                        //               // Fluttertoast.showToast(msg: '${getTranslated(context, 'MIN_CART_AMT')}');
+                                        //             } else if (payMethod == null ||
+                                        //                 payMethod!.isEmpty) {
+                                        //               msg = getTranslated(
+                                        //                   context,
+                                        //                   'payWarning');
+                                        //               Navigator.push(
+                                        //                   context,
+                                        //                   MaterialPageRoute(
+                                        //                       builder: (BuildContext
+                                        //                               context) =>
+                                        //                           Payment(
+                                        //                               updateCheckout,
+                                        //                               msg)));
+                                        //               checkoutState!(() {
+                                        //                 _placeOrder = true;
+                                        //               });
+                                        //             } else if (isTimeSlot! &&
+                                        //                 int.parse(allowDay!) >
+                                        //                     0 &&
+                                        //                 (selDate == null ||
+                                        //                     selDate!.isEmpty)) {
+                                        //               msg = getTranslated(
+                                        //                   context,
+                                        //                   'dateWarning');
+                                        //               Navigator.push(
+                                        //                   context,
+                                        //                   MaterialPageRoute(
+                                        //                       builder: (BuildContext
+                                        //                               context) =>
+                                        //                           Payment(
+                                        //                               updateCheckout,
+                                        //                               msg)));
+                                        //               checkoutState!(() {
+                                        //                 _placeOrder = true;
+                                        //               });
+                                        //             } else if (isTimeSlot! &&
+                                        //                 timeSlotList.length >
+                                        //                     0 &&
+                                        //                 (selTime == null ||
+                                        //                     selTime!.isEmpty)) {
+                                        //               msg = getTranslated(
+                                        //                   context,
+                                        //                   'timeWarning');
+                                        //               Navigator.push(
+                                        //                   context,
+                                        //                   MaterialPageRoute(
+                                        //                       builder: (BuildContext
+                                        //                               context) =>
+                                        //                           Payment(
+                                        //                               updateCheckout,
+                                        //                               msg)));
+                                        //               checkoutState!(() {
+                                        //                 _placeOrder = true;
+                                        //               });
+                                        //             }
+                                        //
+                                        //             // else if (double.parse(
+                                        //             //         MIN_ALLOW_CART_AMT!) >
+                                        //             //     oriPrice) {
+                                        //             //   setSnackbar(
+                                        //             //       getTranslated(context,
+                                        //             //           'MIN_CART_AMT')!,
+                                        //             //       _checkscaffoldKey);
+                                        //             // }
+                                        //             // else if (!deliverable) {
+                                        //             //   checkDeliverable();
+                                        //             // }
+                                        //             else {
+                                        //               checkoutState!(() {
+                                        //                 _placeOrder = false;
+                                        //               });
+                                        //               confirmDialog();
+                                        //             }
+                                        //           }
+                                        //         : null)
                                         SimBtn(
-                                            size: 0.4,
-                                            title: getTranslated(
-                                                context, 'PLACE_ORDER'),
-                                            onBtnSelected: _placeOrder
-                                                ? () {
-                                                    getSetting();
+                                          size: 0.4,
+                                          title: getTranslated(
+                                              context, 'PLACE_ORDER'),
+                                          onBtnSelected: _placeOrder
+                                              ? () {
+                                                  getSetting();
 
-                                                    // checkoutState!(() {
-                                                    //   _placeOrder = false;
-                                                    // });
-                                                    // if(
-                                                    // cartList[0].sellerAvailable == false)
-                                                    msg = getTranslated(
-                                                        context, 'Seller');
+                                                  msg = getTranslated(
+                                                      context, 'Seller');
 
+                                                  print(
+                                                      "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
+
+                                                  if (selAddress == null ||
+                                                      selAddress!.isEmpty) {
+                                                    msg = getTranslated(context,
+                                                        'addressWarning');
+                                                    Navigator.pushReplacement(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            ManageAddress(
+                                                          home: false,
+                                                        ),
+                                                      ),
+                                                    );
+                                                    checkoutState!(() {
+                                                      _placeOrder = true;
+                                                    });
+                                                  } else if (double.parse(
+                                                          MIN_ALLOW_CART_AMT!) >
+                                                      oriPrice) {
                                                     print(
                                                         "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
-
-                                                    if (selAddress == null ||
-                                                        selAddress!.isEmpty) {
-                                                      msg = getTranslated(
-                                                          context,
-                                                          'addressWarning');
-                                                      Navigator.pushReplacement(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                ManageAddress(
-                                                              home: false,
-                                                            ),
-                                                          ));
-                                                      checkoutState!(() {
-                                                        _placeOrder = true;
-                                                      });
-                                                    } else if (double.parse(
-                                                            MIN_ALLOW_CART_AMT!) >
-                                                        oriPrice) {
-                                                      print(
-                                                          "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
-                                                      setSnackbar(
-                                                          "${getTranslated(context, 'MIN_CART_AMT')!} \u{20B9}${MIN_ALLOW_CART_AMT}",
-                                                          _checkscaffoldKey);
-                                                      // Fluttertoast.showToast(msg: '${getTranslated(context, 'MIN_CART_AMT')}');
-                                                    } else if (payMethod == null ||
-                                                        payMethod!.isEmpty) {
-                                                      msg = getTranslated(
-                                                          context,
-                                                          'payWarning');
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  Payment(
-                                                                      updateCheckout,
-                                                                      msg)));
-                                                      checkoutState!(() {
-                                                        _placeOrder = true;
-                                                      });
-                                                    } else if (isTimeSlot! &&
-                                                        int.parse(allowDay!) >
-                                                            0 &&
-                                                        (selDate == null ||
-                                                            selDate!.isEmpty)) {
-                                                      msg = getTranslated(
-                                                          context,
-                                                          'dateWarning');
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  Payment(
-                                                                      updateCheckout,
-                                                                      msg)));
-                                                      checkoutState!(() {
-                                                        _placeOrder = true;
-                                                      });
-                                                    } else if (isTimeSlot! &&
-                                                        timeSlotList.length >
-                                                            0 &&
-                                                        (selTime == null ||
-                                                            selTime!.isEmpty)) {
-                                                      msg = getTranslated(
-                                                          context,
-                                                          'timeWarning');
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (BuildContext
-                                                                      context) =>
-                                                                  Payment(
-                                                                      updateCheckout,
-                                                                      msg)));
-                                                      checkoutState!(() {
-                                                        _placeOrder = true;
-                                                      });
-                                                    }
-
-                                                    // else if (double.parse(
-                                                    //         MIN_ALLOW_CART_AMT!) >
-                                                    //     oriPrice) {
-                                                    //   setSnackbar(
-                                                    //       getTranslated(context,
-                                                    //           'MIN_CART_AMT')!,
-                                                    //       _checkscaffoldKey);
-                                                    // }
-                                                    // else if (!deliverable) {
-                                                    //   checkDeliverable();
-                                                    // }
-                                                    else {
-                                                      checkoutState!(() {
-                                                        _placeOrder = false;
-                                                      });
-                                                      confirmDialog();
-                                                    }
+                                                    setSnackbar(
+                                                      "${getTranslated(context, 'MIN_CART_AMT')!} \u{20B9}${MIN_ALLOW_CART_AMT}",
+                                                      _checkscaffoldKey,
+                                                    );
+                                                  } else if (payMethod ==
+                                                          null ||
+                                                      payMethod!.isEmpty) {
+                                                    msg = getTranslated(
+                                                        context, 'payWarning');
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            Payment(
+                                                                updateCheckout,
+                                                                msg),
+                                                      ),
+                                                    );
+                                                    checkoutState!(() {
+                                                      _placeOrder = true;
+                                                    });
+                                                  } else {
+                                                    checkoutState!(() {
+                                                      _placeOrder = false;
+                                                    });
+                                                    confirmDialog();
                                                   }
-                                                : null)
-                                        //}),
+                                                }
+                                              : null,
+                                        )
                                       ]),
                                     ),
                                   ],
@@ -3665,6 +3655,29 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
               //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
               //   children: [
               //     Text(
+              //       'Total Amount',
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.lightBlack2),
+              //     ),
+              //     Text(
+              //       CUR_CURRENCY! + "${totalamount.toString()}" != " "
+              //           ? isPromoValid == true
+              //               ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
+              //                           totalamount ?? '0.0') -
+              //                       promoAmt)
+              //                   .toString()
+              //               : (CUR_CURRENCY! + "${totalamount.toString()}")
+              //           : "",
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.fontColor,
+              //           fontWeight: FontWeight.bold),
+              //     ),
+              //   ],
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
               //       'Tax Amount',
               //       style: TextStyle(
               //           color: Theme.of(context).colorScheme.lightBlack2),
@@ -3711,6 +3724,30 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                       ],
                     )
                   : Container(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total Amount',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.lightBlack2),
+                  ),
+                  Text(
+                    CUR_CURRENCY! + "${totalamount.toString()}" != " "
+                        ? isPromoValid == true
+                            ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
+                                        totalamount ?? '0.0') -
+                                    promoAmt)
+                                .toString()
+                            : (CUR_CURRENCY! + "${totalamount.toString()}")
+                        : "",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+
               isUseWallet!
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3729,6 +3766,29 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                       ],
                     )
                   : Container(),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     Text(
+              //       'Total Amount',
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.lightBlack2),
+              //     ),
+              //     Text(
+              //       CUR_CURRENCY! + "${totalamount.toString()}" != " "
+              //           ? isPromoValid == true
+              //               ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
+              //                           totalamount ?? '0.0') -
+              //                       promoAmt)
+              //                   .toString()
+              //               : (CUR_CURRENCY! + "${totalamount.toString()}")
+              //           : "",
+              //       style: TextStyle(
+              //           color: Theme.of(context).colorScheme.fontColor,
+              //           fontWeight: FontWeight.bold),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ));
@@ -3748,6 +3808,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           PROMOCODE: promoC.text,
           FINAL_TOTAL: oriPrice.toString()
         };
+        print('promocode:_____${parameter}______');
         Response response =
             await post(validatePromoApi, body: parameter, headers: headers)
                 .timeout(Duration(seconds: timeOut));

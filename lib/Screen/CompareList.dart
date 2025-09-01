@@ -43,6 +43,7 @@ class _CompareListState extends State<CompareList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: colors.grad1Color1,
         appBar: getAppBar(getTranslated(context, 'COMPARE_PRO')!, context),
         body: Selector<ProductDetailProvider, List<Product>>(
           builder: (context, data, child) {

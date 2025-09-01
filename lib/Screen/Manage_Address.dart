@@ -170,6 +170,7 @@ class StateAddress extends State<ManageAddress> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: colors.grad1Color1,
       key: _scaffoldKey,
       appBar:
           getSimpleAppBar(getTranslated(context, "SHIPP_ADDRESS")!, context),
@@ -192,7 +193,6 @@ class StateAddress extends State<ManageAddress> with TickerProviderStateMixin {
         },
         child: const Icon(Icons.add),
       ),
-      backgroundColor: Theme.of(context).colorScheme.lightWhite,
       body: _isNetworkAvail
           ? Column(
               children: [

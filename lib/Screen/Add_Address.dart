@@ -148,6 +148,7 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: colors.grad1Color1,
       key: _scaffoldKey,
       appBar: getSimpleAppBar(getTranslated(context, "ADDRESS_LBL")!, context),
       body: _isNetworkAvail ? _showContent() : noInternet(context),
@@ -1058,8 +1059,8 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                 .textTheme
                 .titleMedium!
                 .copyWith(color: Theme.of(context).colorScheme.fontColor),
-            readOnly: true,
-            //validator: validateField,
+            // readOnly: true,
+            // validator: validateField,
             onChanged: (v) => setState(() {
               state = v;
             }),
@@ -1094,7 +1095,7 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.sentences,
             controller: countryC,
-            readOnly: true,
+            // readOnly: true,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium!
@@ -1537,14 +1538,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
       // setLocaleIdentifier: "en"
     );
 
-    state = placemark[0].administrativeArea;
-    country = placemark[0].country;
+    // state = placemark[0].administrativeArea;
+    // country = placemark[0].country;
     // pincode = placemark[0].postalCode;
     // address = placemark[0].name;
     if (mounted) {
       setState(() {
-        countryC!.text = country!;
-        stateC!.text = state!;
+        // countryC!.text = country!;
+        // stateC!.text = state!;
         // pincodeC!.text = pincode!;
         // addressC!.text = address!;
       });

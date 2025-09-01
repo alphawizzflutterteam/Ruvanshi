@@ -680,7 +680,7 @@ class _AllCategoryState extends State<AllCategory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: colors.grad1Color1,
       // appBar: AppBar(
       //   title: Text(
       //     'All Categories',
