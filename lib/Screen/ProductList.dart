@@ -657,15 +657,6 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                       )
                     ],
                   ),
-                  // model.availability == "0"
-                  //     ? Text(getTranslated(context, 'OUT_OF_STOCK_LBL')!,
-                  //         style: Theme.of(context)
-                  //             .textTheme
-                  //             .subtitle2!
-                  //             .copyWith(
-                  //                 color: Colors.red,
-                  //                 fontWeight: FontWeight.bold))
-                  //     : Container(),
                 ]),
                 onTap: () {
                   Product model = productList[index];
@@ -959,6 +950,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
           USER_ID: CUR_USERID,
           QTY: qty.toString()
         };
+        print('addtocart:_____${parameter}______');
 
         apiBaseHelper.postAPICall(manageCartApi, parameter).then((getdata) {
           bool error = getdata["error"];
@@ -973,6 +965,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
             productList[index]
                 .prVarientList![productList[index].selVarient!]
                 .cartCount = qty.toString();
+            print('qtydfhdh_____${qty}______');
 
             var cart = getdata["cart"];
             List<SectionModel> cartList = (cart as List)
@@ -2057,8 +2050,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
               .id,
           QTY: qty
         };
-        print(parameter.toString());
-        print(manageCartApi);
+        print('hdffffffffffff:_____${parameter}______');
 
         apiBaseHelper.postAPICall(manageCartApi, parameter).then((getdata) {
           bool error = getdata["error"];
@@ -2067,12 +2059,15 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
             var data = getdata["data"];
 
             String? qty = data['total_quantity'];
+            print('totalquantity:_____${qty}______');
             // CUR_CART_COUNT = data['cart_count'];
 
             context.read<UserProvider>().setCartCount(data['cart_count']);
             productList[index]
                 .prVarientList![productList[index].selVarient!]
                 .cartCount = qty.toString();
+            print(
+                'qtyjjhh:_____${productList[index].prVarientList![productList[index].selVarient!].cartCount}______');
 
             var cart = getdata["cart"];
             List<SectionModel> cartList = (cart as List)

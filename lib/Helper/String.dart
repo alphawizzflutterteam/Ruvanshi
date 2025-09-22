@@ -298,6 +298,8 @@ const String HSNCODE = 'hsn_code';
 const String STORE_NAME = 'store_name';
 
 const String MIN_CART_AMT = 'minimum_cart_amt';
+// const String PRIMARY_COLOR = 'primary_color';
+// const String SECONDARY_COLOR = 'secondary_color';
 
 const String ATTACHMENTS = 'attachments';
 
@@ -318,6 +320,8 @@ String? REFER_CODE = '';
 String? MIN_AMT = '';
 String? CUR_DEL_CHR = '';
 String? MIN_ALLOW_CART_AMT = '';
+// String? PRIMARY = '';
+// String? SECONDARY = '';
 
 String? CUR_TICK_ID = '';
 

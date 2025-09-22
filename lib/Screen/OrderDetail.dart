@@ -460,20 +460,20 @@ class StateOrder extends State<OrderDetail>
                   ],
                 ),
               ),
-              // Padding(
-              //   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       Text(getTranslated(context, 'DELIVERY_CHARGE')! + " " + ":",
-              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
-              //               color: Theme.of(context).colorScheme.lightBlack2)),
-              //       Text("+ " + CUR_CURRENCY! + " " + widget.model!.delCharge!,
-              //           style: Theme.of(context).textTheme.labelLarge!.copyWith(
-              //               color: Theme.of(context).colorScheme.lightBlack2))
-              //     ],
-              //   ),
-              // ),
+              Padding(
+                padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(getTranslated(context, 'DELIVERY_CHARGE')! + " " + ":",
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.lightBlack2)),
+                    Text("+ " + CUR_CURRENCY! + " " + widget.model!.delCharge!,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.lightBlack2))
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                 child: Row(

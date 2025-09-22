@@ -73,6 +73,7 @@ dependencies:
   curved_labeled_navigation_bar: ^2.0.2
   html_to_pdf_plus: ^1.0.6
   flutter_downloader: ^1.12.0
+  flutter_statusbarcolor_ns: ^0.6.0
 
 
 dev_dependencies:

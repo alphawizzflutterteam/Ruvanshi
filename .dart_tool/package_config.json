@@ -344,6 +344,12 @@
       "languageVersion": "2.14"
     },
     {
+      "name": "flutter_statusbarcolor_ns",
+      "rootUri": "file:///C:/Users/windows%2011/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_statusbarcolor_ns-0.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_svg",
       "rootUri": "file:///C:/Users/windows%2011/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_svg-2.2.0",
       "packageUri": "lib/",
@@ -1184,7 +1190,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2025-08-28T06:46:54.470334Z",
+  "generated": "2025-09-17T05:48:05.281691Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///C:/src/flutter_windows_3.27.0-stable/flutter",

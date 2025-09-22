@@ -158,8 +158,48 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: getSimpleAppBar(getTranslated(context, 'PAYMENT_METHOD_LBL')!,
-          context), // getAppBar(getTranslated(context, 'PAYMENT_METHOD_LBL')!, context),
+      appBar: AppBar(
+        titleSpacing: 0,
+        backgroundColor: Theme.of(context).colorScheme.white,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return Container(
+              margin: const EdgeInsets.all(10),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(4),
+                onTap: () => Navigator.of(context).pop(),
+                child: const Center(
+                  child: Icon(
+                    Icons.arrow_back_ios_rounded,
+                    color: colors.primary,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Step 3 of 3",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              getTranslated(context, 'PAYMENT_METHOD_LBL')!,
+              style: const TextStyle(
+                color: colors.primary,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: _isNetworkAvail
           ? _isLoading
               ? getProgress()

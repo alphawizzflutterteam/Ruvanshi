@@ -6,10 +6,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:TGSawadesiMartUser/Provider/CartProvider.dart';
 import 'package:TGSawadesiMartUser/Provider/FavoriteProvider.dart';
 import 'package:TGSawadesiMartUser/Provider/HomeProvider.dart';
-import 'package:TGSawadesiMartUser/Provider/ProductDetailProvider.dart';
 import 'package:TGSawadesiMartUser/Provider/UserProvider.dart';
 import 'package:TGSawadesiMartUser/Screen/Cart.dart';
-import 'package:TGSawadesiMartUser/Screen/CompareList.dart';
 import 'package:TGSawadesiMartUser/Screen/ProductList.dart';
 import 'package:TGSawadesiMartUser/Screen/ReviewList.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -138,9 +136,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           revImgList.add(m);
         }
       }
-
-    getShare();
-
     _oldSelVarient = widget.model!.selVarient;
 
     reviewList.clear();
@@ -159,8 +154,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     );
 
     _setProgressAnim(deviceWidth!, 1);
-    //  notificationcontroller = ScrollController(keepScrollOffset: true);
-    // notificationcontroller!.addListener(_transactionscrollListener);
 
     buttonController = new AnimationController(
         duration: new Duration(milliseconds: 2000), vsync: this);
@@ -208,53 +201,11 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     _progressAnimcontroller.forward();
   }
 
-/*  _transactionscrollListener() {
-    if (notificationcontroller!.offset >=
-            notificationcontroller!.position.maxScrollExtent &&
-        !notificationcontroller!.position.outOfRange) {
-
-      print("listner****");
-      if (mounted)
-        setState(() {
-          getProduct();
-        });
-    }
-  }*/
-
   @override
   void dispose() {
     buttonController!.dispose();
     if (_videoController != null) _videoController!.dispose();
-    //notificationcontroller!.dispose();
     super.dispose();
-  }
-
-  Future<void> createDynamicLink() async {
-    try {
-      var documentDirectory;
-
-      if (Platform.isIOS)
-        documentDirectory = (await getApplicationDocumentsDirectory()).path;
-      else
-        documentDirectory = (await getExternalStorageDirectory())!.path;
-
-      final response1 = await get(Uri.parse(widget.model!.image!));
-      final bytes1 = response1.bodyBytes;
-
-      final File imageFile =
-          File('$documentDirectory/${widget.model!.name}.png');
-      imageFile.writeAsBytesSync(bytes1);
-      // Share.shareFiles(['$documentDirectory/${widget.model!.name}.png'],
-      //     text:
-      //         "${widget.model!.name}\n${shortenedLink.shortUrl.toString()}\n$shareLink");
-      SharePlus.instance.share(ShareParams(
-        files: [XFile('$documentDirectory/${widget.model!.name}.png')],
-        text:
-            '${widget.model!.name}\n${shortenedLink.shortUrl.toString()}\n$shareLink',
-      ));
-    } catch (e) {
-      print(e);
-    }
   }
 
   Future<Null> _playAnimation() async {
@@ -301,10 +252,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     deviceHeight = MediaQuery.of(context).size.height;
     deviceWidth = MediaQuery.of(context).size.width;
 
-    /* SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ));*/
-
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -328,185 +275,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     return result;
   }
 
-  // Widget _slider() {
-  //   double height = MediaQuery.of(context).size.height * .48;
-  //   double statusBarHeight = MediaQuery.of(context).padding.top;
-  //
-  //   return InkWell(
-  //     onTap: () {},
-  //     child: Stack(
-  //       children: <Widget>[
-  //         Hero(
-  //           tag: widget.list == true
-  //               ? "${widget.index}${widget.model?.id ?? ''}"
-  //               : "${widget.index}",
-  //           child: Container(
-  //             padding: EdgeInsets.only(top: statusBarHeight + kToolbarHeight),
-  //             height: height,
-  //             width: double.infinity,
-  //             child: PageView.builder(
-  //               itemCount: (widget.model?.videType != null &&
-  //                       widget.model?.video != null &&
-  //                       widget.model!.video!.isNotEmpty)
-  //                   ? sliderList.length + 1
-  //                   : sliderList.length,
-  //               scrollDirection: Axis.horizontal,
-  //               controller: _pageController,
-  //               reverse: false,
-  //               onPageChanged: (index) {
-  //                 if (mounted) {
-  //                   setState(() {
-  //                     _curSlider = index;
-  //                   });
-  //                 }
-  //                 _curSlider = index;
-  //                 _progressAnimcontroller.reset();
-  //                 if (deviceWidth != null) {
-  //                   _setProgressAnim(deviceWidth!, index + 1);
-  //                 }
-  //               },
-  //               itemBuilder: (BuildContext context, int index) {
-  //                 // Check if this is the video item
-  //                 if (index == sliderList.length &&
-  //                     widget.model?.videType != null &&
-  //                     widget.model?.video != null &&
-  //                     widget.model!.video!.isNotEmpty) {
-  //                   if (widget.model!.videType == "vimeo") {
-  //                     print("testing2");
-  //                     String videoUrl = widget.model!.video!;
-  //                     if (videoUrl.contains("https://vimeo.com/")) {
-  //                       List<String> id = videoUrl.split("https://vimeo.com/");
-  //                       if (id.length > 1 && id[1].isNotEmpty) {
-  //                         return SafeArea(
-  //                           child: Container(
-  //                             width: double.maxFinite,
-  //                             height: double.maxFinite,
-  //                             child: Center(
-  //                               child: VimeoPlayer(
-  //                                 id: id[1],
-  //                                 autoPlay: true,
-  //                                 looping: false,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         );
-  //                       }
-  //                     }
-  //                     return Container(
-  //                       child: Center(
-  //                         child: Text("Invalid Vimeo URL"),
-  //                       ),
-  //                     );
-  //                   } else {
-  //                     print("testing3");
-  //                     return (_videoController?.value.isInitialized == true)
-  //                         ? AspectRatio(
-  //                             aspectRatio:
-  //                                 MediaQuery.of(context).size.aspectRatio,
-  //                             child: Container(
-  //                               color: Colors.red,
-  //                               width: MediaQuery.of(context).size.width,
-  //                               height: _videoController!.value.size.height,
-  //                               child: Stack(
-  //                                 alignment: Alignment.bottomCenter,
-  //                                 children: <Widget>[
-  //                                   VideoPlayer(_videoController!),
-  //                                   _ControlsOverlay(
-  //                                       controller: _videoController),
-  //                                   VideoProgressIndicator(
-  //                                     _videoController!,
-  //                                     allowScrubbing: true,
-  //                                     colors: VideoProgressColors(
-  //                                       playedColor: Theme.of(context)
-  //                                           .colorScheme
-  //                                           .primary,
-  //                                     ),
-  //                                     padding:
-  //                                         EdgeInsets.symmetric(vertical: 8.0),
-  //                                     // Set minHeight for progress bar thickness
-  //                                     // minHeight is available in video_player >=2.2.7
-  //                                     // minHeight: 8.0,
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                           )
-  //                         : Container(
-  //                             child: Center(
-  //                               child: CircularProgressIndicator(
-  //                                 valueColor: AlwaysStoppedAnimation<Color>(
-  //                                     Theme.of(context).colorScheme.primary),
-  //                               ),
-  //                             ),
-  //                           );
-  //                   }
-  //                 }
-  //                 if (index < sliderList.length && sliderList[index] != null) {
-  //                   return Stack(
-  //                     children: [
-  //                       InkWell(onTap: () {
-  //                         showDialog(
-  //                             context: context,
-  //                             builder: (_) => ImagePopUp(
-  //                                   index: index,
-  //                                   attachmentUrls: sliderList ?? [],
-  //                                 ));
-  //
-  //                         child:
-  //                         FadeInImage(
-  //                           image:
-  //                               CachedNetworkImageProvider(sliderList[index]!),
-  //                           placeholder: AssetImage(
-  //                             "assets/images/sliderph.png",
-  //                           ),
-  //                           height: height,
-  //                           width: double.maxFinite,
-  //                           fit: extendImg ? BoxFit.fill : BoxFit.fitWidth,
-  //                           imageErrorBuilder: (context, error, stackTrace) =>
-  //                               erroWidget(height),
-  //                         );
-  //                       }),
-  //                       // index == 1 ? playIcon() : Container()
-  //                     ],
-  //                   );
-  //                 }
-  //
-  //                 // Fallback for invalid index
-  //                 return Container(
-  //                   child: Center(
-  //                     child: Text("No content available"),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           ),
-  //         ),
-  //         Positioned.fill(
-  //           child: Align(
-  //             alignment: Alignment.bottomCenter,
-  //             child: Row(
-  //               children: <Widget>[
-  //                 AnimatedProgressBar(
-  //                   animation: _progressAnimation,
-  //                 ),
-  //                 Expanded(
-  //                   child: Container(
-  //                     height: 5.0,
-  //                     width: double.infinity,
-  //                     decoration: BoxDecoration(
-  //                         color: Theme.of(context).colorScheme.surface),
-  //                   ),
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         favImg(),
-  //         indicatorImage(),
-  //       ],
-  //     ),
-  //   );
-  // }
   Widget _slider() {
     double height = MediaQuery.of(context).size.height * .48;
     double statusBarHeight = MediaQuery.of(context).padding.top;
@@ -799,137 +567,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     );
   }
 
-  // _price(pos, from) {
-  //   double price = double.parse(widget.model!.prVarientList![pos].disPrice!);
-  //   if (price == 0)
-  //     price = double.parse(widget.model!.prVarientList![pos].price!);
-  //
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         Text(
-  //           CUR_CURRENCY! + " " + price.toString(),
-  //           //style: Theme.of(context).textTheme.titleLarge,
-  //           style: TextStyle(
-  //             color: Theme.of(context).colorScheme.fontColor,
-  //             fontWeight: FontWeight.bold,
-  //             fontSize: 20,
-  //           ),
-  //         ),
-  //         from
-  //             ? Padding(
-  //                 padding: const EdgeInsetsDirectional.only(
-  //                     start: 3.0, bottom: 5, top: 3),
-  //                 child: widget.model!.availability == "0"
-  //                     ? Container()
-  //                     : Row(
-  //                         children: <Widget>[
-  //                           GestureDetector(
-  //                             child: Card(
-  //                               shape: RoundedRectangleBorder(
-  //                                 borderRadius: BorderRadius.circular(50),
-  //                               ),
-  //                               child: Padding(
-  //                                 padding: const EdgeInsets.all(8.0),
-  //                                 child: Icon(
-  //                                   Icons.remove,
-  //                                   size: 15,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                             onTap: () {
-  //                               if (_isProgress == false &&
-  //                                   (int.parse(qtyController.text)) > 0)
-  //                                 removeFromCart();
-  //                             },
-  //                           ),
-  //                           Container(
-  //                             width: 37,
-  //                             height: 20,
-  //                             color: Colors.transparent,
-  //                             child: Stack(
-  //                               children: [
-  //                                 Selector<CartProvider,
-  //                                     Tuple2<List<dynamic>, List<dynamic>>>(
-  //                                   builder: (context, data, child) {
-  //                                     setVariant == false
-  //                                         ? qtyController.text = data.item1
-  //                                                 .contains(widget.model!.id)
-  //                                             ? data.item2[data.item1
-  //                                                     .indexWhere((element) =>
-  //                                                         element ==
-  //                                                         widget.model!.id)]
-  //                                                 .toString()
-  //                                             : "0"
-  //                                         : "0";
-  //                                     return TextField(
-  //                                       textAlign: TextAlign.center,
-  //                                       readOnly: true,
-  //                                       style: TextStyle(
-  //                                           fontSize: 12,
-  //                                           color: Theme.of(context)
-  //                                               .colorScheme
-  //                                               .fontColor,
-  //                                           fontWeight: FontWeight.bold),
-  //                                       controller: qtyController,
-  //                                       // _controller[index],
-  //                                       decoration: InputDecoration(
-  //                                         border: InputBorder.none,
-  //                                       ),
-  //                                     );
-  //                                   },
-  //                                   selector: (_, provider) => Tuple2(
-  //                                       provider.cartIdList, provider.qtyList),
-  //                                 ),
-  //                                 /*    TextField(
-  //                           textAlign: TextAlign.center,
-  //                           readOnly: true,
-  //                           style: TextStyle(
-  //                             fontSize: 12,
-  //                           ),
-  //                           controller: qtyController,
-  //                           // _controller[index],
-  //                           decoration: InputDecoration(
-  //                             border: InputBorder.none,
-  //                           ),
-  //                         ),*/
-  //                               ],
-  //                             ),
-  //                           ), // ),
-  //
-  //                           GestureDetector(
-  //                             child: Card(
-  //                               shape: RoundedRectangleBorder(
-  //                                 borderRadius: BorderRadius.circular(50),
-  //                               ),
-  //                               child: Padding(
-  //                                 padding: const EdgeInsets.all(8.0),
-  //                                 child: Icon(
-  //                                   Icons.add,
-  //                                   size: 15,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                             onTap: () {
-  //                               if (_isProgress == false)
-  //                                 addToCart(
-  //                                     (int.parse(qtyController.text) +
-  //                                             int.parse(
-  //                                                 widget.model!.qtyStepSize!))
-  //                                         .toString(),
-  //                                     false);
-  //                             },
-  //                           )
-  //                         ],
-  //                       ),
-  //               )
-  //             : Container(),
-  //       ],
-  //     ),
-  //   );
-  // }
   _price(pos, from) {
     double price = double.parse(widget.model!.prVarientList![pos].disPrice!);
     if (price == 0)
@@ -1111,6 +748,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
         apiBaseHelper.postAPICall(manageCartApi, parameter).then((getdata) {
           bool error = getdata["error"];
           String? msg = getdata["message"];
+          print('message_____${msg}______');
           log('${getdata}');
           if (!error) {
             var data = getdata["data"];
@@ -1212,80 +850,400 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
         : Container();
   }
 
-  _getVarient(int? pos) {
-    if (widget.model!.type == "variable_product") {
-      print("Type===============> ${widget.model!.type}");
-      List att = [], val = [];
-      if (widget.model!.prVarientList![widget.model!.selVarient!].attr_name !=
-          null) {
-        print(
-            "Type2===============> ${widget.model!.prVarientList![widget.model!.selVarient!].attr_name}");
-        att = widget.model!.prVarientList![widget.model!.selVarient!].attr_name!
-            .split(',');
-        val = widget
-            .model!.prVarientList![widget.model!.selVarient!].varient_value!
-            .split(',');
+  // _getVarient(int? pos) {
+  //   if (widget.model!.type == "variable_product") {
+  //     print("Type===============> ${widget.model!.type}");
+  //     List att = [], val = [];
+  //     if (widget.model!.prVarientList![widget.model!.selVarient!].attr_name !=
+  //         null) {
+  //       print(
+  //           "Type2===============> ${widget.model!.prVarientList![widget.model!.selVarient!].attr_name}");
+  //       att = widget.model!.prVarientList![widget.model!.selVarient!].attr_name!
+  //           .split(',');
+  //       val = widget
+  //           .model!.prVarientList![widget.model!.selVarient!].varient_value!
+  //           .split(',');
+  //     }
+  //     return widget.model!.prVarientList![widget.model!.selVarient!]
+  //                     .attr_name !=
+  //                 null &&
+  //             widget.model!.prVarientList![widget.model!.selVarient!].attr_name!
+  //                 .isNotEmpty
+  //         ? InkWell(
+  //             child: MediaQuery.removePadding(
+  //               removeTop: true,
+  //               context: context,
+  //               child: Card(
+  //                 elevation: 0,
+  //                 child: ListView.builder(
+  //                     physics: NeverScrollableScrollPhysics(),
+  //                     shrinkWrap: true,
+  //                     itemCount: att.length,
+  //                     itemBuilder: (context, index) {
+  //                       return ListTile(
+  //                           dense: true,
+  //                           trailing: Icon(Icons.keyboard_arrow_right),
+  //                           title: Row(
+  //                               crossAxisAlignment: CrossAxisAlignment.center,
+  //                               children: [
+  //                                 Flexible(
+  //                                   child: Text(
+  //                                     att[index].trim() + ":",
+  //                                     overflow: TextOverflow.ellipsis,
+  //                                     style: Theme.of(context)
+  //                                         .textTheme
+  //                                         .titleSmall!
+  //                                         .copyWith(
+  //                                             color: Theme.of(context)
+  //                                                 .colorScheme
+  //                                                 .fontColor),
+  //                                   ),
+  //                                 ),
+  //                                 Padding(
+  //                                   padding:
+  //                                       EdgeInsetsDirectional.only(start: 5.0),
+  //                                   child: Text(
+  //                                     val[index],
+  //                                     style: Theme.of(context)
+  //                                         .textTheme
+  //                                         .titleSmall!
+  //                                         .copyWith(
+  //                                             color: Theme.of(context)
+  //                                                 .colorScheme
+  //                                                 .fontColor,
+  //                                             fontWeight: FontWeight.bold),
+  //                                   ),
+  //                                 )
+  //                               ]));
+  //                     }),
+  //               ),
+  //             ),
+  //             onTap: _chooseVarient,
+  //           )
+  //         : Container();
+  //   } else {
+  //     return Container();
+  //   }
+  // }
+  // Replace your existing _getVarient method with this:
+
+  Widget _extraDetail() {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // _desc(),
+              // widget.model!.desc!.isNotEmpty ? Divider() : Container(),
+              _attr(),
+              widget.model!.attributeList!.isNotEmpty ? Divider() : Container(),
+              _madeIn(),
+              _warrenty(),
+              _gaurantee(),
+              _otherDetail(widget.model!.selVarient),
+              _cancleable(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVariantSelection() {
+    bool? available = true, outOfStock = false;
+    int? selectIndex = 0;
+
+    // Initialize selected indices if not already done
+    if (_selectedIndex.isEmpty) {
+      _selectedIndex.clear();
+      if (widget.model!.stockType == "0" || widget.model!.stockType == "1") {
+        if (widget.model!.availability == "1") {
+          available = true;
+          outOfStock = false;
+          _oldSelVarient = widget.model!.selVarient;
+        } else {
+          available = false;
+          outOfStock = true;
+        }
+      } else if (widget.model!.stockType == "null") {
+        available = true;
+        outOfStock = false;
+        _oldSelVarient = widget.model!.selVarient;
+      } else if (widget.model!.stockType == "2") {
+        if (widget.model!.prVarientList![widget.model!.selVarient!]
+                .availability ==
+            "1") {
+          available = true;
+          outOfStock = false;
+          _oldSelVarient = widget.model!.selVarient;
+        } else {
+          available = false;
+          outOfStock = true;
+        }
       }
-      return widget.model!.prVarientList![widget.model!.selVarient!]
-                      .attr_name !=
-                  null &&
-              widget.model!.prVarientList![widget.model!.selVarient!].attr_name!
-                  .isNotEmpty
-          ? InkWell(
-              child: MediaQuery.removePadding(
-                removeTop: true,
-                context: context,
-                child: Card(
-                  elevation: 0,
-                  child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: att.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                            dense: true,
-                            trailing: Icon(Icons.keyboard_arrow_right),
-                            title: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                      att[index].trim() + ":",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .fontColor),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsetsDirectional.only(start: 5.0),
-                                    child: Text(
-                                      val[index],
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .fontColor,
-                                              fontWeight: FontWeight.bold),
-                                    ),
-                                  )
-                                ]));
-                      }),
-                ),
-              ),
-              onTap: _chooseVarient,
-            )
-          : Container();
-    } else {
-      return Container();
+
+      List<String> selList = widget
+          .model!.prVarientList![widget.model!.selVarient!].attribute_value_ids!
+          .split(",");
+
+      for (int i = 0; i < widget.model!.attributeList!.length; i++) {
+        List<String> sinList = widget.model!.attributeList![i].id!.split(',');
+
+        for (int j = 0; j < sinList.length; j++) {
+          if (selList.contains(sinList[j])) {
+            _selectedIndex.insert(i, j);
+          }
+        }
+
+        if (_selectedIndex.length == i) _selectedIndex.insert(i, null);
+      }
     }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(
+            getTranslated(context, 'selectVarient') ?? 'Select Variant',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.fontColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: widget.model!.attributeList!.length,
+          itemBuilder: (context, index) {
+            List<Widget?> chips = [];
+            List<String> att =
+                widget.model!.attributeList![index].value!.split(',');
+            List<String> attId =
+                widget.model!.attributeList![index].id!.split(',');
+            List<String> attSType =
+                widget.model!.attributeList![index].sType!.split(',');
+            List<String> attSValue =
+                widget.model!.attributeList![index].sValue!.split(',');
+
+            int? varSelected;
+            List<String> wholeAtt = widget.model!.attrIds!.split(',');
+
+            for (int i = 0; i < att.length; i++) {
+              Widget itemLabel;
+              if (attSType[i] == "1") {
+                String clr = (attSValue[i].substring(1));
+                String color = "0xff" + clr;
+
+                itemLabel = Container(
+                  width: 25,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Color(int.parse(color))),
+                );
+              } else if (attSType[i] == "2") {
+                itemLabel = ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.network(attSValue[i],
+                        width: 80,
+                        height: 80,
+                        errorBuilder: (context, error, stackTrace) =>
+                            erroWidget(80)));
+              } else {
+                itemLabel = Text(att[i],
+                    style: TextStyle(
+                        color: _selectedIndex.length > index &&
+                                _selectedIndex[index] == (i)
+                            ? Theme.of(context).colorScheme.white
+                            : Theme.of(context).colorScheme.fontColor));
+              }
+
+              if (_selectedIndex.length > index &&
+                  _selectedIndex[index] != null) {
+                if (wholeAtt.contains(attId[i])) {
+                  choiceChip = ChoiceChip(
+                    selected: _selectedIndex.length > index
+                        ? _selectedIndex[index] == i
+                        : false,
+                    label: itemLabel,
+                    selectedColor: colors.primary,
+                    backgroundColor: Theme.of(context).colorScheme.white,
+                    labelPadding: EdgeInsets.all(0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(attSType[i] == "1" ? 100 : 10),
+                      side: BorderSide(
+                          color: _selectedIndex.length > index &&
+                                  _selectedIndex[index] == (i)
+                              ? colors.primary
+                              : colors.black12,
+                          width: 1.5),
+                    ),
+                    onSelected: att.length == 1
+                        ? null
+                        : (bool selected) {
+                            if (selected) {
+                              setState(() {
+                                available = false;
+                                _selectedIndex[index] = selected ? i : null;
+
+                                // Your existing selection logic here
+                                List<int> selectedId = [];
+                                List<bool> check = [];
+                                for (int i = 0;
+                                    i < widget.model!.attributeList!.length;
+                                    i++) {
+                                  List<String> attId = widget
+                                      .model!.attributeList![i].id!
+                                      .split(',');
+                                  if (_selectedIndex[i] != null)
+                                    selectedId.add(
+                                        int.parse(attId[_selectedIndex[i]!]));
+                                }
+
+                                check.clear();
+                                late List<String> sinId;
+                                findMatch:
+                                for (int i = 0;
+                                    i < widget.model!.prVarientList!.length;
+                                    i++) {
+                                  sinId = widget.model!.prVarientList![i]
+                                      .attribute_value_ids!
+                                      .split(",");
+
+                                  for (int j = 0; j < selectedId.length; j++) {
+                                    if (sinId
+                                        .contains(selectedId[j].toString())) {
+                                      check.add(true);
+
+                                      if (selectedId.length == sinId.length &&
+                                          check.length == selectedId.length) {
+                                        varSelected = i;
+                                        selectIndex = i;
+                                        break findMatch;
+                                      }
+                                    } else {
+                                      check.clear();
+                                      selectIndex = null;
+                                      break;
+                                    }
+                                  }
+                                }
+
+                                if (selectedId.length == sinId.length &&
+                                    check.length == selectedId.length) {
+                                  if (widget.model!.stockType == "0" ||
+                                      widget.model!.stockType == "1") {
+                                    if (widget.model!.availability == "1") {
+                                      available = true;
+                                      outOfStock = false;
+                                      _oldSelVarient = varSelected;
+                                    } else {
+                                      available = false;
+                                      outOfStock = true;
+                                    }
+                                  } else if (widget.model!.stockType ==
+                                      "null") {
+                                    available = true;
+                                    outOfStock = false;
+                                    _oldSelVarient = varSelected;
+                                  } else if (widget.model!.stockType == "2") {
+                                    if (widget
+                                            .model!
+                                            .prVarientList![varSelected!]
+                                            .availability ==
+                                        "1") {
+                                      available = true;
+                                      outOfStock = false;
+                                      _oldSelVarient = varSelected;
+                                    } else {
+                                      available = false;
+                                      outOfStock = true;
+                                    }
+                                  }
+
+                                  // Apply variant immediately
+                                  widget.model!.selVarient = _oldSelVarient;
+
+                                  // Update slider if variant has images
+                                  if (widget
+                                          .model!
+                                          .prVarientList![_oldSelVarient!]
+                                          .images!
+                                          .length >
+                                      0) {
+                                    int oldVarTotal = 0;
+                                    if (_oldSelVarient! > 0) {
+                                      for (int i = 0;
+                                          i < _oldSelVarient!;
+                                          i++) {
+                                        oldVarTotal = oldVarTotal +
+                                            widget.model!.prVarientList![i]
+                                                .images!.length;
+                                      }
+                                    }
+                                    int p = widget.model!.otherImage!.length +
+                                        1 +
+                                        oldVarTotal;
+                                    _pageController.jumpToPage(p);
+                                  }
+                                } else {
+                                  available = false;
+                                  outOfStock = false;
+                                }
+                              });
+                            }
+                          },
+                  );
+
+                  chips.add(choiceChip);
+                }
+              }
+            }
+
+            String value = _selectedIndex.length > index &&
+                    _selectedIndex[index] != null &&
+                    _selectedIndex[index]! <= att.length
+                ? att[_selectedIndex[index]!]
+                : getTranslated(context, 'VAR_SEL')?.substring(
+                        2, getTranslated(context, 'VAR_SEL')!.length) ??
+                    'Select';
+
+            return chips.length > 0
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.model!.attributeList![index].name! +
+                              " : " +
+                              value,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Wrap(
+                          children: chips.map<Widget>((Widget? chip) {
+                            return Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: chip,
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container();
+          },
+        ),
+      ],
+    );
   }
 
   void _pincodeCheck() {
@@ -1376,43 +1334,43 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     return false;
   }
 
-  void _extraDetail() {
-    showModalBottomSheet<dynamic>(
-        context: context,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
-        builder: (builder) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.9),
-              child: ListView(shrinkWrap: true, children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _desc(),
-                    widget.model!.desc!.isNotEmpty ? Divider() : Container(),
-                    _attr(),
-                    widget.model!.attributeList!.isNotEmpty
-                        ? Divider()
-                        : Container(),
-                    _madeIn(),
-                    _warrenty(),
-                    _gaurantee(),
-                    _otherDetail(widget.model!.selVarient),
-                    _cancleable(),
-                  ],
-                )
-              ]),
-            );
-            //});
-          });
-        });
-  }
+  // void _extraDetail() {
+  //   showModalBottomSheet<dynamic>(
+  //       context: context,
+  //       isScrollControlled: true,
+  //       shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.only(
+  //               topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+  //       builder: (builder) {
+  //         return StatefulBuilder(
+  //             builder: (BuildContext context, StateSetter setState) {
+  //           return Container(
+  //             constraints: BoxConstraints(
+  //                 maxHeight: MediaQuery.of(context).size.height * 0.9),
+  //             child: ListView(shrinkWrap: true, children: [
+  //               Column(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   _desc(),
+  //                   widget.model!.desc!.isNotEmpty ? Divider() : Container(),
+  //                   _attr(),
+  //                   widget.model!.attributeList!.isNotEmpty
+  //                       ? Divider()
+  //                       : Container(),
+  //                   _madeIn(),
+  //                   _warrenty(),
+  //                   _gaurantee(),
+  //                   _otherDetail(widget.model!.selVarient),
+  //                   _cancleable(),
+  //                 ],
+  //               )
+  //             ]),
+  //           );
+  //           //});
+  //         });
+  //       });
+  // }
 
   void _chooseVarient() {
     bool? available, outOfStock;
@@ -1917,47 +1875,47 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     if (_isNetworkAvail) {
       Product model = widget.model!;
 
-      if (await checkVenderIdExistOrNot(model.seller_id ?? '')) {
-        var result = await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext buildContext) {
-              return AlertDialog(
-                title: const Text("Are you sure"),
-                content: const Text("Do you went to reset the cart"),
-                actions: <Widget>[
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.primary),
-                    child: const Text("YES"),
-                    onPressed: () {
-                      Navigator.of(buildContext).pop(true);
-                    },
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.primary),
-                    child: Text("NO"),
-                    onPressed: () {
-                      Navigator.of(buildContext).pop(false);
-                    },
-                  )
-                ],
-              );
-            });
-        print('PrintData:_____${result}______');
-
-        if (result == true) {
-          // await removeFromCart();
-          // // await _getCart('0');
-          // addToCart(qty == '0' ? '1' : qty, intent);
-          // //await cleanCartValue(qty, intent);
-
-          // return;
-        } else {
-          return;
-        }
-      }
+      // if (await checkVenderIdExistOrNot(model.seller_id ?? '')) {
+      //   var result = await showDialog(
+      //       context: context,
+      //       barrierDismissible: false,
+      //       builder: (BuildContext buildContext) {
+      //         return AlertDialog(
+      //           title: const Text("Are you sure"),
+      //           content: const Text("Do you went to reset the cart"),
+      //           actions: <Widget>[
+      //             ElevatedButton(
+      //               style: ElevatedButton.styleFrom(
+      //                   backgroundColor: colors.primary),
+      //               child: const Text("YES"),
+      //               onPressed: () {
+      //                 Navigator.of(buildContext).pop(true);
+      //               },
+      //             ),
+      //             ElevatedButton(
+      //               style: ElevatedButton.styleFrom(
+      //                   backgroundColor: colors.primary),
+      //               child: Text("NO"),
+      //               onPressed: () {
+      //                 Navigator.of(buildContext).pop(false);
+      //               },
+      //             )
+      //           ],
+      //         );
+      //       });
+      //   print('PrintData:_____${result}______');
+      //
+      //   if (result == true) {
+      //     // await removeFromCart();
+      //     // // await _getCart('0');
+      //     // addToCart(qty == '0' ? '1' : qty, intent);
+      //     // //await cleanCartValue(qty, intent);
+      //
+      //     // return;
+      //   } else {
+      //     return;
+      //   }
+      // }
 
       if (CUR_USERID != null) {
         try {
@@ -1968,7 +1926,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
 
           if (int.parse(qty) < model.minOrderQuntity!) {
             qty = model.minOrderQuntity.toString();
-            // setSnackbar("${getTranslated(context, 'MIN_MSG')}$qty", context);
+            setSnackbar("${getTranslated(context, 'MIN_MSG')}$qty", context);
           }
           var parameter = {
             USER_ID: CUR_USERID,
@@ -2011,14 +1969,14 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                 ),
               );
           } else {
-            // setSnackbar(msg!, context);
+            setSnackbar(msg!, context);
           }
           if (mounted)
             setState(() {
               _isProgress = false;
             });
         } on TimeoutException catch (_) {
-          // setSnackbar(getTranslated(context, 'somethingMSg')!, context);
+          setSnackbar(getTranslated(context, 'somethingMSg')!, context);
           if (mounted)
             setState(() {
               _isProgress = false;
@@ -2223,13 +2181,8 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   }
 
   _showContent() {
-    //qtyController.text=
     qtyController.text =
         widget.model!.prVarientList![widget.model!.selVarient!].cartCount!;
-
-    //String id=widget.model!.id!;
-
-    //print("id****${widget.model!.id!}****${widget.model!.name!}");
 
     return Column(children: <Widget>[
       Expanded(
@@ -2273,7 +2226,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
               icon: SvgPicture.asset(
                 imagePath + "desel_fav.svg",
                 height: 20,
-                color: colors.primary,
+                color: Colors.red,
               ),
               onPressed: () {
                 CUR_USERID != null
@@ -2350,111 +2303,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
               },
               selector: (_, homeProvider) => homeProvider.curCartCount,
             )
-            /*  Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                      borderRadius: BorderRadius.circular(4),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Icon(
-                          Icons.search,
-                          color: colors.primary,
-                          size: 20,
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Search(),
-                            ));
-                      }),
-                )),
-            Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                      borderRadius: BorderRadius.circular(4),
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Icon(
-                          Icons.favorite,
-                          color: colors.primary,
-                          size: 20,
-                        ),
-                      ),
-                      onTap: () {
-                        if (CUR_USERID != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Favorite(),
-                              ));
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => Login()),
-                          );
-                        }
-                      }),
-                )),
-            Container(
-              margin: EdgeInsetsDirectional.only(top: 10, bottom: 10, end: 10),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(4),
-                onTap: () async {
-                  CUR_USERID == null
-                      ? Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Login(),
-                          ))
-                      : Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Cart(fromBottom: false,),
-                          ));
-                },
-                child: new Stack(children: <Widget>[
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: SvgPicture.asset(
-                        'assets/images/noti_cart.svg',
-                      ),
-                    ),
-                  ),
-                  Consumer<UserProvider>(builder: (context, userProvider, _) {
-                    return (userProvider.curCartCount.isNotEmpty &&
-                            userProvider.curCartCount != "0")
-                        ? new Positioned(
-                            top: 0.0,
-                            right: 5.0,
-                            bottom: 10,
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: colors.primary.withOpacity(0.5)),
-                                child: new Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(3),
-                                    child: new Text(
-                                      userProvider.curCartCount,
-                                      style: TextStyle(
-                                          fontSize: 7,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                )),
-                          )
-                        : Container();
-                  }),
-                ]),
-              ),
-            ),*/
           ],
           title: Text(
             widget.model!.name ?? '',
@@ -2493,21 +2341,9 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-
-                    /*  widget.model!.type == "variable_product"
-                        ? Divider()
-                        : Container(),*/
-
-                    _getVarient(widget.model!.selVarient),
-
-                    // Divider(),
+                    _buildVariantSelection(),
                     _specification(),
-                    // Divider(),
-
-                    // _deliverPincode(),
-
-                    //Divider(),
-                    // _sellerDetail(),
+                    _extraDetail(),
                     Text(
                       "   HSN Code : ${widget.model!.hsn_code ?? ''}",
                       maxLines: 2,
@@ -2517,7 +2353,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                       ),
                     ),
                     // Divider()
-                    //_tags()
                   ],
                 ),
                 reviewList.length > 0
@@ -2534,7 +2369,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         ),
                       )
                     : Container(),
-                // reviewList.length > 0 ? Divider() : Container(),
                 productList.length > 0
                     ? Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -2569,30 +2403,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                 ? simmerSingle()
                                 : productItem(index);
                           },
-                        )
-
-                        /*    List.generate(
-                        productList.length,
-                        (index) {
-                          Product? item;
-                        */
-                        /*  try {
-                            item =
-                                productList.isEmpty ? null : productList[index];
-                            if (notificationisloadmore &&
-                                index == (productList.length - 1) &&
-                                notificationcontroller!.position.pixels <= 0) {
-                              getProduct();
-                            }
-                          } on Exception catch (_) {}*/
-                        /*
-
-                          return item == null
-                              ? Container()
-                              : productItem(index);
-                        },
-                      )*/
-                        )),
+                        ))),
               ],
             )
           ]),
@@ -2612,55 +2423,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  // OutlinedlabelLarge.icon(
-                  //   onPressed: () {
-                  //     if (context
-                  //                 .read<ProductDetailProvider>()
-                  //                 .compareList
-                  //                 .length >
-                  //             0 &&
-                  //         context
-                  //             .read<ProductDetailProvider>()
-                  //             .compareList
-                  //             .contains(widget.model)) {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (BuildContext context) =>
-                  //                   CompareList()));
-                  //     } else {
-                  //       context
-                  //           .read<ProductDetailProvider>()
-                  //           .addCompareList(widget.model!);
-                  //
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute(
-                  //               builder: (BuildContext context) =>
-                  //                   CompareList()));
-                  //     }
-                  //   },
-                  //   icon: Icon(Icons.compare,
-                  //       color: Theme.of(context).colorScheme.btnColor),
-                  //   label: Text(""),
-                  //   style: OutlinedlabelLarge.styleFrom(
-                  //     side: BorderSide(
-                  //         color: Theme.of(context).colorScheme.btnColor),
-                  //   ),
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  //   child: OutlinedlabelLarge.icon(
-                  //     onPressed: createDynamicLink,
-                  //     icon: Icon(Icons.share,
-                  //         color: Theme.of(context).colorScheme.btnColor),
-                  //     label: Text(""),
-                  //     style: OutlinedlabelLarge.styleFrom(
-                  //       side: BorderSide(
-                  //           color: Theme.of(context).colorScheme.btnColor),
-                  //     ),
-                  //   ),
-                  // ),
                   Expanded(
                     child: TextButton.icon(
                         style: TextButton.styleFrom(
@@ -2687,45 +2449,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                           ),
                         )),
                   ),
-                  /*    Container(
-                    width: deviceWidth! * 0.5,
-                    child: InkWell(
-                      onTap: () {
-                        addToCart(false);
-                      },
-                      child: Center(
-                          child: Text(
-
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold, color: colors.primary),
-                      )),
-                    ),
-                  ),*/
-                  /*      Container(
-                    height: 55,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [colors.grad1Color, colors.grad2Color],
-                          stops: [0, 1]),
-                      boxShadow: [
-                        BoxShadow(color: Theme.of(context).colorScheme.black26, blurRadius: 10)
-                      ],
-                    ),
-                    width: deviceWidth! * 0.5,
-                    child: InkWell(
-                      onTap: () {
-                        addToCart(true);
-                      },
-                      child: Center(
-                          child: Text(
-                        getTranslated(context, 'BUYNOW')!,
-                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.white),
-                      )),
-                    ),
-                  ),*/
                 ],
               ),
             )
@@ -2835,8 +2558,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                   erroWidget(
                                 double.maxFinite,
                               ),
-
-                              //errorWidget: (context, url, e) => placeHolder(width),
                               placeholder: placeHolder(
                                 double.maxFinite,
                               ),
@@ -2867,52 +2588,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         Divider(
                           height: 1,
                         ),
-                        /*   Positioned.directional(
-                          textDirection: Directionality.of(context),
-                          end: 0,
-                          bottom: -18,
-                          child: Card(
-                            elevation: 1,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: productList[index].isFavLoading!
-                                ? Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                        height: 15,
-                                        width: 15,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 0.7,
-                                        )),
-                                  )
-                                : InkWell(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        productList[index].isFav == "0"
-                                            ? Icons.favorite_border
-                                            : Icons.favorite,
-                                        size: 15,
-                                      ),
-                                    ),
-                                    onTap: () {
-
-                                      if (CUR_USERID != null) {
-                                        productList[index].isFav == "0"
-                                            ? _setFav(index)
-                                            : _removeFav(index);
-                                      } else {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Login()),
-                                        );
-                                      }
-                                    },
-                                  ),
-                          ),
-                        ),*/
                       ],
                     ),
                   ),
@@ -2985,7 +2660,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                 Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
-                      // transitionDuration: Duration(seconds: 1),
                       pageBuilder: (_, __, ___) => ProductDetail(
                           model: model,
                           secPos: widget.secPos,
@@ -3079,8 +2753,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           };
 
           if (CUR_USERID != null) parameter[USER_ID] = CUR_USERID;
-          print('Productdetail:_____${parameter}______');
-
           Response response =
               await post(getProductApi, headers: headers, body: parameter)
                   .timeout(Duration(seconds: timeOut));
@@ -3197,60 +2869,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           ),
           trailing: Icon(Icons.keyboard_arrow_right),
         ),
-        onTap: _extraDetail,
-      ),
-    );
-  }
-
-  _sellerDetail() {
-    String? name = widget.model!.seller_name;
-    if (name == null) name = ' ';
-
-    //print("name***${widget.model!.seller_id}");
-
-    return Card(
-      elevation: 0,
-      child: GestureDetector(
-        child: ListTile(
-          dense: true,
-          // title: Text(
-          //   getTranslated(context, 'SOLD_BY')! + " : " + name,
-          //   style: TextStyle(color: Theme.of(context).colorScheme.lightBlack),
-          // ),
-          trailing: Icon(Icons.keyboard_arrow_right),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => SellerProfile(
-                      sellerStoreName: widget.model!.store_name ?? "",
-                      sellerRating: widget.model!.seller_rating ?? "",
-                      sellerImage: widget.model!.seller_profile ?? "",
-                      sellerName: widget.model!.seller_name ?? "",
-                      sellerID: widget.model!.seller_id,
-                      storeDesc: widget.model!.store_description,
-                      hsncode: widget.model!.hsn_code,
-                    )));
-          },
-        ),
-      ),
-    );
-  }
-
-  _deliverPincode() {
-    String pin = context.read<UserProvider>().curPincode;
-    return Card(
-      elevation: 0,
-      child: GestureDetector(
-        child: ListTile(
-          dense: true,
-          title: Text(
-            pin == ''
-                ? getTranslated(context, 'SELOC')!
-                : getTranslated(context, 'DELIVERTO')! + pin,
-            style: TextStyle(color: Theme.of(context).colorScheme.lightBlack),
-          ),
-          trailing: Icon(Icons.keyboard_arrow_right),
-        ),
-        onTap: _pincodeCheck,
+        // onTap: _extraDetail,
       ),
     );
   }
@@ -3383,36 +3002,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
             ),
           )
         : Container();
-  }
-
-  Future<void> getShare() async {
-    /* final DynamicLinkParameters parameters = DynamicLinkParameters(
-      uriPrefix: deepLinkUrlPrefix,
-      link: Uri.parse(
-          'https://$deepLinkName/?index=${widget.index}&secPos=${widget.secPos}&list=${widget.list}&id=${widget.model!.id}'),
-      androidParameters: AndroidParameters(
-        packageName: packageName,
-        minimumVersion: 1,
-      ),
-      iosParameters: IosParameters(
-        bundleId: iosPackage,
-        minimumVersion: '1',
-        appStoreId: appStoreId,
-      ),
-    );
-
-    final Uri longDynamicUrl = await parameters.buildUrl();
-
-    shortenedLink = await DynamicLinkParameters.shortenUrl(
-      longDynamicUrl,
-      new DynamicLinkParametersOptions(
-          shortDynamicLinkPathLength: ShortDynamicLinkPathLength.unguessable),
-    );
-
-    new Future.delayed(Duration.zero, () {
-      shareLink =
-          "\n$appName\n${getTranslated(context, 'APPFIND')}$androidLink$packageName\n${getTranslated(context, 'IOSLBL')}\n$iosLink";
-    });*/
   }
 
   _warrenty() {

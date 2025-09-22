@@ -13,6 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,20 @@ import 'Screen/Login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+  await FlutterStatusbarcolor.setStatusBarWhiteForeground(false); // Dark icons
+  await FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
+  await FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
+
   await _requestLocationPermission();
   await Firebase.initializeApp();
   LocalNotificationService.initialize();
@@ -99,8 +114,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: colors.primary));
+    _setStatusBarColor();
 
     if (this._locale == null) {
       return Container(
@@ -171,6 +185,21 @@ class _MyAppState extends State<MyApp> {
             primaryColor: Theme.of(context).colorScheme.lightWhite,
             fontFamily: 'opensans',
             brightness: Brightness.light,
+            appBarTheme: AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.white,
+                statusBarIconBrightness: Brightness.dark,
+                statusBarBrightness: Brightness.light,
+              ),
+              backgroundColor: Colors.white,
+              elevation: 0,
+              iconTheme: IconThemeData(color: colors.primary),
+              titleTextStyle: TextStyle(
+                color: colors.primary,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             textTheme: TextTheme(
               titleLarge: TextStyle(
                 color: Theme.of(context).colorScheme.fontColor,
@@ -193,6 +222,17 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       );
+    }
+  }
+
+  void _setStatusBarColor() async {
+    try {
+      await FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+      await FlutterStatusbarcolor.setStatusBarWhiteForeground(false);
+      await FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
+      await FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
+    } catch (e) {
+      print("Error setting status bar color: $e");
     }
   }
 }

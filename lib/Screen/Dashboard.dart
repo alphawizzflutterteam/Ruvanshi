@@ -12,10 +12,12 @@ import 'package:TGSawadesiMartUser/Screen/MyProfile.dart';
 import 'package:TGSawadesiMartUser/Screen/Product_Detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import '../Helper/notification_service.dart';
+import '../Provider/SettingProvider.dart';
 import 'All_Category.dart';
 import 'Cart.dart';
 import 'HomePage.dart';
@@ -37,24 +39,16 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    _setStatusBarColor();
+    dynamicGradient();
     super.initState();
+    getSetting();
     initDynamicLinks();
     _tabController = TabController(
       length: 3,
       vsync: this,
     );
     LocalNotificationService.initialize();
-
-    // final pushNotificationService = PushNotificationService(
-    //     context: context, tabController: _tabController);
-    // pushNotificationService.initialise();
-
     _tabController.addListener(
       () {
         Future.delayed(Duration(seconds: 0)).then(
@@ -82,45 +76,31 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  void initDynamicLinks() async {
-    /* FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData? dynamicLink) async {
-      final Uri? deepLink = dynamicLink?.link;
+  void _setStatusBarColor() async {
+    try {
+      // Using flutter_statusbarcolor_ns for iPhone 14/15 compatibility
+      await FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+      await FlutterStatusbarcolor.setStatusBarWhiteForeground(
+          false); // Dark icons on white
+      await FlutterStatusbarcolor.setNavigationBarColor(Colors.white);
+      await FlutterStatusbarcolor.setNavigationBarWhiteForeground(false);
 
-      if (deepLink != null) {
-        if (deepLink.queryParameters.length > 0) {
-          int index = int.parse(deepLink.queryParameters['index']!);
-
-          int secPos = int.parse(deepLink.queryParameters['secPos']!);
-
-          String? id = deepLink.queryParameters['id'];
-
-          String? list = deepLink.queryParameters['list'];
-
-          getProduct(id!, index, secPos, list == "true" ? true : false);
-        }
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print(e.message);
-    });
-
-    final PendingDynamicLinkData? data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri? deepLink = data?.link;
-    if (deepLink != null) {
-      if (deepLink.queryParameters.length > 0) {
-        int index = int.parse(deepLink.queryParameters['index']!);
-
-        int secPos = int.parse(deepLink.queryParameters['secPos']!);
-
-        String? id = deepLink.queryParameters['id'];
-
-        // String list = deepLink.queryParameters['list'];
-
-        getProduct(id!, index, secPos, true);
-      }
-    }*/
+      // Also set SystemChrome as backup
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+      );
+    } catch (e) {
+      print("Error setting status bar color in HomePage: $e");
+    }
   }
+
+  void initDynamicLinks() async {}
 
   Future<void> getProduct(String id, int index, int secPos, bool list) async {
     _isNetworkAvail = await isNetworkAvailable();
@@ -175,6 +155,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    _setStatusBarColor();
     return WillPopScope(
       onWillPop: () async {
         if (_tabController.index == 0) {
@@ -200,7 +181,6 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: colors.grad1Color1,
-          // backgroundColor: Theme.of(context).colorScheme.lightWhite,
           appBar: _getAppBar(),
           body: TabBarView(
             controller: _tabController,
@@ -226,8 +206,13 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     // else if (_selBottom == 3) title = getTranslated(context, 'PROFILE');
 
     return AppBar(
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      ),
+      backgroundColor: Colors.white,
       elevation: 0.0,
-      backgroundColor: colors.white70,
       leadingWidth: 200,
       centerTitle: false,
       title: _selBottom == 0
@@ -237,8 +222,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             )
           : Text(
               title ?? "",
-              style: const TextStyle(
-                color: colors.primary,
+              style: TextStyle(
+                color: primaryColor,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -247,7 +232,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           icon: SvgPicture.asset(
             imagePath + "search.svg",
             height: 22,
-            color: Colors.black,
+            color: primaryColor,
           ),
           onPressed: () {
             Navigator.push(
@@ -256,30 +241,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             );
           },
         ),
-        // IconButton(
-        //   icon: SvgPicture.asset(
-        //     imagePath + "desel_fav.svg",
-        //     height: 22,
-        //     color: Colors.red,
-        //   ),
-        //   onPressed: () {
-        //     CUR_USERID != null
-        //         ? Navigator.push(
-        //             context,
-        //             MaterialPageRoute(builder: (context) => Favorite()),
-        //           )
-        //         : Navigator.push(
-        //             context,
-        //             MaterialPageRoute(builder: (context) => Login()),
-        //           );
-        //   },
-        // ),
         IconButton(
-          icon: SvgPicture.asset(
-            imagePath + "desel_notification.svg",
-            height: 22,
-            color: Colors.black,
-          ),
+          icon: SvgPicture.asset(imagePath + "desel_notification.svg",
+              height: 22, color: primaryColor),
           onPressed: () {
             CUR_USERID != null
                 ? Navigator.push(
@@ -310,24 +274,11 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                   );
           },
         ),
-        // IconButton(
-        //   icon: SvgPicture.asset(
-        //     imagePath + "search.svg",
-        //     height: 22,
-        //     color: Colors.black,
-        //   ),
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(builder: (context) => Search()),
-        //     );
-        //   },
-        // ),
         IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.account_circle,
             size: 28,
-            color: Colors.black,
+            color: primaryColor,
           ),
           onPressed: () {
             CUR_USERID != null
@@ -342,199 +293,18 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           },
         ),
       ],
+      flexibleSpace: Container(
+        decoration: dynamicGradient(),
+      ),
     );
   }
 
-  // Widget _getBottomBar() {
-  //   return Material(
-  //     color: Theme.of(context).colorScheme.white,
-  //     child: Container(
-  //       decoration: BoxDecoration(
-  //         color: Theme.of(context).colorScheme.white,
-  //         boxShadow: [
-  //           BoxShadow(
-  //             color: Theme.of(context).colorScheme.black26,
-  //             blurRadius: 10,
-  //           ),
-  //         ],
-  //       ),
-  //       child: TabBar(
-  //         onTap: (_) {
-  //           if (_tabController.index == 3) {
-  //             if (CUR_USERID == null) {
-  //               Navigator.push(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                   builder: (context) => Login(),
-  //                 ),
-  //               );
-  //               _tabController.animateTo(0);
-  //             }
-  //           }
-  //         },
-  //         controller: _tabController,
-  //         tabs: [
-  //           Tab(
-  //             icon: SvgPicture.asset(
-  //               _selBottom == 0
-  //                   ? imagePath + "sel_home.svg"
-  //                   : imagePath + "desel_home.svg",
-  //               color: _selBottom == 0 ? colors.secondary : Colors.black,
-  //             ),
-  //             text: getTranslated(context, 'HOME_LBL'),
-  //           ),
-  //           Tab(
-  //             icon: SvgPicture.asset(
-  //               _selBottom == 1
-  //                   ? imagePath + "category01.svg"
-  //                   : imagePath + "category.svg",
-  //               color: _selBottom == 1 ? colors.secondary : Colors.black,
-  //             ),
-  //             text: getTranslated(context, 'category'),
-  //           ),
-  //           // Tab(
-  //           //   icon: SvgPicture.asset(
-  //           //     _selBottom == 2
-  //           //         ? imagePath + "sale02.svg"
-  //           //         : imagePath + "sale.svg",
-  //           //     color: _selBottom == 2 ? colors.secondary : Colors.black,
-  //           //   ),
-  //           //   text: getTranslated(context, 'SALE'),
-  //           // ),
-  //           // Tab(
-  //           //   icon: Selector<UserProvider, String>(
-  //           //     builder: (context, data, child) {
-  //           //       print('bjhgjghjkg:_____${data}______');
-  //           //       return Stack(
-  //           //         children: [
-  //           //           Center(
-  //           //             child: SvgPicture.asset(
-  //           //               _selBottom == 2
-  //           //                   ? imagePath + "cart01.svg"
-  //           //                   : imagePath + "cart.svg",
-  //           //               color:
-  //           //                   _selBottom == 2 ? colors.secondary : Colors.black,
-  //           //             ),
-  //           //           ),
-  //           //           if (data != null && data.isNotEmpty && data != "0")
-  //           //             Positioned.directional(
-  //           //               // bottom: _selBottom == 2 ? 6 : 20,
-  //           //               textDirection: Directionality.of(context),
-  //           //               end: 0,
-  //           //               child: Container(
-  //           //                 decoration: BoxDecoration(
-  //           //                   shape: BoxShape.circle,
-  //           //                   color: colors.primary,
-  //           //                 ),
-  //           //                 child: Center(
-  //           //                   child: Padding(
-  //           //                     padding: EdgeInsets.all(3),
-  //           //                     child: Text(
-  //           //                       data,
-  //           //                       style: TextStyle(
-  //           //                         fontSize: 7,
-  //           //                         fontWeight: FontWeight.bold,
-  //           //                         color: Theme.of(context).colorScheme.white,
-  //           //                       ),
-  //           //                     ),
-  //           //                   ),
-  //           //                 ),
-  //           //               ),
-  //           //             ),
-  //           //         ],
-  //           //       );
-  //           //     },
-  //           //     selector: (_, homeProvider) => homeProvider.curCartCount,
-  //           //   ),
-  //           //   text: getTranslated(context, 'CART'),
-  //           // ),
-  //           Tab(
-  //             icon: Selector<UserProvider, String>(
-  //               builder: (context, data, child) {
-  //                 print('bjhgjghjkg:_____${data}______');
-  //                 return Stack(
-  //                   children: [
-  //                     Center(
-  //                       child: SvgPicture.asset(
-  //                         _selBottom == 2
-  //                             ? imagePath + "cart01.svg"
-  //                             : imagePath + "cart.svg",
-  //                         color:
-  //                             _selBottom == 2 ? colors.secondary : Colors.black,
-  //                         width: 24, // Fixed width for consistent positioning
-  //                         height: 24, // Fixed height for consistent positioning
-  //                       ),
-  //                     ),
-  //                     if (data != null && data.isNotEmpty && data != "0")
-  //                       Positioned(
-  //                         top: -2, // Position from top
-  //                         right: -2, // Position from right
-  //                         child: Container(
-  //                           constraints: BoxConstraints(
-  //                             minWidth: 18, // Minimum width for the badge
-  //                             minHeight: 18, // Minimum height for the badge
-  //                           ),
-  //                           decoration: BoxDecoration(
-  //                             shape: BoxShape.circle,
-  //                             color: colors.primary,
-  //                             border: Border.all(
-  //                               color: Theme.of(context).colorScheme.white,
-  //                               width: 1,
-  //                             ),
-  //                           ),
-  //                           child: Center(
-  //                             child: Padding(
-  //                               padding: EdgeInsets.symmetric(
-  //                                   horizontal: 4, vertical: 2),
-  //                               child: Text(
-  //                                 data,
-  //                                 style: TextStyle(
-  //                                   fontSize: 11, // Increased from 7 to 11
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: Theme.of(context).colorScheme.white,
-  //                                 ),
-  //                                 textAlign: TextAlign.center,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                   ],
-  //                 );
-  //               },
-  //               selector: (_, homeProvider) => homeProvider.curCartCount,
-  //             ),
-  //             text: getTranslated(context, 'CART'),
-  //           ), // Tab(
-  //           //   icon: SvgPicture.asset(
-  //           //     _selBottom == 3
-  //           //         ? imagePath + "profile01.svg"
-  //           //         : imagePath + "profile.svg",
-  //           //     color: _selBottom == 3 ? colors.secondary : Colors.black,
-  //           //   ),
-  //           //   text: getTranslated(context, 'ACCOUNT'),
-  //           // ),
-  //         ],
-  //         indicator: UnderlineTabIndicator(
-  //           // borderSide: BorderSide(color: colors.lightWhite2, width: 5.0),
-  //           insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
-  //         ),
-  //         labelColor: colors.secondary,
-  //         unselectedLabelColor: Colors.black,
-  //         labelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-  //         unselectedLabelStyle:
-  //             TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _getBottomBar() {
     return Material(
-      color: colors.white70,
-      // color: Theme.of(context).colorScheme.white,
+      color: colors.whiteTemp,
       child: Container(
         decoration: BoxDecoration(
-          color: colors.white70,
+          color: colors.whiteTemp,
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).colorScheme.black26,
@@ -563,9 +333,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 _selBottom == 0
                     ? imagePath + "sel_home.svg"
                     : imagePath + "desel_home.svg",
-                color: _selBottom == 0 ? colors.secondary : Colors.black,
-                width: 24,
-                height: 24,
+                color: _selBottom == 0 ? secondaryColor : primaryColor,
+                width: 28,
+                height: 28,
               ),
               text: getTranslated(context, 'HOME_LBL'),
             ),
@@ -574,9 +344,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 _selBottom == 1
                     ? imagePath + "category01.svg"
                     : imagePath + "category.svg",
-                color: _selBottom == 1 ? colors.secondary : Colors.black,
-                width: 20,
-                height: 20,
+                color: _selBottom == 1 ? secondaryColor : primaryColor,
+                width: 26,
+                height: 26,
               ),
               text: getTranslated(context, 'category'),
             ),
@@ -592,21 +362,21 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                               ? imagePath + "cart01.svg"
                               : imagePath + "cart.svg",
                           color:
-                              _selBottom == 2 ? colors.secondary : Colors.black,
-                          width: 20,
-                          height: 20,
+                              _selBottom == 2 ? secondaryColor : primaryColor,
+                          width: 26,
+                          height: 26,
                         ),
                       ),
                       if (data != null && data.isNotEmpty && data != "0")
                         Align(
                           alignment: Alignment.topRight,
                           child: Transform.translate(
-                            offset: Offset(25, -7),
+                            offset: Offset(20, -7),
                             child: Container(
                               padding: EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: colors.primary,
+                                color: primaryColor,
                                 border: Border.all(
                                   color: Theme.of(context).colorScheme.white,
                                   width: 1,
@@ -641,14 +411,59 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           indicator: UnderlineTabIndicator(
             insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
           ),
-          labelColor: colors.secondary,
-          unselectedLabelColor: Colors.black,
+          labelColor: secondaryColor,
+          unselectedLabelColor: primaryColor,
           labelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           unselectedLabelStyle:
               TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
         ),
       ),
     );
+  }
+
+  Color primaryColor = Colors.black;
+  Color secondaryColor = Colors.white;
+
+  BoxDecoration dynamicGradient() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        colors: [primaryColor, secondaryColor],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    );
+  }
+
+  String? PRIMARY = '';
+  String? SECONDARY = '';
+  String PRIMARY_COLOR = 'primary_color';
+  String SECONDARY_COLOR = 'secondary_color';
+
+  void getSetting() {
+    CUR_USERID = context.read<SettingProvider>().userId;
+    Map<String, dynamic> parameter = {};
+    if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+
+    apiBaseHelper.postAPICall(getSettingApi, parameter).then((getdata) async {
+      bool error = getdata["error"];
+      if (!error) {
+        var data = getdata["data"]["system_settings"][0];
+
+        String? primaryHex = data[PRIMARY_COLOR]?.toString();
+        String? secondaryHex = data[SECONDARY_COLOR]?.toString();
+
+        if (primaryHex != null && primaryHex.isNotEmpty) {
+          primaryColor = Color(int.parse("0xFF$primaryHex"));
+        }
+        if (secondaryHex != null && secondaryHex.isNotEmpty) {
+          secondaryColor = Color(int.parse("0xFF$secondaryHex"));
+        }
+        print("Primary: $primaryColor, Secondary: $secondaryColor");
+        if (mounted) setState(() {});
+      }
+    }, onError: (error) {
+      print("API Error: $error");
+    });
   }
 
   @override
