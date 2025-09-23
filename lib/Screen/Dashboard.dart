@@ -40,6 +40,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
   @override
   void initState() {
     _setStatusBarColor();
+    _getAppBar();
     dynamicGradient();
     super.initState();
     getSetting();
@@ -333,7 +334,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 _selBottom == 0
                     ? imagePath + "sel_home.svg"
                     : imagePath + "desel_home.svg",
-                color: _selBottom == 0 ? secondaryColor : primaryColor,
+                color: _selBottom == 0 ? primaryColor : secondaryColor,
                 width: 28,
                 height: 28,
               ),
@@ -344,7 +345,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 _selBottom == 1
                     ? imagePath + "category01.svg"
                     : imagePath + "category.svg",
-                color: _selBottom == 1 ? secondaryColor : primaryColor,
+                color: _selBottom == 1 ? primaryColor : secondaryColor,
                 width: 26,
                 height: 26,
               ),
@@ -362,7 +363,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                               ? imagePath + "cart01.svg"
                               : imagePath + "cart.svg",
                           color:
-                              _selBottom == 2 ? secondaryColor : primaryColor,
+                              _selBottom == 2 ? primaryColor : secondaryColor,
                           width: 26,
                           height: 26,
                         ),
@@ -376,7 +377,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                               padding: EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: primaryColor,
+                                color: secondaryColor,
                                 border: Border.all(
                                   color: Theme.of(context).colorScheme.white,
                                   width: 1,
@@ -411,8 +412,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           indicator: UnderlineTabIndicator(
             insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
           ),
-          labelColor: secondaryColor,
-          unselectedLabelColor: primaryColor,
+          labelColor: primaryColor,
+          unselectedLabelColor: secondaryColor,
           labelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           unselectedLabelStyle:
               TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
@@ -434,23 +435,24 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  String? PRIMARY = '';
-  String? SECONDARY = '';
-  String PRIMARY_COLOR = 'primary_color';
-  String SECONDARY_COLOR = 'secondary_color';
+  String? PRIMARY = 'primary';
+  String? SECONDARY = 'secondary';
+
+  String PRIMARY_COLOR = 'primary';
+  String SECONDARY_COLOR = 'secondary';
 
   void getSetting() {
     CUR_USERID = context.read<SettingProvider>().userId;
     Map<String, dynamic> parameter = {};
     if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
 
-    apiBaseHelper.postAPICall(getSettingApi, parameter).then((getdata) async {
+    apiBaseHelper.postAPICall(getThemeApi, parameter).then((getdata) async {
       bool error = getdata["error"];
       if (!error) {
-        var data = getdata["data"]["system_settings"][0];
+        var colors = getdata["data"]["colors"];
 
-        String? primaryHex = data[PRIMARY_COLOR]?.toString();
-        String? secondaryHex = data[SECONDARY_COLOR]?.toString();
+        String? primaryHex = colors[PRIMARY_COLOR]?.toString();
+        String? secondaryHex = colors[SECONDARY_COLOR]?.toString();
 
         if (primaryHex != null && primaryHex.isNotEmpty) {
           primaryColor = Color(int.parse("0xFF$primaryHex"));
@@ -458,7 +460,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         if (secondaryHex != null && secondaryHex.isNotEmpty) {
           secondaryColor = Color(int.parse("0xFF$secondaryHex"));
         }
+
         print("Primary: $primaryColor, Secondary: $secondaryColor");
+
         if (mounted) setState(() {});
       }
     }, onError: (error) {

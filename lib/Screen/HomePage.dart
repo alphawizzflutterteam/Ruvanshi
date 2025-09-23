@@ -30,6 +30,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
+import '../Model/Welcome_Offer_Model.dart';
 import '../Model/city_model.dart';
 import 'Login.dart';
 import 'ProductList.dart';
@@ -80,6 +81,9 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _setStatusBarColor();
+    getSetting();
+    dynamicGradient();
+    getOfferData();
     _controller = PageController(
       viewportFraction: 0.9,
     );
@@ -193,6 +197,97 @@ class _HomePageState extends State<HomePage>
     } catch (e) {
       print("Error setting status bar color in HomePage: $e");
     }
+  }
+
+  Color primaryColor = Colors.black;
+  Color secondaryColor = Colors.white;
+
+  BoxDecoration dynamicGradient() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        colors: [primaryColor, secondaryColor],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ),
+    );
+  }
+
+  Future<void> getOfferData() async {
+    try {
+      var headers = {
+        'Cookie': 'ci_session=0eba83f24da5e2ebd0f228b98bbeb3506df9bf21'
+      };
+
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(
+            'https://developmentalphawizz.com/ruvanshi/app/v1/api/get_active_popups'),
+      );
+      request.headers.addAll(headers);
+
+      http.StreamedResponse response = await request.send();
+
+      if (response.statusCode == 200) {
+        String res = await response.stream.bytesToString();
+        final Map<String, dynamic> jsonRes = json.decode(res);
+        final WelcomeOfferModel model = WelcomeOfferModel.fromJson(jsonRes);
+
+        if (model.data != null && model.data!.isNotEmpty) {
+          final String rawImage = model.data![0].imageUrl ?? '';
+          String imageLink = '';
+
+          if (rawImage.startsWith('http')) {
+            imageLink = rawImage;
+          } else {
+            imageLink = 'https://developmentalphawizz.com/ruvanshi/$rawImage';
+          }
+          if (imageLink.isNotEmpty && mounted && !isSpecialOfferShown) {
+            openBottomSheet(imageLink: imageLink);
+          }
+        }
+      } else {
+        debugPrint("API Error: ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      debugPrint("Exception: $e");
+    }
+  }
+
+  void openBottomSheet({required String imageLink}) {
+    isSpecialOfferShown = true;
+    Future.delayed(const Duration(milliseconds: 100)).then((_) {
+      showModalBottomSheet(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (builder) {
+          return _buildBottomSheetContent(imageLink: imageLink);
+        },
+      );
+    });
+  }
+
+  Widget _buildBottomSheetContent({required String imageLink}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(imageLink, fit: BoxFit.cover),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Close"),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -334,27 +429,6 @@ class _HomePageState extends State<HomePage>
           .then((_) => _animateSlider());
     });
   }
-
-  // void _animateSlider() {
-  //   Future.delayed(Duration(seconds: 30)).then(
-  //     (_) {
-  //       if (mounted) {
-  //         int nextPage = _controller.hasClients
-  //             ? _controller.page!.round() + 1
-  //             : _controller.initialPage;
-  //
-  //         if (nextPage == homeSliderList.length) {
-  //           nextPage = 0;
-  //         }
-  //         if (_controller.hasClients)
-  //           _controller
-  //               .animateToPage(nextPage,
-  //                   duration: Duration(milliseconds: 200), curve: Curves.linear)
-  //               .then((_) => _animateSlider());
-  //       }
-  //     },
-  //   );
-  // }
 
   _catList() {
     return Selector<HomeProvider, bool>(

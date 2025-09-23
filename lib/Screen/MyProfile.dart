@@ -32,6 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../Helper/Constant.dart';
 import '../Provider/Theme.dart';
 import '../main.dart';
+import 'CouponListScreen.dart';
 import 'Edit_Profile.dart';
 import 'Faqs.dart';
 import 'Manage_Address.dart';
@@ -471,6 +472,13 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
             ? Container()
             : _getDrawerItem(getTranslated(context, 'MY_ORDERS_LBL')!,
                 'assets/images/pro_myorder.svg'),
+
+        CUR_USERID == "" || CUR_USERID == null
+            ? Container()
+            : _getDrawerItem(
+                getTranslated(context, 'MY_COUPON_LBL')!,
+                'assets/images/coupon.svg',
+              ),
         // CUR_USERID == "" || CUR_USERID == null ? Container() : _getDivider(),
         CUR_USERID == "" || CUR_USERID == null
             ? Container()
@@ -575,8 +583,13 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                 builder: (context) => MyOrder(),
               ),
             );
-
             //sendAndRetrieveMessage();
+          } else if (title == getTranslated(context, 'MY_COUPON_LBL')) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CouponListScreen(),
+                ));
           } else if (title == getTranslated(context, 'MYTRANSACTION')) {
             Navigator.push(
                 context,
