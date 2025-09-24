@@ -46,6 +46,7 @@ import 'Review_Preview.dart';
 import 'Search.dart';
 import 'Seller_Details.dart';
 import 'image_popup.dart';
+import 'package:http/http.dart' as http;
 
 class ProductDetail extends StatefulWidget {
   final Product? model;
@@ -2039,6 +2040,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           LIMIT: perPage.toString(),
           OFFSET: offset.toString(),
         };
+        print('yjjffjfy:_____${parameter}______');
 
         Response response =
             await post(getRatingApi, body: parameter, headers: headers)
@@ -2409,6 +2411,68 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           ]),
         )
       ])),
+      // widget.model!.availability == "1" || widget.model!.stockType == "null"
+      //     ? Container(
+      //         height: 55,
+      //         decoration: BoxDecoration(
+      //           color: Theme.of(context).colorScheme.white,
+      //           boxShadow: [
+      //             BoxShadow(
+      //                 color: Theme.of(context).colorScheme.black26,
+      //                 blurRadius: 10)
+      //           ],
+      //         ),
+      //         padding: EdgeInsets.symmetric(horizontal: 20),
+      //         child: Row(
+      //           children: [
+      //             Expanded(
+      //               child: TextButton.icon(
+      //                   style: TextButton.styleFrom(
+      //                       backgroundColor:
+      //                           Theme.of(context).colorScheme.btnColor),
+      //                   onPressed: () {
+      //                     String qty = ((int.parse(qtyController.text)) + 0
+      //                         // (int.parse(widget.model!.qtyStepSize!))
+      //                         )
+      //                         .toString();
+      //                     addToCart(qty, true);
+      //                   },
+      //                   icon: Icon(
+      //                     Icons.shopping_bag,
+      //                     color: Theme.of(context).colorScheme.white,
+      //                   ),
+      //                   label: Padding(
+      //                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      //                     child: Text(
+      //                       getTranslated(context, 'BUYNOW')!,
+      //                       style: TextStyle(
+      //                           color: Theme.of(context).colorScheme.white,
+      //                           fontWeight: FontWeight.bold),
+      //                     ),
+      //                   )),
+      //             ),
+      //           ],
+      //         ),
+      //       )
+      //     : Container(
+      //         height: 55,
+      //         decoration: BoxDecoration(
+      //           color: Theme.of(context).colorScheme.white,
+      //           boxShadow: [
+      //             BoxShadow(
+      //                 color: Theme.of(context).colorScheme.black26,
+      //                 blurRadius: 10)
+      //           ],
+      //         ),
+      //         child: Center(
+      //             child: Text(
+      //           getTranslated(context, 'OUT_OF_STOCK_LBL')!,
+      //           style: Theme.of(context)
+      //               .textTheme
+      //               .labelLarge!
+      //               .copyWith(fontWeight: FontWeight.bold, color: Colors.red),
+      //         )),
+      //       ),
       widget.model!.availability == "1" || widget.model!.stockType == "null"
           ? Container(
               height: 55,
@@ -2416,38 +2480,39 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                 color: Theme.of(context).colorScheme.white,
                 boxShadow: [
                   BoxShadow(
-                      color: Theme.of(context).colorScheme.black26,
-                      blurRadius: 10)
+                    color: Theme.of(context).colorScheme.black26,
+                    blurRadius: 10,
+                  ),
                 ],
               ),
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
                   Expanded(
                     child: TextButton.icon(
-                        style: TextButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.btnColor),
-                        onPressed: () {
-                          String qty = ((int.parse(qtyController.text)) + 0
-                              // (int.parse(widget.model!.qtyStepSize!))
-                              )
-                              .toString();
-                          addToCart(qty, true);
-                        },
-                        icon: Icon(
-                          Icons.shopping_bag,
-                          color: Theme.of(context).colorScheme.white,
-                        ),
-                        label: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            getTranslated(context, 'BUYNOW')!,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.white,
-                                fontWeight: FontWeight.bold),
+                      style: TextButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.btnColor,
+                      ),
+                      onPressed: () {
+                        String qty =
+                            ((int.parse(qtyController.text)) + 0).toString();
+                        addToCart(qty, true);
+                      },
+                      icon: Icon(
+                        Icons.shopping_bag,
+                        color: Theme.of(context).colorScheme.white,
+                      ),
+                      label: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          getTranslated(context, 'BUYNOW')!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.white,
+                            fontWeight: FontWeight.bold,
                           ),
-                        )),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -2458,20 +2523,76 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                 color: Theme.of(context).colorScheme.white,
                 boxShadow: [
                   BoxShadow(
-                      color: Theme.of(context).colorScheme.black26,
-                      blurRadius: 10)
+                    color: Theme.of(context).colorScheme.black26,
+                    blurRadius: 10,
+                  ),
                 ],
               ),
-              child: Center(
-                  child: Text(
-                getTranslated(context, 'OUT_OF_STOCK_LBL')!,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelLarge!
-                    .copyWith(fontWeight: FontWeight.bold, color: Colors.red),
-              )),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    getTranslated(context, 'OUT_OF_STOCK_LBL')!,
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.btnColor,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                    ),
+                    onPressed: () async {
+                      await notifyWhenAvailable(widget.model!.id!);
+                    },
+                    child: Text(
+                      "Notify Me",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
     ]);
+  }
+
+  Future<void> notifyWhenAvailable(String productId) async {
+    var headers = {
+      'Cookie': 'ci_session=7ea188c7fa788e1c95a353013f785046fcc9be07'
+    };
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('${baseUrl}notify_when_available'));
+    request.fields.addAll({
+      USER_ID: CUR_USERID.toString(),
+      PRODUCT_ID: widget.model!.id.toString(),
+      'email': '',
+      'phone': '',
+    });
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      var res = await response.stream.bytesToString();
+      print(res);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                "Thank You. We will notify you once the product is available")),
+      );
+    } else {
+      print(response.reasonPhrase);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: ${response.reasonPhrase}")),
+      );
+    }
   }
 
   simmerSingle() {

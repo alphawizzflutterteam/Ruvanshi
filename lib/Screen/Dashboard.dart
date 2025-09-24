@@ -224,7 +224,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           : Text(
               title ?? "",
               style: TextStyle(
-                color: primaryColor,
+                color: secondaryColor,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -233,7 +233,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           icon: SvgPicture.asset(
             imagePath + "search.svg",
             height: 22,
-            color: primaryColor,
+            color: secondaryColor,
           ),
           onPressed: () {
             Navigator.push(
@@ -244,7 +244,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         ),
         IconButton(
           icon: SvgPicture.asset(imagePath + "desel_notification.svg",
-              height: 22, color: primaryColor),
+              height: 22, color: secondaryColor),
           onPressed: () {
             CUR_USERID != null
                 ? Navigator.push(
@@ -279,7 +279,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           icon: Icon(
             Icons.account_circle,
             size: 28,
-            color: primaryColor,
+            color: secondaryColor,
           ),
           onPressed: () {
             CUR_USERID != null
@@ -428,7 +428,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
   BoxDecoration dynamicGradient() {
     return BoxDecoration(
       gradient: LinearGradient(
-        colors: [primaryColor, secondaryColor],
+        colors: [primaryColor, primaryColor],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ),

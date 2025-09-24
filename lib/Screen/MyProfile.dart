@@ -469,16 +469,102 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       physics: BouncingScrollPhysics(),
       children: <Widget>[
         CUR_USERID == "" || CUR_USERID == null
-            ? Container()
-            : _getDrawerItem(getTranslated(context, 'MY_ORDERS_LBL')!,
-                'assets/images/pro_myorder.svg'),
-
-        CUR_USERID == "" || CUR_USERID == null
-            ? Container()
-            : _getDrawerItem(
-                getTranslated(context, 'MY_COUPON_LBL')!,
-                'assets/images/coupon.svg',
+            ? SizedBox()
+            : Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 60,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyOrder(),
+                                ),
+                              );
+                            },
+                            icon: SvgPicture.asset(
+                              'assets/images/pro_myorder.svg',
+                              height: 24,
+                              width: 24,
+                              color: Colors.black,
+                            ),
+                            label: Text(
+                              getTranslated(context, 'MY_ORDERS_LBL') ??
+                                  'My Orders',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colors.whiteTemp,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: SizedBox(
+                          height: 60,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CouponListScreen(),
+                                  ));
+                            },
+                            icon: SvgPicture.asset(
+                              'assets/images/coupon.svg',
+                              height: 24,
+                              width: 24,
+                              color: Colors.black,
+                            ),
+                            label: Text(
+                              getTranslated(context, 'MY_COUPON_LBL') ??
+                                  'My Coupons',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colors.whiteTemp,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                ],
               ),
+
+        // CUR_USERID == "" || CUR_USERID == null
+        //     ? Container()
+        //     : _getDrawerItem(getTranslated(context, 'MY_ORDERS_LBL')!,
+        //         'assets/images/pro_myorder.svg'),
+        //
+        // CUR_USERID == "" || CUR_USERID == null
+        //     ? Container()
+        //     : _getDrawerItem(
+        //         getTranslated(context, 'MY_COUPON_LBL')!,
+        //         'assets/images/coupon.svg',
+        //       ),
         // CUR_USERID == "" || CUR_USERID == null ? Container() : _getDivider(),
         CUR_USERID == "" || CUR_USERID == null
             ? Container()
