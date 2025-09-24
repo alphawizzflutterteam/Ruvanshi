@@ -22,6 +22,7 @@ import 'All_Category.dart';
 import 'Cart.dart';
 import 'HomePage.dart';
 import 'NotificationLIst.dart';
+import 'Offer.dart';
 import 'Sale.dart';
 import 'Search.dart';
 
@@ -46,7 +47,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     getSetting();
     initDynamicLinks();
     _tabController = TabController(
-      length: 3,
+      length: 4,
       vsync: this,
     );
     LocalNotificationService.initialize();
@@ -187,10 +188,14 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             controller: _tabController,
             physics: NeverScrollableScrollPhysics(),
             children: [
-              HomePage(),
+              HomePage(
+                callback: () {
+                  getSetting();
+                },
+              ),
               AllCategory(),
               Cart(fromBottom: true),
-              // MyProfile(),
+              Offer(),
             ],
           ),
           bottomNavigationBar: _getBottomBar(),
@@ -408,6 +413,17 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
               ),
               text: getTranslated(context, 'CART'),
             ),
+            Tab(
+              icon: SizedBox(
+                width: 132,
+                height: 132,
+                child: Image.asset(
+                  "assets/images/offer.gif",
+                  fit: BoxFit.cover,
+                ),
+              ),
+              text: getTranslated(context, 'OFFERS'),
+            ),
           ],
           indicator: UnderlineTabIndicator(
             insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
@@ -435,9 +451,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  String? PRIMARY = 'primary';
-  String? SECONDARY = 'secondary';
-
+  String? PRIMARY = '';
+  String? SECONDARY = '';
   String PRIMARY_COLOR = 'primary';
   String SECONDARY_COLOR = 'secondary';
 
@@ -460,9 +475,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         if (secondaryHex != null && secondaryHex.isNotEmpty) {
           secondaryColor = Color(int.parse("0xFF$secondaryHex"));
         }
-
         print("Primary: $primaryColor, Secondary: $secondaryColor");
-
+        // updateAppColors(primaryColor, secondaryColor);
         if (mounted) setState(() {});
       }
     }, onError: (error) {

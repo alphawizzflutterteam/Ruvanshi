@@ -40,7 +40,11 @@ import 'package:http/http.dart' as http;
 import 'Search.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  // Create Callback function
+  final VoidCallback? callback;
+
+  // Constructor with callback parameter
+  const HomePage({Key? key, this.callback}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -81,7 +85,6 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _setStatusBarColor();
-    getSetting();
     dynamicGradient();
     getOfferData();
     _controller = PageController(
@@ -217,12 +220,8 @@ class _HomePageState extends State<HomePage>
       var headers = {
         'Cookie': 'ci_session=0eba83f24da5e2ebd0f228b98bbeb3506df9bf21'
       };
-
       var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(
-            'https://developmentalphawizz.com/ruvanshi/app/v1/api/get_active_popups'),
-      );
+          'POST', Uri.parse('${baseUrl}get_active_popups'));
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
@@ -257,37 +256,57 @@ class _HomePageState extends State<HomePage>
     isSpecialOfferShown = true;
     Future.delayed(const Duration(milliseconds: 100)).then((_) {
       showModalBottomSheet(
-        backgroundColor: Colors.transparent,
         context: context,
-        builder: (builder) {
-          return _buildBottomSheetContent(imageLink: imageLink);
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    imageLink,
+                    fit: BoxFit.contain,
+                    width: MediaQuery.of(context).size.width,
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return const Center(child: CircularProgressIndicator());
+                    },
+                    errorBuilder: (_, __, ___) => const Center(
+                      child: Icon(Icons.broken_image,
+                          size: 40, color: Colors.white),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: const Icon(Icons.close,
+                          color: Colors.white, size: 20),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
         },
       );
     });
-  }
-
-  Widget _buildBottomSheetContent({required String imageLink}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(imageLink, fit: BoxFit.cover),
-          ),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Close"),
-          )
-        ],
-      ),
-    );
   }
 
   @override
@@ -338,7 +357,7 @@ class _HomePageState extends State<HomePage>
     context.read<HomeProvider>().setCatLoading(true);
     context.read<HomeProvider>().setSecLoading(true);
     context.read<HomeProvider>().setSliderLoading(true);
-
+    widget.callback!();
     return callApi();
   }
 
@@ -2138,4 +2157,76 @@ class _HomePageState extends State<HomePage>
       selector: (_, homeProvider) => homeProvider.sellerLoading,
     );
   }
+
+// String? PRIMARY = '';
+// String? SECONDARY = '';
+// String PRIMARY_COLOR = 'primary';
+// String SECONDARY_COLOR = 'secondary';
+
+// void getThemeSetting() {
+//   CUR_USERID = context.read<SettingProvider>().userId;
+//   Map<String, dynamic> parameter = {};
+//   if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+
+//   apiBaseHelper.postAPICall(getThemeApi, parameter).then((getdata) async {
+//     bool error = getdata["error"];
+//     if (!error) {
+//       var colors = getdata["data"]["colors"];
+
+//       String? primaryHex = colors[PRIMARY_COLOR]?.toString();
+//       String? secondaryHex = colors[SECONDARY_COLOR]?.toString();
+//       String? backgroundHex = colors["background"]?.toString();
+//       String? textHex = colors["text"]?.toString();
+//       // Color backgroundColor = colors.background;
+//       // Color textColor = colors.text;
+//       primaryHex = "c3831d";
+//       if (primaryHex != null && primaryHex.isNotEmpty) {
+//         primaryColor = Color(int.parse("0xFF$primaryHex"));
+//       }
+//       if (secondaryHex != null && secondaryHex.isNotEmpty) {
+//         secondaryColor = Color(int.parse("0xFF$secondaryHex"));
+//       }
+//       // if (backgroundHex != null && backgroundHex.isNotEmpty) {
+//       //   backgroundColor = Color(int.parse("0xFF$backgroundHex"));
+//       // }
+//       // if (textHex != null && textHex.isNotEmpty) {
+//       //   textColor = Color(int.parse("0xFF$textHex"));
+//       // }
+
+//       print("Primary: $primaryColor, Secondary: $secondaryColor");
+//       updateAppColors(primaryColor, secondaryColor);
+//       if (mounted) setState(() {});
+//     }
+//   }, onError: (error) {
+//     print("API Error: $error");
+//   });
+// }
+
+// void updateAppColors(Color newPrimary, Color newSecondary) {
+//   setState(() {
+//     colors.setPrimary(newPrimary);
+//     colors.setSecondary(newSecondary);
+//   });
+//   themeNotifier.value = !themeNotifier.value;
+//   // colors.setPrimary = newPrimary;
+//   // colors.setSecondary = newSecondary;
+//   // // colors.b
+
+//   // // Rebuild MaterialColor swatch
+//   // colors.primary_app = MaterialColor(
+//   //   newPrimary.value,
+//   //   <int, Color>{
+//   //     50: newPrimary,
+//   //     100: newPrimary,
+//   //     200: newPrimary,
+//   //     300: newPrimary,
+//   //     400: newPrimary,
+//   //     500: newPrimary,
+//   //     600: newPrimary,
+//   //     700: newPrimary,
+//   //     800: newPrimary,
+//   //     900: newPrimary,
+//   //   },
+//   // );
+// }
 }

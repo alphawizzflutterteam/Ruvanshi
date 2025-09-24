@@ -99,4 +99,19 @@ extension colors on ColorScheme {
   Color get back5 => this.brightness == Brightness.dark
       ? Color(0xff0F1412)
       : Color(0x66C6F8E5);
+
+  static set setPrimary(Color primary) {
+    primary = primary;
+  }
+
+  static set setSecondary(Color secondary) {
+    secondary = secondary;
+  }
+
+  //  static set setBackground(Color secondary) {
+  //   secondary = secondary;
+  // }
+  static set setTextColor(Color text) {
+    text = text;
+  }
 }

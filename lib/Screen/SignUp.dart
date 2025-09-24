@@ -281,10 +281,11 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
       var headers = {
         'Cookie': 'ci_session=cc08d4381b4fdf4681fe5697fbda2886d2fda585',
       };
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('https://developmentalphawizz.com/ruvanshi/app/v1/api/city'),
-      );
+      // var request = http.MultipartRequest(
+      //   'POST',
+      //   Uri.parse('https://developmentalphawizz.com/ruvanshi/app/v1/api/city'),
+      // );
+      var request = http.MultipartRequest('POST', Uri.parse('${baseUrl}city'));
       request.headers.addAll(headers);
       print("Sending request to: ${request.url}");
       print("Headers: ${request.headers}");
