@@ -632,8 +632,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                 _checkscaffoldKey,
                               );
                             } else {
-                              _getCart("");
-                              checkout(cartList);
+                              _getCart1("");
+                              checkout1(cartList);
                             }
                           },
                           icon: Icon(Icons.shopping_bag,
@@ -1333,6 +1333,94 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                 : Container()
           ],
         ));
+  }
+
+  Future<void> _getCart1(String save) async {
+    _isNetworkAvail = await isNetworkAvailable();
+
+    if (_isNetworkAvail) {
+      try {
+        var parameter = {
+          USER_ID: CUR_USERID,
+          ADD_ID: selAddress ?? '',
+          SAVE_LATER: save,
+          'buy_now': 1,
+          'product_variant_ids': 2
+        };
+        print('cart:_____${parameter}______');
+        Response response =
+            await post(getCartApi, body: parameter, headers: headers)
+                .timeout(Duration(seconds: timeOut));
+
+        var getdata = json.decode(response.body);
+        bool error = getdata["error"];
+        String? msg = getdata["message"];
+
+        if (!error) {
+          var data = getdata["data"];
+
+          setState(() {
+            totalamount = getdata['overall_amount'];
+            oriPrice = double.parse(getdata[SUB_TOTAL]);
+            dCharge = double.parse(
+                getdata['delivery_charge'].toString().replaceAll(",", ""));
+            taxAmount = double.parse(
+                getdata['tax_amount'].toString().replaceAll(",", ""));
+            taxPer = double.parse(getdata[TAX_PER]);
+
+            cgstAmount = getdata['cgst_amount'] != null
+                ? double.parse(
+                    getdata['cgst_amount'].toString().replaceAll(",", ""))
+                : 0.0;
+            sgstAmount = getdata['sgst_amount'] != null
+                ? double.parse(
+                    getdata['sgst_amount'].toString().replaceAll(",", ""))
+                : 0.0;
+          });
+
+          print("Subtotal: $oriPrice");
+          print("CGST Amount: $cgstAmount");
+          print("SGST Amount: $sgstAmount");
+          print("Tax Amount: $taxAmount");
+          print("Total Amount: $totalamount");
+
+          totalPrice = delCharge + oriPrice;
+
+          List<SectionModel> cartList = (data as List)
+              .map((data) => new SectionModel.fromCart(data))
+              .toList();
+          context.read<CartProvider>().setCartlist(cartList);
+
+          if (getdata.containsKey(PROMO_CODES)) {
+            var promo = getdata[PROMO_CODES];
+            promoList =
+                (promo as List).map((e) => new Promo.fromJson(e)).toList();
+          }
+
+          for (int i = 0; i < cartList.length; i++) {
+            _controller.add(new TextEditingController());
+          }
+        } else {
+          if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
+        }
+
+        if (mounted) {
+          setState(() {
+            _isCartLoad = false;
+          });
+        }
+
+        _getAddress();
+      } on TimeoutException catch (_) {
+        setSnackbar(getTranslated(context, 'somethingMSg')!, _scaffoldKey);
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _isNetworkAvail = false;
+        });
+      }
+    }
   }
 
   var dCharge;
@@ -2647,6 +2735,273 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
         },
       ),
     );
+  }
+
+  checkout1(List<SectionModel> cartList) {
+    _razorpay = Razorpay();
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
+
+    return showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+        builder: (builder) {
+          return SafeArea(
+            child: FractionallySizedBox(
+              heightFactor: 1,
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                checkoutState = setState;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    key: _checkscaffoldKey,
+                    body: _isNetworkAvail
+                        ? cartList.length == 0
+                            ? cartEmpty()
+                            : _isLoading
+                                ? shimmer(context)
+                                : Column(
+                                    children: [
+                                      Expanded(
+                                        child: Stack(
+                                          children: <Widget>[
+                                            SingleChildScrollView(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    SizedBox(height: 20),
+                                                    Image.asset(
+                                                      "assets/images/ordersummarymain.png",
+                                                      height: 150,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    address(),
+                                                    // payment(),
+                                                    cartItems(cartList),
+                                                    orderSummary(cartList),
+                                                    SizedBox(height: 80),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            Selector<CartProvider, bool>(
+                                              builder: (context, data, child) {
+                                                return showCircularProgress(
+                                                    data, colors.primary);
+                                              },
+                                              selector: (_, provider) =>
+                                                  provider.isProgress,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.grey.withOpacity(0.3),
+                                              spreadRadius: 1,
+                                              blurRadius: 5,
+                                              offset: Offset(0, -2),
+                                            ),
+                                          ],
+                                        ),
+                                        padding: EdgeInsets.only(
+                                          left: 15.0,
+                                          right: 15.0,
+                                          top: 12.0,
+                                          bottom: MediaQuery.of(context)
+                                                  .viewPadding
+                                                  .bottom +
+                                              12.0,
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    CUR_CURRENCY! +
+                                                                "${totalamount.toString()}" !=
+                                                            " "
+                                                        ? isPromoValid == true
+                                                            ? (double.parse(totalamount ??
+                                                                        '0.0') -
+                                                                    promoAmt)
+                                                                .toString()
+                                                            : (CUR_CURRENCY! +
+                                                                "${totalamount.toString()}")
+                                                        : "",
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .fontColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16.0,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 2.0),
+                                                  Text(
+                                                    cartList.length.toString() +
+                                                        " Items",
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .fontColor
+                                                          .withOpacity(0.7),
+                                                      fontSize: 13.0,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(width: 12.0),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                              height: 42.0,
+                                              child: ElevatedButton(
+                                                onPressed: _placeOrder
+                                                    ? () {
+                                                        getSetting();
+                                                        msg = getTranslated(
+                                                            context, 'Seller');
+
+                                                        print(
+                                                            "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
+
+                                                        if (selAddress ==
+                                                                null ||
+                                                            selAddress!
+                                                                .isEmpty) {
+                                                          msg = getTranslated(
+                                                              context,
+                                                              'addressWarning');
+                                                          Navigator
+                                                              .pushReplacement(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  ManageAddress(
+                                                                      home:
+                                                                          false),
+                                                            ),
+                                                          );
+                                                          checkoutState!(() {
+                                                            _placeOrder = true;
+                                                          });
+                                                        } else if (double.parse(
+                                                                MIN_ALLOW_CART_AMT!) >
+                                                            oriPrice) {
+                                                          print(
+                                                              "=cart price======${oriPrice}============range price====${MIN_ALLOW_CART_AMT}");
+                                                          setSnackbar(
+                                                            "${getTranslated(context, 'MIN_CART_AMT')!} \u{20B9}${MIN_ALLOW_CART_AMT}",
+                                                            _checkscaffoldKey,
+                                                          );
+                                                        } else if (payMethod ==
+                                                                null ||
+                                                            payMethod!
+                                                                .isEmpty) {
+                                                          msg = getTranslated(
+                                                              context,
+                                                              'payWarning');
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  Payment(
+                                                                      updateCheckout,
+                                                                      msg),
+                                                            ),
+                                                          );
+                                                          checkoutState!(() {
+                                                            _placeOrder = true;
+                                                          });
+                                                        } else {
+                                                          checkoutState!(() {
+                                                            _placeOrder = false;
+                                                          });
+                                                          doPayment();
+
+                                                          // confirmDialog();
+                                                        }
+                                                      }
+                                                    : null,
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      colors.primary,
+                                                  foregroundColor:
+                                                      colors.whiteTemp,
+                                                  elevation: 2,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5.0),
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                                ),
+                                                child: Text(
+                                                  'Place Order',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 13.0,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                        : noInternet(context),
+                  ),
+                );
+              }),
+            ),
+          );
+        }).then((value) {
+      clearAll();
+      _getCart('0');
+    });
   }
 
   checkout(List<SectionModel> cartList) {

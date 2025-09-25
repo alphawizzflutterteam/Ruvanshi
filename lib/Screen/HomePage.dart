@@ -86,7 +86,10 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _setStatusBarColor();
     dynamicGradient();
-    getOfferData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getOfferData();
+    });
+    // getOfferData();
     _controller = PageController(
       viewportFraction: 0.9,
     );
@@ -609,7 +612,7 @@ class _HomePageState extends State<HomePage>
                   ],
                 ),
               ),
-              offerImages.length > index ? _getOfferImage(index) : Container(),
+              // offerImages.length > index ? _getOfferImage(index) : Container(),
             ],
           )
         : Container();
@@ -618,7 +621,7 @@ class _HomePageState extends State<HomePage>
         sectionList[index - 1].style == DEFAULT) {
       return Column(
         children: [
-          Text("See All Categories"),
+          // Text("See All Categories"),
           _catList1(),
           const SizedBox(height: 10),
           _sectionBody(),

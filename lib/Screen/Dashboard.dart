@@ -422,7 +422,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                   fit: BoxFit.cover,
                 ),
               ),
-              text: getTranslated(context, 'OFFERS'),
+              // text: getTranslated(context, 'OFFERS'),
             ),
           ],
           indicator: UnderlineTabIndicator(

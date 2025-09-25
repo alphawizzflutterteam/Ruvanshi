@@ -1,18 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:TGSawadesiMartUser/Helper/Color.dart';
 import 'package:TGSawadesiMartUser/Helper/String.dart';
+import 'package:TGSawadesiMartUser/Helper/Session.dart';
+import 'package:TGSawadesiMartUser/Helper/ApiBaseHelper.dart';
 import 'package:TGSawadesiMartUser/Provider/CategoryProvider.dart';
 import 'package:TGSawadesiMartUser/Provider/HomeProvider.dart';
+import 'package:TGSawadesiMartUser/Provider/UserProvider.dart';
 import 'package:TGSawadesiMartUser/Screen/SubCategory.dart';
+import 'package:TGSawadesiMartUser/Screen/Product_Detail.dart';
+import 'package:TGSawadesiMartUser/Model/Model.dart';
+import 'package:TGSawadesiMartUser/Model/Section_Model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import '../Helper/Session.dart';
-import '../Model/Section_Model.dart';
-import 'HomePage.dart';
 import 'ProductList.dart';
 
 class Offer extends StatefulWidget {
@@ -21,10 +23,19 @@ class Offer extends StatefulWidget {
 }
 
 class _OfferState extends State<Offer> {
+  List<SectionModel> sectionList = [];
+  List<Product> catList = [];
+  List<Product> popularList = [];
+  ApiBaseHelper apiBaseHelper = ApiBaseHelper();
+  List<Model> offerImages = [];
+  bool _isNetworkAvail = true;
+
   @override
   void initState() {
     super.initState();
     getCat();
+    getSection();
+    getOfferImages();
   }
 
   Future<void> getCat() async {
@@ -64,6 +75,68 @@ class _OfferState extends State<Offer> {
       Fluttertoast.showToast(msg: error, backgroundColor: colors.primary);
       context.read<HomeProvider>().setCatLoading(false);
     });
+  }
+
+  void getSection() {
+    Map parameter = {PRODUCT_LIMIT: "5"};
+    print("section params______${parameter}");
+
+    if (CUR_USERID != null) parameter[USER_ID] = CUR_USERID!;
+    String curPin = context.read<UserProvider>().curPincode;
+    if (curPin != '') parameter[ZIPCODE] = curPin;
+
+    apiBaseHelper.postAPICall(getSectionApi, parameter).then((getdata) {
+      bool error = getdata["error"];
+      String? msg = getdata["message"];
+      print("Get Section Data---------: $getdata");
+      sectionList.clear();
+      if (!error) {
+        var data = getdata["data"];
+        print("Get Section Data2: $data");
+        sectionList = (data as List)
+            .map((data) => new SectionModel.fromJson(data))
+            .toList();
+      } else {
+        if (curPin != '') context.read<UserProvider>().setPincode('');
+        setSnackbar(msg!, context);
+        print("Get Section Error Msg: $msg");
+      }
+      context.read<HomeProvider>().setSecLoading(false);
+      if (mounted) setState(() {});
+    }, onError: (error) {
+      setSnackbar(error.toString(), context);
+      context.read<HomeProvider>().setSecLoading(false);
+    });
+  }
+
+  void getOfferImages() {
+    Map parameter = Map();
+    apiBaseHelper.postAPICall(getOfferImageApi, parameter).then((getdata) {
+      bool error = getdata["error"];
+      String? msg = getdata["message"];
+      if (!error) {
+        var data = getdata["data"];
+        offerImages.clear();
+        offerImages =
+            (data as List).map((data) => new Model.fromSlider(data)).toList();
+      } else {
+        setSnackbar(msg!, context);
+      }
+
+      context.read<HomeProvider>().setOfferLoading(false);
+      if (mounted) setState(() {});
+    }, onError: (error) {
+      setSnackbar(error.toString(), context);
+      context.read<HomeProvider>().setOfferLoading(false);
+    });
+  }
+
+  void setSnackbar(String message, BuildContext context) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget catLoading() {
@@ -123,191 +196,119 @@ class _OfferState extends State<Offer> {
     return Scaffold(
       backgroundColor: colors.grad1Color1,
       // appBar: AppBar(
-      //   title: Text(
-      //     'All Categories',
-      //     style: TextStyle(
-      //       color: Colors.black87,
-      //       fontWeight: FontWeight.w600,
+      //   title: Text("My AppBar"),
+      //   centerTitle: true,
+      //   backgroundColor: Colors.blue,
+      //   elevation: 4,
+      //   // leading: IconButton(
+      //   //   icon: Icon(Icons.menu),
+      //   //   onPressed: () {
+      //   //     // Handle menu action
+      //   //   },
+      //   // ),
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.search),
+      //       onPressed: () {
+      //         // Handle search action
+      //       },
       //     ),
-      //   ),
-      //   backgroundColor: Colors.white,
-      //   elevation: 1,
-      //   iconTheme: IconThemeData(color: Colors.black87),
+      //     IconButton(
+      //       icon: Icon(Icons.more_vert),
+      //       onPressed: () {
+      //         // Handle more action
+      //       },
+      //     ),
+      //   ],
       // ),
-      body: _catList(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // _catList1(),
+            // SizedBox(height: 20),
+            _section(),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget catItem(int index, BuildContext context1) {
-    return Selector<CategoryProvider, int>(
+  _section() {
+    return Selector<HomeProvider, bool>(
       builder: (context, data, child) {
-        if (index == 0 && (popularList.length > 0)) {
-          return GestureDetector(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: data == index
-                    ? Border.all(color: colors.primary, width: 2)
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 60,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: colors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: SvgPicture.asset(
-                        data == index
-                            ? imagePath + "popular_sel.svg"
-                            : imagePath + "popular.svg",
-                        color: colors.primary,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      catList[index].name!,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context1).textTheme.bodySmall!.copyWith(
-                            color: data == index
-                                ? colors.primary
-                                : Theme.of(context).colorScheme.fontColor,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            onTap: () {
-              context1.read<CategoryProvider>().setCurSelected(index);
-              context1.read<CategoryProvider>().setSubList(popularList);
-            },
-          );
-        } else {
-          return GestureDetector(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: data == index
-                    ? Border.all(color: colors.primary, width: 2)
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: CachedNetworkImage(
-                        imageUrl: catList[index].image ?? '',
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[200],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(colors.primary),
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[200],
-                          child: Icon(
-                            Icons.image_not_supported,
-                            color: Colors.grey[400],
-                            size: 30,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      catList[index].name ?? '',
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context1).textTheme.bodySmall!.copyWith(
-                            color: data == index
-                                ? colors.primary
-                                : Theme.of(context).colorScheme.fontColor,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            onTap: () {
-              context1.read<CategoryProvider>().setCurSelected(index);
-              if (catList[index].subList == null ||
-                  catList[index].subList!.length == 0) {
-                context1.read<CategoryProvider>().setSubList([]);
-                Navigator.push(
-                  context1,
-                  MaterialPageRoute(
-                    builder: (context) => ProductList(
-                      name: catList[index].name,
-                      id: catList[index].id,
-                      tag: false,
-                      fromSeller: false,
-                    ),
-                  ),
-                );
-              } else {
-                context1
-                    .read<CategoryProvider>()
-                    .setSubList(catList[index].subList);
-              }
-            },
-          );
-        }
+        return data
+            ? Container(
+                width: double.infinity,
+                child: Shimmer.fromColors(
+                  baseColor: Theme.of(context).colorScheme.simmerBase,
+                  highlightColor: Theme.of(context).colorScheme.simmerHigh,
+                  child: sectionLoading(),
+                ),
+              )
+            : ListView.builder(
+                padding: EdgeInsets.all(0),
+                itemCount: sectionList.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return _singleSection(index);
+                },
+              );
       },
-      selector: (_, cat) => cat.curCat,
+      selector: (_, homeProvider) => homeProvider.secLoading,
     );
   }
 
-  _catList() {
+  _singleSection(int index) {
+    Color back;
+    int pos = index % 5;
+    if (pos == 0)
+      back = Theme.of(context).colorScheme.back1;
+    else if (pos == 1)
+      back = Theme.of(context).colorScheme.back2;
+    else if (pos == 2)
+      back = Theme.of(context).colorScheme.back3;
+    else if (pos == 3)
+      back = Theme.of(context).colorScheme.back4;
+    else
+      back = Theme.of(context).colorScheme.back5;
+
+    Widget _sectionBody() => sectionList[index].productList!.length > 0
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    // _getHeading(sectionList[index].title ?? "", index),
+                    // _getSection(index),
+                  ],
+                ),
+              ),
+              offerImages.length > index ? _getOfferImage(index) : Container(),
+            ],
+          )
+        : Container();
+
+    if (sectionList[index].style == STYLE1 &&
+        index > 0 &&
+        sectionList[index - 1].style == DEFAULT) {
+      return Column(
+        children: [
+          // Text("See All Categories"),
+          _catList1(),
+          const SizedBox(height: 10),
+          _sectionBody(),
+        ],
+      );
+    } else {
+      return _sectionBody();
+    }
+  }
+
+  _catList1() {
     return Selector<HomeProvider, bool>(
       builder: (context, data, child) {
         return data
@@ -454,131 +455,511 @@ class _OfferState extends State<Offer> {
     );
   }
 
-  subCatItem(List<Product> subList, int index, BuildContext context) {
-    return GestureDetector(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 3,
-              offset: Offset(0, 1),
-            ),
-          ],
+  _getOfferImage(index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: InkWell(
+        child: FadeInImage(
+          fit: BoxFit.contain,
+          fadeInDuration: Duration(milliseconds: 150),
+          image: CachedNetworkImageProvider(offerImages[index].image!),
+          width: double.maxFinite,
+          imageErrorBuilder: (context, error, stackTrace) => erroWidget(50),
+          placeholder: AssetImage(
+            "assets/images/sliderph.png",
+          ),
         ),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Container(
-                margin: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[50],
+        onTap: () {
+          if (offerImages[index].type == "products") {
+            Product? item = offerImages[index].list;
+
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) =>
+                    ProductDetail(model: item, secPos: 0, index: 0, list: true),
+              ),
+            );
+          } else if (offerImages[index].type == "categories") {
+            Product item = offerImages[index].list;
+            if (item.subList == null || item.subList!.length == 0) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductList(
+                    name: item.name,
+                    id: item.id,
+                    tag: false,
+                    fromSeller: false,
+                  ),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: subList[index].image ?? '',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[200],
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(colors.primary),
+              );
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubCategory(
+                    title: item.name!,
+                    subList: item.subList,
+                  ),
+                ),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+
+  _getSection(int i) {
+    var orient = MediaQuery.of(context).orientation;
+    return sectionList[i].style == DEFAULT
+        ? Padding(
+            padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 15),
+            child: GridView.count(
+              padding: EdgeInsetsDirectional.only(top: 5),
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              childAspectRatio: 0.750,
+              physics: NeverScrollableScrollPhysics(),
+              children: List.generate(
+                sectionList[i].productList!.length < 4
+                    ? sectionList[i].productList!.length
+                    : 4,
+                (index) {
+                  return productItem(i, index, index % 2 == 0 ? true : false);
+                },
+              ),
+            ),
+          )
+        : sectionList[i].style == STYLE1
+            ? sectionList[i].productList!.isNotEmpty
+                ? SizedBox(
+                    height: deviceHeight! * 0.35,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: sectionList[i].productList!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            child: productItem(i, index, index % 2 == 0),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                : Container()
+            : sectionList[i].style == STYLE2
+                ? Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          fit: FlexFit.loose,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                  height: orient == Orientation.portrait
+                                      ? deviceHeight! * 0.2
+                                      : deviceHeight! * 0.5,
+                                  child: productItem(i, 0, true)),
+                              Container(
+                                height: orient == Orientation.portrait
+                                    ? deviceHeight! * 0.2
+                                    : deviceHeight! * 0.5,
+                                child: productItem(i, 1, true),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Flexible(
+                          flex: 3,
+                          fit: FlexFit.loose,
+                          child: Container(
+                            height: orient == Orientation.portrait
+                                ? deviceHeight! * 0.4
+                                : deviceHeight,
+                            child: productItem(i, 2, false),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : sectionList[i].style == STYLE3
+                    ? Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              flex: 1,
+                              fit: FlexFit.loose,
+                              child: Container(
+                                height: orient == Orientation.portrait
+                                    ? deviceHeight! * 0.3
+                                    : deviceHeight! * 0.6,
+                                child: productItem(i, 0, false),
+                              ),
+                            ),
+                            Container(
+                              height: orient == Orientation.portrait
+                                  ? deviceHeight! * 0.2
+                                  : deviceHeight! * 0.5,
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    flex: 1,
+                                    fit: FlexFit.loose,
+                                    child: productItem(i, 1, true),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    fit: FlexFit.loose,
+                                    child: productItem(i, 2, true),
+                                  ),
+                                  Flexible(
+                                    flex: 1,
+                                    fit: FlexFit.loose,
+                                    child: productItem(i, 3, false),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : sectionList[i].style == STYLE4
+                        ? Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                    flex: 1,
+                                    fit: FlexFit.loose,
+                                    child: Container(
+                                        height: orient == Orientation.portrait
+                                            ? deviceHeight! * 0.25
+                                            : deviceHeight! * 0.5,
+                                        child: productItem(i, 0, false))),
+                                Container(
+                                  height: orient == Orientation.portrait
+                                      ? deviceHeight! * 0.2
+                                      : deviceHeight! * 0.5,
+                                  child: Row(
+                                    children: [
+                                      Flexible(
+                                        flex: 1,
+                                        fit: FlexFit.loose,
+                                        child: productItem(i, 1, true),
+                                      ),
+                                      Flexible(
+                                        flex: 1,
+                                        fit: FlexFit.loose,
+                                        child: productItem(i, 2, false),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: GridView.count(
+                              padding: EdgeInsetsDirectional.only(top: 5),
+                              crossAxisCount: 2,
+                              shrinkWrap: true,
+                              childAspectRatio: 1.2,
+                              physics: NeverScrollableScrollPhysics(),
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 0,
+                              children: List.generate(
+                                sectionList[i].productList!.length < 6
+                                    ? sectionList[i].productList!.length
+                                    : 6,
+                                (index) {
+                                  return productItem(
+                                      i, index, index % 2 == 0 ? true : false);
+                                },
+                              ),
+                            ),
+                          );
+  }
+
+  Widget productItem(int secPos, int index, bool pad) {
+    if (sectionList[secPos].productList!.length > index) {
+      String? offPer;
+      double price = double.parse(
+          sectionList[secPos].productList![index].prVarientList![0].disPrice!);
+      if (price == 0) {
+        price = double.parse(
+            sectionList[secPos].productList![index].prVarientList![0].price!);
+      } else {
+        double off = double.parse(sectionList[secPos]
+                .productList![index]
+                .prVarientList![0]
+                .price!) -
+            price;
+        offPer = ((off * 100) /
+                double.parse(sectionList[secPos]
+                    .productList![index]
+                    .prVarientList![0]
+                    .price!))
+            .toStringAsFixed(2);
+      }
+
+      double width = deviceWidth! * 0.5;
+
+      return Card(
+        elevation: 0.0,
+        margin: EdgeInsetsDirectional.only(bottom: 2, end: 2),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(5),
+                          topRight: Radius.circular(5)),
+                      child: Hero(
+                        transitionOnUserGestures: true,
+                        tag:
+                            "${sectionList[secPos].productList![index].id}$secPos$index",
+                        child: FadeInImage(
+                          fadeInDuration: Duration(milliseconds: 150),
+                          image: CachedNetworkImageProvider(
+                              sectionList[secPos].productList![index].image!),
+                          height: double.maxFinite,
+                          width: double.maxFinite,
+                          imageErrorBuilder: (context, error, stackTrace) =>
+                              erroWidget(double.maxFinite),
+                          fit: BoxFit.contain,
+                          placeholder: placeHolder(width),
                         ),
                       ),
                     ),
-                    errorWidget: (context, url, error) => Container(
-                      color: Colors.grey[200],
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey[400],
-                        size: 30,
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  start: 5.0,
+                  top: 3,
+                ),
+                child: Text(
+                  sectionList[secPos].productList![index].name!,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.lightBlack,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Text(
+                " " + CUR_CURRENCY! + " " + price.toString(),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.fontColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                    start: 5.0, bottom: 5, top: 3),
+                child: double.parse(sectionList[secPos]
+                            .productList![index]
+                            .prVarientList![0]
+                            .disPrice!) !=
+                        0
+                    ? Row(
+                        children: <Widget>[
+                          Text(
+                            double.parse(sectionList[secPos]
+                                        .productList![index]
+                                        .prVarientList![0]
+                                        .disPrice!) !=
+                                    0
+                                ? CUR_CURRENCY! +
+                                    "" +
+                                    sectionList[secPos]
+                                        .productList![index]
+                                        .prVarientList![0]
+                                        .price!
+                                : "",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
+                                .copyWith(
+                                    decoration: TextDecoration.lineThrough,
+                                    letterSpacing: 0,
+                                    fontSize: 15,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                          ),
+                          Flexible(
+                            child: Text(
+                              " | " + "$offPer%",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall!
+                                  .copyWith(
+                                      color: colors.primary,
+                                      letterSpacing: 0,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(
+                        height: 5,
                       ),
-                    ),
+              ),
+            ],
+          ),
+          onTap: () {
+            Product model = sectionList[secPos].productList![index];
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => ProductDetail(
+                    model: model, secPos: secPos, index: index, list: false),
+              ),
+            );
+          },
+        ),
+      );
+    } else
+      return Container();
+  }
+
+  _getHeading(String title, int index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 20.0),
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.centerRight,
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
                 ),
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsetsDirectional.only(
+                    start: 10, bottom: 0, top: 0, end: 10),
                 child: Text(
-                  subList[index].name ?? '',
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Theme.of(context).colorScheme.fontColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  title,
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: colors.blackTemp,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                  maxLines: 1,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      onTap: () {
-        if (context.read<CategoryProvider>().curCat == 0 &&
-            popularList.length > 0) {
-          if (popularList[index].subList == null ||
-              popularList[index].subList!.length == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProductList(
-                  name: popularList[index].name,
-                  id: popularList[index].id,
-                  tag: false,
-                  fromSeller: false,
-                ),
+        Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 0.0,
+            horizontal: 10,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(sectionList[index].shortDesc ?? "",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Colors.grey, fontSize: 14)),
               ),
-            );
-          } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SubCategory(
-                  subList: popularList[index].subList,
-                  title: popularList[index].name ?? "",
-                ),
-              ),
-            );
-          }
-        } else if (subList[index].subList == null ||
-            subList[index].subList!.length == 0) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductList(
-                name: subList[index].name,
-                id: subList[index].id,
-                tag: false,
-                fromSeller: false,
-              ),
-            ),
-          );
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SubCategory(
-                subList: subList[index].subList,
-                title: subList[index].name ?? "",
-              ),
-            ),
-          );
-        }
-      },
+            ],
+          ),
+        ),
+      ],
     );
+  }
+
+  sectionLoading() {
+    return Column(
+        children: [0, 1, 2, 3, 4]
+            .map((_) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 40),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 5),
+                                width: double.infinity,
+                                height: 18.0,
+                                color: Theme.of(context).colorScheme.white,
+                              ),
+                              GridView.count(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 10),
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                childAspectRatio: 1.0,
+                                physics: NeverScrollableScrollPhysics(),
+                                mainAxisSpacing: 5,
+                                crossAxisSpacing: 5,
+                                children: List.generate(
+                                  4,
+                                  (index) {
+                                    return Container(
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      color:
+                                          Theme.of(context).colorScheme.white,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ))
+            .toList());
   }
 }
