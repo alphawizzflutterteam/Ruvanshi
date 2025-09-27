@@ -100,6 +100,13 @@ class _PlanListScreenState extends State<PlanListScreen> {
                   SizedBox(
                     height: 2,
                   ),
+                  Text("Duration: ${plan.billingInfo ?? ''}",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.fontColor,
+                          fontWeight: FontWeight.w600)),
+                  SizedBox(
+                    height: 2,
+                  ),
                   Text("Description: ${plan.description ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,

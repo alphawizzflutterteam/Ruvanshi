@@ -394,7 +394,7 @@ class _HomePageState extends State<HomePage>
                           itemBuilder: (BuildContext context, int index) {
                             return Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 6),
+                                  const EdgeInsets.symmetric(horizontal: 2),
                               child: pages[index],
                             );
                           },
@@ -1044,41 +1044,63 @@ class _HomePageState extends State<HomePage>
       double width = deviceWidth! * 0.5;
 
       return Card(
-        elevation: 0.0,
-        margin: EdgeInsetsDirectional.only(bottom: 2, end: 2),
-        //end: pad ? 5 : 0),
+        elevation: 2,
+        shadowColor: Colors.black.withOpacity(0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(6),
         child: InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              // Expanded(
+              //   child: Stack(
+              //     alignment: Alignment.topRight,
+              //     children: [
+              //       ClipRRect(
+              //         borderRadius: BorderRadius.only(
+              //             topLeft: Radius.circular(5),
+              //             topRight: Radius.circular(5)),
+              //         child: Hero(
+              //           transitionOnUserGestures: true,
+              //           tag:
+              //               "${sectionList[secPos].productList![index].id}$secPos$index",
+              //           child: FadeInImage(
+              //             fadeInDuration: Duration(milliseconds: 150),
+              //             image: CachedNetworkImageProvider(
+              //                 sectionList[secPos].productList![index].image!),
+              //             height: double.maxFinite,
+              //             width: double.maxFinite,
+              //             imageErrorBuilder: (context, error, stackTrace) =>
+              //                 erroWidget(double.maxFinite),
+              //             fit: BoxFit.contain,
+              //             placeholder: placeHolder(width),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Expanded(
-                child: Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(5),
-                          topRight: Radius.circular(5)),
-                      child: Hero(
-                        transitionOnUserGestures: true,
-                        tag:
-                            "${sectionList[secPos].productList![index].id}$secPos$index",
-                        child: FadeInImage(
-                          fadeInDuration: Duration(milliseconds: 150),
-                          image: CachedNetworkImageProvider(
-                              sectionList[secPos].productList![index].image!),
-                          height: double.maxFinite,
-                          width: double.maxFinite,
-                          imageErrorBuilder: (context, error, stackTrace) =>
-                              erroWidget(double.maxFinite),
-                          fit: BoxFit.contain,
-                          placeholder: placeHolder(width),
+                child: Hero(
+                  tag:
+                      "${sectionList[secPos].productList![index].id}$secPos$index",
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(10),
+                      ),
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          sectionList[secPos].productList![index].image!,
                         ),
+                        fit: BoxFit.contain,
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
               Padding(

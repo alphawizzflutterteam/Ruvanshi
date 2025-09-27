@@ -27,6 +27,7 @@ class SubscriptionListModel {
 class SubscriptionData {
   String? id;
   String? planName;
+  String? billingInfo;
   String? description;
   String? price;
   String? status;
@@ -40,6 +41,7 @@ class SubscriptionData {
   SubscriptionData(
       {this.id,
       this.planName,
+      this.billingInfo,
       this.description,
       this.price,
       this.status,
@@ -53,6 +55,7 @@ class SubscriptionData {
   SubscriptionData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     planName = json['plan_name'];
+    billingInfo = json['billing_info'];
     description = json['description'];
     price = json['price'];
     status = json['status'];
@@ -68,6 +71,7 @@ class SubscriptionData {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['plan_name'] = this.planName;
+    data['billing_info'] = this.billingInfo;
     data['description'] = this.description;
     data['price'] = this.price;
     data['status'] = this.status;

@@ -37,6 +37,8 @@ class Data {
   String? price;
   String? billingInfo;
   String? trialDays;
+  String? freeDelivery;
+  String? userOffer;
   String? status;
   String? createdAt;
 
@@ -47,6 +49,8 @@ class Data {
       this.price,
       this.billingInfo,
       this.trialDays,
+      this.freeDelivery,
+      this.userOffer,
       this.status,
       this.createdAt});
 
@@ -57,6 +61,8 @@ class Data {
     price = json['price'];
     billingInfo = json['billing_info'];
     trialDays = json['trial_days'];
+    freeDelivery = json['free_delivery'];
+    userOffer = json['user_offer'];
     status = json['status'];
     createdAt = json['created_at'];
   }
@@ -69,6 +75,8 @@ class Data {
     data['price'] = this.price;
     data['billing_info'] = this.billingInfo;
     data['trial_days'] = this.trialDays;
+    data['free_delivery'] = this.freeDelivery;
+    data['user_offer'] = this.userOffer;
     data['status'] = this.status;
     data['created_at'] = this.createdAt;
     return data;

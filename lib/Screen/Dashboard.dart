@@ -226,10 +226,17 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
       leadingWidth: 200,
       centerTitle: false,
       title: _selBottom == 0
-          ? Image.asset(
-              'assets/images/applogo.png',
-              height: 40,
-            )
+          ? (appLogo != null && appLogo!.isNotEmpty
+              ? Image.network(
+                  appLogo!,
+                  height: 40,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Image.asset('assets/images/applogo.png', height: 40),
+                )
+              : Image.asset(
+                  'assets/images/applogo.png',
+                  height: 40,
+                ))
           : Text(
               title ?? "",
               style: TextStyle(
@@ -237,6 +244,19 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 fontWeight: FontWeight.normal,
               ),
             ),
+
+      // title: _selBottom == 0
+      //     ? Image.asset(
+      //         'assets/images/applogo.png',
+      //         height: 40,
+      //       )
+      //     : Text(
+      //         title ?? "",
+      //         style: TextStyle(
+      //           color: secondaryColor,
+      //           fontWeight: FontWeight.normal,
+      //         ),
+      //       ),
       actions: [
         IconButton(
           icon: SvgPicture.asset(
@@ -267,11 +287,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
           },
         ),
         IconButton(
-          icon: SvgPicture.asset(
-            imagePath + "desel_fav.svg",
-            height: 22,
-            color: Colors.red,
-          ),
+          icon: SvgPicture.asset(imagePath + "desel_fav.svg",
+              height: 22, color: secondaryColor),
           onPressed: () {
             CUR_USERID != null
                 ? Navigator.push(
@@ -446,7 +463,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
 
   Color primaryColor = Colors.black;
   Color secondaryColor = Colors.white;
-
+  Color backgroundColor = Colors.white;
+  Color textColor = Colors.black;
   BoxDecoration dynamicGradient() {
     return BoxDecoration(
       gradient: LinearGradient(
@@ -457,10 +475,26 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  String? PRIMARY = '';
-  String? SECONDARY = '';
+  String? appLogo;
+
   String PRIMARY_COLOR = 'primary';
   String SECONDARY_COLOR = 'secondary';
+  String BACKGROUND_COLOR = 'background';
+  String TEXT_COLOR = 'text';
+  String APP_LOGO = 'app_logo';
+  String BASE_URL = "https://developmentalphawizz.com/ruvanshi/";
+
+  Color hexToColor(String hex) {
+    try {
+      if (hex.length == 6) {
+        return Color(int.parse("0xFF$hex"));
+      }
+      return Colors.black; // fallback
+    } catch (e) {
+      print("Hex parse error: $e");
+      return Colors.black;
+    }
+  }
 
   void getSetting() {
     CUR_USERID = context.read<SettingProvider>().userId;
@@ -470,25 +504,75 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     apiBaseHelper.postAPICall(getThemeApi, parameter).then((getdata) async {
       bool error = getdata["error"];
       if (!error) {
-        var colors = getdata["data"]["colors"];
-
+        var data = getdata["data"];
+        var colors = data["colors"];
         String? primaryHex = colors[PRIMARY_COLOR]?.toString();
         String? secondaryHex = colors[SECONDARY_COLOR]?.toString();
+        String? backgroundHex = colors[BACKGROUND_COLOR]?.toString();
+        String? textHex = colors[TEXT_COLOR]?.toString();
 
         if (primaryHex != null && primaryHex.isNotEmpty) {
-          primaryColor = Color(int.parse("0xFF$primaryHex"));
+          primaryColor = hexToColor(primaryHex);
         }
         if (secondaryHex != null && secondaryHex.isNotEmpty) {
-          secondaryColor = Color(int.parse("0xFF$secondaryHex"));
+          secondaryColor = hexToColor(secondaryHex);
         }
-        print("Primary: $primaryColor, Secondary: $secondaryColor");
-        // updateAppColors(primaryColor, secondaryColor);
+        if (backgroundHex != null && backgroundHex.isNotEmpty) {
+          backgroundColor = hexToColor(backgroundHex);
+        }
+        if (textHex != null && textHex.isNotEmpty) {
+          textColor = hexToColor(textHex);
+        }
+        String? logoPath = data[APP_LOGO]?.toString();
+        if (logoPath != null && logoPath.isNotEmpty) {
+          appLogo = BASE_URL + logoPath;
+        }
+        print("Primary: $primaryColor");
+        print("Secondary: $secondaryColor");
+        print("Background: $backgroundColor");
+        print("Text: $textColor");
+        print("App Logo: $appLogo");
+
         if (mounted) setState(() {});
       }
     }, onError: (error) {
       print("API Error: $error");
     });
   }
+
+  //
+  // String? PRIMARY = '';
+  // String? SECONDARY = '';
+  // String PRIMARY_COLOR = 'primary';
+  // String SECONDARY_COLOR = 'secondary';
+  //
+  // void getSetting() {
+  //   CUR_USERID = context.read<SettingProvider>().userId;
+  //   Map<String, dynamic> parameter = {};
+  //   if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+  //
+  //   apiBaseHelper.postAPICall(getThemeApi, parameter).then((getdata) async {
+  //     bool error = getdata["error"];
+  //     if (!error) {
+  //       var colors = getdata["data"]["colors"];
+  //
+  //       String? primaryHex = colors[PRIMARY_COLOR]?.toString();
+  //       String? secondaryHex = colors[SECONDARY_COLOR]?.toString();
+  //
+  //       if (primaryHex != null && primaryHex.isNotEmpty) {
+  //         primaryColor = Color(int.parse("0xFF$primaryHex"));
+  //       }
+  //       if (secondaryHex != null && secondaryHex.isNotEmpty) {
+  //         secondaryColor = Color(int.parse("0xFF$secondaryHex"));
+  //       }
+  //       print("Primary: $primaryColor, Secondary: $secondaryColor");
+  //       // updateAppColors(primaryColor, secondaryColor);
+  //       if (mounted) setState(() {});
+  //     }
+  //   }, onError: (error) {
+  //     print("API Error: $error");
+  //   });
+  // }
 
   @override
   void dispose() {

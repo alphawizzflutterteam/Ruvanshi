@@ -1,324 +1,3 @@
-// import 'dart:convert';
-// import 'dart:developer';
-// import 'package:carousel_slider/carousel_options.dart';
-// import 'package:carousel_slider/carousel_slider.dart';
-// import 'package:flutter_html/flutter_html.dart';
-// import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:flutter/material.dart';
-// import 'package:razorpay_flutter/razorpay_flutter.dart';
-//
-// import '../Helper/Session.dart';
-// import '../Model/SubscriptionModel.dart';
-//
-// class SubscriptionScreen extends StatefulWidget {
-//   const SubscriptionScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
-// }
-//
-// class _SubscriptionScreenState extends State<SubscriptionScreen> {
-//   Razorpay _razorpay = Razorpay();
-//   String? email;
-//   String? userId;
-//   String? phone;
-//   int? price;
-//   var amounts;
-//   var planT;
-//   var planI;
-//
-//   String planID = '';
-//   String planeAmount = '';
-//
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//     super.initState();
-//     // getUserDetails();
-//     Future.delayed(Duration(milliseconds: 200), () {
-//       return getPlans();
-//     });
-//     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-//     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-//     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
-//   }
-//
-//   @override
-//   void dispose() {
-//     // TODO: implement dispose
-//     super.dispose();
-//     _razorpay.clear();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final mediaQuery = MediaQuery.of(context);
-//     final height = mediaQuery.size.height;
-//     final width = mediaQuery.size.width;
-//     return Scaffold(
-//         appBar: getSimpleAppBar(
-//             getTranslated(context, "MYSUBSCRIPTIONS")!, context),
-//         body: Padding(
-//           padding: EdgeInsets.symmetric(
-//               horizontal: width * 0.040, vertical: height * 0.014),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               SizedBox(height: height * 0.025),
-//               plansModel == null
-//                   ? const Center(
-//                       child: CircularProgressIndicator(),
-//                     )
-//                   : plansModel!.data == null
-//                       ? const Center(child: Text("No Data Found"))
-//                       : SizedBox(
-//                           height: MediaQuery.of(context).size.height * 0.5,
-//                           width: MediaQuery.of(context).size.width * 0.8,
-//                           child: CarouselSlider(
-//                             options: CarouselOptions(
-//                               autoPlayInterval: const Duration(seconds: 4),
-//                               autoPlay: true,
-//                               aspectRatio: .5,
-//                               enlargeCenterPage: true,
-//                               // enlargeStrategy: CenterPageEnlargeStrategy.height,
-//                             ),
-//                             items: plansModel!.data!
-//                                 .map<Widget>((item) => Container(
-//                                       margin: const EdgeInsets.all(5.0),
-//                                       child: ClipRRect(
-//                                           borderRadius: const BorderRadius.all(
-//                                               Radius.circular(5.0)),
-//                                           child: Column(
-//                                             children: [
-//                                               Expanded(
-//                                                 child: Card(
-//                                                   elevation: 5,
-//                                                   shape: RoundedRectangleBorder(
-//                                                     borderRadius:
-//                                                         BorderRadius.circular(
-//                                                             20.0),
-//                                                   ),
-//                                                   child: Padding(
-//                                                     padding:
-//                                                         const EdgeInsets.all(
-//                                                             12.0),
-//                                                     child:
-//                                                         SingleChildScrollView(
-//                                                       child: Column(
-//                                                         crossAxisAlignment:
-//                                                             CrossAxisAlignment
-//                                                                 .start,
-//                                                         children: [
-//                                                           SizedBox(
-//                                                               height: height *
-//                                                                   0.0125),
-//                                                           item.price == 0
-//                                                               ? const SizedBox
-//                                                                   .shrink()
-//                                                               : const Align(
-//                                                                   alignment:
-//                                                                       Alignment
-//                                                                           .topRight,
-//                                                                   child: Center(
-//                                                                     child: Text(
-//                                                                       "Special Offer",
-//                                                                       style:
-//                                                                           TextStyle(
-//                                                                         color: Colors
-//                                                                             .red,
-//                                                                         fontWeight:
-//                                                                             FontWeight.bold,
-//                                                                       ),
-//                                                                     ),
-//                                                                   ),
-//                                                                 ),
-//                                                           const SizedBox(
-//                                                               height: 20),
-//                                                           Text(
-//                                                             item.name ?? "",
-//                                                             style:
-//                                                                 const TextStyle(
-//                                                               fontSize: 18,
-//                                                               fontWeight:
-//                                                                   FontWeight
-//                                                                       .bold,
-//                                                             ),
-//                                                           ),
-//                                                           const SizedBox(
-//                                                               height: 20),
-//                                                           Text(
-//                                                             "${item.price.toString()}",
-//                                                             style:
-//                                                                 const TextStyle(
-//                                                               fontWeight:
-//                                                                   FontWeight
-//                                                                       .bold,
-//                                                               fontSize: 30,
-//                                                               color:
-//                                                                   Colors.blue,
-//                                                             ),
-//                                                           ),
-//                                                           const SizedBox(
-//                                                               height: 20),
-//                                                           Text(
-//                                                             "${item.trialDays} Days",
-//                                                             style: const TextStyle(
-//                                                                 fontWeight:
-//                                                                     FontWeight
-//                                                                         .w600),
-//                                                           ),
-//                                                           const SizedBox(
-//                                                               height: 10),
-//                                                           Html(
-//                                                             data:
-//                                                                 item.description ??
-//                                                                     "",
-//                                                             style: {
-//                                                               "body": Style(
-//                                                                   fontSize:
-//                                                                       FontSize
-//                                                                           .small),
-//                                                             },
-//                                                           ),
-//                                                           const Divider(
-//                                                               color:
-//                                                                   Colors.blue),
-//                                                           const SizedBox(
-//                                                               height: 10),
-//                                                           const Row(
-//                                                             children: [
-//                                                               SizedBox(
-//                                                                   width: 5),
-//                                                               Icon(
-//                                                                   Icons
-//                                                                       .check_circle,
-//                                                                   color: Color(
-//                                                                       0xff0007a3),
-//                                                                   size: 20),
-//                                                               SizedBox(
-//                                                                   width: 6),
-//                                                               Expanded(
-//                                                                 child: Text(
-//                                                                   "Lifetime Service Support",
-//                                                                   style: TextStyle(
-//                                                                       color: Colors
-//                                                                           .black,
-//                                                                       fontSize:
-//                                                                           16),
-//                                                                 ),
-//                                                               ),
-//                                                             ],
-//                                                           ),
-//                                                           const SizedBox(
-//                                                               height: 10),
-//                                                           const Row(
-//                                                             children: [
-//                                                               SizedBox(
-//                                                                   width: 5),
-//                                                               Icon(
-//                                                                   Icons
-//                                                                       .check_circle,
-//                                                                   color: Color(
-//                                                                       0xff0007a3),
-//                                                                   size: 18),
-//                                                               SizedBox(
-//                                                                   width: 6),
-//                                                               Expanded(
-//                                                                 child: Text(
-//                                                                   "User Priority Support",
-//                                                                   style: TextStyle(
-//                                                                       color: Colors
-//                                                                           .black,
-//                                                                       fontSize:
-//                                                                           16),
-//                                                                 ),
-//                                                               ),
-//                                                             ],
-//                                                           ),
-//                                                           const SizedBox(
-//                                                               height: 10),
-//                                                           const Row(
-//                                                             children: [
-//                                                               SizedBox(
-//                                                                   width: 5),
-//                                                               Icon(
-//                                                                   Icons
-//                                                                       .check_circle,
-//                                                                   color: Color(
-//                                                                       0xff0007a3),
-//                                                                   size: 18),
-//                                                               SizedBox(
-//                                                                   width: 6),
-//                                                               Expanded(
-//                                                                 child: Text(
-//                                                                   "Basic Plan",
-//                                                                   style: TextStyle(
-//                                                                       color: Colors
-//                                                                           .black,
-//                                                                       fontSize:
-//                                                                           16),
-//                                                                 ),
-//                                                               ),
-//                                                             ],
-//                                                           ),
-//                                                           const SizedBox(
-//                                                               height: 20),
-//                                                         ],
-//                                                       ),
-//                                                     ),
-//                                                   ),
-//                                                 ),
-//                                               ),
-//                                               (item.price == 0 ||
-//                                                       item.price == "0")
-//                                                   ? Container()
-//                                                   : ElevatedButton(
-//                                                       style: ButtonStyle(
-//                                                           backgroundColor:
-//                                                               MaterialStateProperty
-//                                                                   .all(Colors
-//                                                                       .blue)),
-//                                                       onPressed: () async {
-//                                                         var userId =
-//                                                             // await MyToken
-//                                                             //     .getUserID();
-//                                                             planI = item.id
-//                                                                 .toString();
-//                                                         if (item.price == 0 ||
-//                                                             item.price == "0") {
-//                                                           Fluttertoast.showToast(
-//                                                               msg:
-//                                                                   "Plan amount is not valid");
-//                                                         } else {
-//                                                           planID = item.id
-//                                                               .toString();
-//                                                           planeAmount = item
-//                                                               .price
-//                                                               .toString();
-//                                                           checkOut(item.price);
-//                                                         }
-//                                                       },
-//                                                       child: Text(
-//                                                         "Buy Plan",
-//                                                         style: TextStyle(
-//                                                             color: Colors.white,
-//                                                             fontSize: 16,
-//                                                             fontWeight:
-//                                                                 FontWeight
-//                                                                     .bold),
-//                                                       ))
-//                                             ],
-//                                           )),
-//                                     ))
-//                                 .toList(),
-//                           ),
-//                         ),
-//             ],
-//           ),
-//         ));
-//   }
-
 import 'dart:convert';
 import 'dart:developer';
 import 'package:TGSawadesiMartUser/Helper/Color.dart';
@@ -443,15 +122,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: height * 0.01),
-              Text(
-                "Select the perfect plan for your needs",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: height * 0.05),
+              // Text(
+              //   "Select the perfect plan for your needs",
+              //   style: TextStyle(
+              //     fontSize: 16,
+              //     color: Colors.grey[600],
+              //   ),
+              // ),
+              // SizedBox(height: height * 0.03),
               plansModel == null
                   ? SizedBox(
                       height: height * 0.6,
@@ -546,14 +225,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
-                  if (item.trialDays != null)
-                    _buildInfoRow("Trial Days: ${item.trialDays}"),
+                  if (item.userOffer == "1")
+                    _buildInfoRow("Exclusive Deal for You"),
                   const SizedBox(height: 12),
-                  _buildInfoRow("Lifetime Service Support"),
+                  if (item.freeDelivery == "1")
+                    _buildInfoRow("Enjoy Free Doorstep Delivery"),
                   const SizedBox(height: 12),
-                  _buildInfoRow("User Priority Support"),
-                  const SizedBox(height: 12),
-                  _buildInfoRow("Basic Plan"),
+                  if (item.billingInfo != null)
+                    _buildInfoRow("Duration: ${item.billingInfo}"),
                   if (item.description != null &&
                       item.description.isNotEmpty) ...[
                     const SizedBox(height: 16),
@@ -568,7 +247,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         data: item.description ?? "",
                         style: {
                           "body": Style(
-                            fontSize: FontSize.small,
+                            fontSize: FontSize.large,
                             margin: Margins.zero,
                             padding: HtmlPaddings.zero,
                           ),
@@ -576,48 +255,44 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                     ),
                   ],
-
                   const Spacer(),
                   if (item.price != 0) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: Colors.red.withOpacity(0.3)),
-                      ),
-                      child: const Text(
-                        "Special Offer",
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 12, vertical: 6),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.red.withOpacity(0.1),
+                    //     borderRadius: BorderRadius.circular(15),
+                    //     border: Border.all(color: Colors.red.withOpacity(0.3)),
+                    //   ),
+                    //   child: const Text(
+                    //     "Special Offer",
+                    //     style: TextStyle(
+                    //       color: Colors.red,
+                    //       fontSize: 12,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
                   ],
-
-                  // Price
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     decoration: BoxDecoration(
-                      color: planColor,
+                      color: colors.whiteTemp,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       item.price == 0 ? "free" : "${item.price}",
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: planColor,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
                   if (item.price != 0 && item.price != "0")
                     SizedBox(
@@ -664,11 +339,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget _buildInfoRow(String text) {
     return Row(
       children: [
-        Icon(
-          Icons.check_circle_outline,
-          color: Colors.grey[600],
-          size: 18,
-        ),
+        // Icon(
+        //   Icons.check_circle_outline,
+        //   color: Colors.grey[600],
+        //   size: 18,
+        // ),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -689,12 +364,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     var headers = {
       'Cookie': 'ci_session=f1791de67399698ea2182039c6d53618b1741266'
     };
-
     var request = http.MultipartRequest(
       'POST',
       Uri.parse('${baseUrl}get_subscriptions'),
     );
-
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();

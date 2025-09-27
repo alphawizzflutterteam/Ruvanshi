@@ -4071,7 +4071,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                     _specification(),
                     _extraDetail(),
                     Text(
-                      "   HSN Code : ${widget.model!.hsn_code ?? ''}",
+                      "    Product Id : PRD${widget.model!.id ?? ''}",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -4173,30 +4173,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    // child: TextButton.icon(
-                    //   style: TextButton.styleFrom(
-                    //     backgroundColor: Theme.of(context).colorScheme.btnColor,
-                    //   ),
-                    //   onPressed: () {
-                    //     String qty =
-                    //         ((int.parse(qtyController.text)) + 0).toString();
-                    //     addToCart(qty, true);
-                    //   },
-                    //   icon: Icon(
-                    //     Icons.shopping_bag,
-                    //     color: Theme.of(context).colorScheme.white,
-                    //   ),
-                    //   label: Padding(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //     child: Text(
-                    //       getTranslated(context, 'BUYNOW')!,
-                    //       style: TextStyle(
-                    //         color: Theme.of(context).colorScheme.white,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ),
                 ],
               ),
