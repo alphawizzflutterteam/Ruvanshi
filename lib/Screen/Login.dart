@@ -227,6 +227,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
         "fcm_id": fcmToken,
       };
     }
+    print('loginjfjlbls:_____${data}______');
     try {
       Response response = await post(
         getUserLoginApi,

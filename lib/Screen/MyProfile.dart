@@ -15,6 +15,7 @@ import 'package:TGSawadesiMartUser/Screen/ReferEarn.dart';
 import 'package:TGSawadesiMartUser/Screen/SendOtp.dart';
 import 'package:TGSawadesiMartUser/Screen/Setting.dart';
 import 'package:TGSawadesiMartUser/Screen/Login.dart';
+import 'package:TGSawadesiMartUser/Screen/subscription_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,6 +39,7 @@ import 'Faqs.dart';
 import 'Manage_Address.dart';
 import 'MyOrder.dart';
 import 'My_Wallet.dart';
+import 'Planlist.dart';
 import 'Privacy_Policy.dart';
 
 class MyProfile extends StatefulWidget {
@@ -575,6 +577,15 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
             ? Container()
             : _getDrawerItem(getTranslated(context, 'MYWALLET')!,
                 'assets/images/pro_wh.svg'),
+        CUR_USERID == "" || CUR_USERID == null
+            ? Container()
+            : _getDrawerItem(getTranslated(context, 'MYSUBSCRIPTIONS')!,
+                'assets/images/pro_wh.svg'),
+        CUR_USERID == "" || CUR_USERID == null
+            ? Container()
+            : _getDrawerItem(getTranslated(context, 'MYSUBSCRIPTIONSLIST')!,
+                'assets/images/pro_wh.svg'),
+
         // CUR_USERID == "" || CUR_USERID == null ? Container() : _getDivider(),
         // CUR_USERID == "" || CUR_USERID == null
         //     ? Container()
@@ -687,6 +698,18 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                 context,
                 MaterialPageRoute(
                   builder: (context) => MyWallet(),
+                ));
+          } else if (title == getTranslated(context, 'MYSUBSCRIPTIONS')) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubscriptionScreen(),
+                ));
+          } else if (title == getTranslated(context, 'MYSUBSCRIPTIONSLIST')) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlanListScreen(),
                 ));
           } else if (title == getTranslated(context, 'SETTING')) {
             CUR_USERID == null

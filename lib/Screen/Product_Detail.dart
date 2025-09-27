@@ -23,6 +23,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tuple/tuple.dart';
@@ -37,9 +38,14 @@ import '../Helper/String.dart';
 import '../Helper/vimeoplayer.dart';
 import '../Model/Section_Model.dart';
 import '../Model/User.dart';
+import '../Provider/SettingProvider.dart';
+import 'Add_Address.dart';
 import 'Favorite.dart';
 import 'HomePage.dart';
 import 'Login.dart';
+import 'Manage_Address.dart';
+import 'Order_Success.dart';
+import 'Payment.dart';
 import 'Product_Preview.dart';
 import 'Review_Gallary.dart';
 import 'Review_Preview.dart';
@@ -69,6 +75,8 @@ int offset = 0;
 int total = 0;
 
 class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
+  final GlobalKey<ScaffoldMessengerState> _checkscaffoldKey =
+      new GlobalKey<ScaffoldMessengerState>();
   int _curSlider = 0;
   final _pageController = PageController();
   VideoPlayerController? _videoController;
@@ -94,6 +102,24 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   late AnimationController _progressAnimcontroller;
   AnimationController? buttonController;
   Animation? buttonSqueezeanimation;
+  StateSetter? checkoutState;
+  String? selAddress;
+  double totalPrice = 0, oriPrice = 0, delCharge = 0, taxAmount = 0, taxPer = 0;
+  double cgstAmount = 0.0, sgstAmount = 0.0;
+  String? totalamount;
+  List<Promo> promoList = [];
+  bool isPromoValid = false, isUseWallet = false;
+  double promoAmt = 0, usedBal = 0;
+  // buy now
+
+  Razorpay? _razorpay;
+  bool _placeOrder = true;
+  List<SectionModel> buyNowCartList = [];
+  int buyNowSelectedIndex = -1;
+  bool deliverable = false;
+  List<TextEditingController> _controller = [];
+  String? msg;
+  TextEditingController noteC = new TextEditingController();
 
   var isDarkTheme;
   late ShortDynamicLink shortenedLink;
@@ -248,6 +274,62 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     );
   }
 
+  SectionModel createBuyNowCartItem() {
+    SectionModel buyNowItem = SectionModel(
+      id: widget.model!.id,
+      varientId: widget.model!.prVarientList![widget.model!.selVarient!].id,
+      qty: qtyController.text.isEmpty ? "1" : qtyController.text,
+      productList: [widget.model!],
+      perItemPrice:
+          widget.model!.prVarientList![widget.model!.selVarient!].disPrice !=
+                  "0"
+              ? widget.model!.prVarientList![widget.model!.selVarient!].disPrice
+              : widget.model!.prVarientList![widget.model!.selVarient!].price,
+    );
+    double price = double.parse(buyNowItem.perItemPrice!);
+    int quantity = int.parse(buyNowItem.qty!);
+    buyNowItem.perItemTotal = (price * quantity).toString();
+
+    return buyNowItem;
+  }
+
+  void handleBuyNow() async {
+    if (widget.model!.availability == "0") {
+      setSnackbar('This product is out of stock!', context);
+      return;
+    }
+    if (CUR_USERID == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _isProgress = true;
+      });
+    }
+
+    try {
+      SectionModel buyNowItem = createBuyNowCartItem();
+      buyNowSelectedIndex = 0;
+      buyNowCartList = [buyNowItem];
+      await _getBuyCart([buyNowItem], 0);
+      buycheckout(buyNowCartList);
+    } catch (e) {
+      print('Buy Now Error: $e');
+      setSnackbar('Something went wrong. Please try again.', context);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProgress = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     deviceHeight = MediaQuery.of(context).size.height;
@@ -274,6 +356,1648 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
       result.add(handler(i, list[i]));
     }
     return result;
+  }
+
+  var dCharge;
+  String? overallAmount;
+  Future<void> _getBuyCart(List<SectionModel> cartList, int index) async {
+    _isNetworkAvail = await isNetworkAvailable();
+
+    if (_isNetworkAvail) {
+      try {
+        var parameter = {
+          USER_ID: CUR_USERID.toString(),
+          ADD_ID: selAddress.toString(),
+          PRODUCT_VARIENT_IDs: cartList[index].varientId.toString(),
+          'buy_now': "1",
+        };
+
+        print('buycart request: $parameter');
+
+        Response response = await post(
+          getCartApi,
+          body: parameter,
+          headers: headers,
+        ).timeout(Duration(seconds: timeOut));
+        var getdata = json.decode(response.body);
+        bool error = getdata["error"];
+        String? msg = getdata["message"];
+
+        if (!error) {
+          var data = getdata["data"];
+          totalamount = getdata['overall_amount'];
+          oriPrice = double.parse(getdata[SUB_TOTAL].toString());
+          dCharge = double.parse(
+              getdata['delivery_charge'].toString().replaceAll(",", ""));
+          taxAmount = double.parse(
+              getdata['tax_amount'].toString().replaceAll(",", ""));
+          taxPer = double.parse(getdata[TAX_PER].toString());
+
+          cgstAmount = getdata['cgst_amount'] != null
+              ? double.parse(
+                  getdata['cgst_amount'].toString().replaceAll(",", ""))
+              : 0.0;
+          sgstAmount = getdata['sgst_amount'] != null
+              ? double.parse(
+                  getdata['sgst_amount'].toString().replaceAll(",", ""))
+              : 0.0;
+
+          totalPrice = dCharge + oriPrice;
+
+          List<SectionModel> responseCartList = (data as List)
+              .map((data) => SectionModel.fromCart(data))
+              .toList();
+
+          buyNowCartList = responseCartList;
+
+          if (getdata.containsKey(PROMO_CODES)) {
+            var promo = getdata[PROMO_CODES];
+            promoList = (promo as List).map((e) => Promo.fromJson(e)).toList();
+          }
+        } else {
+          if (msg != 'Cart Is Empty !') {
+            setSnackbar(msg!, context);
+          }
+        }
+      } on TimeoutException catch (_) {
+        setSnackbar(getTranslated(context, 'somethingMSg')!, context);
+      } catch (e) {
+        print(" Exception in _getBuyCart: $e");
+        setSnackbar('Something went wrong. Please try again.', context);
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          _isNetworkAvail = false;
+        });
+      }
+    }
+  }
+
+  cartEmpty() {
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          noCartImage(context),
+          noCartText(context),
+          noCartDec(context),
+          shopNow()
+        ]),
+      ),
+    );
+  }
+
+  noCartImage(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/images/empty_cart.svg',
+      fit: BoxFit.contain,
+      color: colors.primary,
+    );
+  }
+
+  noCartText(BuildContext context) {
+    return Container(
+        child: Text(getTranslated(context, 'NO_CART')!,
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: colors.primary, fontWeight: FontWeight.normal)));
+  }
+
+  shopNow() {
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(top: 28.0),
+      child: CupertinoButton(
+        child: Container(
+            width: deviceWidth! * 0.7,
+            height: 45,
+            alignment: FractionalOffset.center,
+            decoration: new BoxDecoration(
+              color: colors.primary,
+              // gradient: LinearGradient(
+              //     begin: Alignment.topLeft,
+              //     end: Alignment.bottomRight,
+              //     colors: [colors.grad1Color, colors.grad2Color],
+              //     stops: [0, 1]),
+              borderRadius: new BorderRadius.all(const Radius.circular(50.0)),
+            ),
+            child: Text(getTranslated(context, 'SHOP_NOW')!,
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(color: Colors.white70))),
+        onPressed: () {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              '/home', (Route<dynamic> route) => false);
+        },
+      ),
+    );
+  }
+
+  noCartDec(BuildContext context) {
+    return Container(
+      padding: EdgeInsetsDirectional.only(top: 30.0, start: 30.0, end: 30.0),
+      child: Text(getTranslated(context, 'CART_DESC')!,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                color: Theme.of(context).colorScheme.lightBlack2,
+                fontWeight: FontWeight.normal,
+              )),
+    );
+  }
+
+  double finalTotal = 0.0;
+  buycheckout(List<SectionModel> cartList) {
+    _razorpay = Razorpay();
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
+
+    return showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10), topRight: Radius.circular(10))),
+        builder: (builder) {
+          return SafeArea(
+            child: FractionallySizedBox(
+              heightFactor: 1,
+              child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                checkoutState = setState;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                  ),
+                  child: Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    key: _checkscaffoldKey,
+                    body: _isNetworkAvail
+                        ? buyNowCartList.length == 0
+                            ? cartEmpty()
+                            : _isLoading
+                                ? shimmer(context)
+                                : Column(
+                                    children: [
+                                      Expanded(
+                                        child: Stack(
+                                          children: <Widget>[
+                                            SingleChildScrollView(
+                                              child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Stack(
+                                                        children: <Widget>[
+                                                          SingleChildScrollView(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(
+                                                                      10.0),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  SizedBox(
+                                                                      height:
+                                                                          20),
+                                                                  Image.asset(
+                                                                    "assets/images/ordersummarymain.png",
+                                                                    height: 150,
+                                                                    fit: BoxFit
+                                                                        .contain,
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          10),
+                                                                  address(),
+                                                                  buycartItems(
+                                                                      buyNowCartList),
+                                                                  buyorderSummary(
+                                                                      buyNowCartList),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          80),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Selector<CartProvider,
+                                                              bool>(
+                                                            builder: (context,
+                                                                data, child) {
+                                                              return showCircularProgress(
+                                                                  data,
+                                                                  colors
+                                                                      .primary);
+                                                            },
+                                                            selector: (_,
+                                                                    provider) =>
+                                                                provider
+                                                                    .isProgress,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .white,
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: Colors.grey
+                                                                  .withOpacity(
+                                                                      0.3),
+                                                              spreadRadius: 1,
+                                                              blurRadius: 5,
+                                                              offset:
+                                                                  Offset(0, -2),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                          left: 15.0,
+                                                          right: 15.0,
+                                                          top: 12.0,
+                                                          bottom: MediaQuery.of(
+                                                                      context)
+                                                                  .viewPadding
+                                                                  .bottom +
+                                                              12.0,
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Text(
+                                                                    () {
+                                                                      double
+                                                                          productTotal =
+                                                                          0.0;
+                                                                      double
+                                                                          productTax =
+                                                                          0.0;
+                                                                      double
+                                                                          deliveryCharge =
+                                                                          dCharge?.toDouble() ??
+                                                                              0.0;
+                                                                      double promoDiscount = (isPromoValid ==
+                                                                              true)
+                                                                          ? promoAmt
+                                                                          : 0.0;
+                                                                      double walletDeduction = (isUseWallet ==
+                                                                              true)
+                                                                          ? usedBal
+                                                                          : 0.0;
+
+                                                                      if (buyNowCartList
+                                                                          .isNotEmpty) {
+                                                                        SectionModel
+                                                                            selectedProduct =
+                                                                            buyNowCartList[0];
+                                                                        int selectedPos =
+                                                                            0;
+                                                                        for (int i =
+                                                                                0;
+                                                                            i < selectedProduct.productList![0].prVarientList!.length;
+                                                                            i++) {
+                                                                          if (selectedProduct.varientId ==
+                                                                              selectedProduct.productList![0].prVarientList![i].id) {
+                                                                            selectedPos =
+                                                                                i;
+                                                                            break;
+                                                                          }
+                                                                        }
+                                                                        double price = double.parse(selectedProduct
+                                                                            .productList![0]
+                                                                            .prVarientList![selectedPos]
+                                                                            .disPrice!);
+                                                                        if (price ==
+                                                                            0) {
+                                                                          price = double.parse(selectedProduct
+                                                                              .productList![0]
+                                                                              .prVarientList![selectedPos]
+                                                                              .price!);
+                                                                        }
+                                                                        int quantity =
+                                                                            int.parse(selectedProduct.qty!);
+                                                                        productTotal =
+                                                                            price *
+                                                                                quantity;
+                                                                        double
+                                                                            taxRate =
+                                                                            double.parse(selectedProduct.productList![0].tax ??
+                                                                                '0');
+                                                                        productTax =
+                                                                            (productTotal * taxRate) /
+                                                                                100;
+                                                                      }
+                                                                      finalTotal = productTotal +
+                                                                          productTax +
+                                                                          deliveryCharge -
+                                                                          promoDiscount -
+                                                                          walletDeduction;
+                                                                      return CUR_CURRENCY! +
+                                                                          " " +
+                                                                          finalTotal
+                                                                              .toStringAsFixed(2);
+                                                                    }(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .colorScheme
+                                                                          .fontColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          16,
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          2.0),
+                                                                  Text(
+                                                                    buyNowCartList
+                                                                            .length
+                                                                            .toString() +
+                                                                        " Item",
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .colorScheme
+                                                                          .fontColor
+                                                                          .withOpacity(
+                                                                              0.7),
+                                                                      fontSize:
+                                                                          13.0,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                width: 12.0),
+                                                            Container(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.35,
+                                                              height: 42.0,
+                                                              child:
+                                                                  ElevatedButton(
+                                                                onPressed:
+                                                                    _placeOrder
+                                                                        ? () {
+                                                                            getSetting();
+                                                                            msg =
+                                                                                getTranslated(context, 'Seller');
+
+                                                                            if (selAddress == null ||
+                                                                                selAddress!.isEmpty) {
+                                                                              msg = getTranslated(context, 'addressWarning');
+                                                                              Navigator.pushReplacement(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (BuildContext context) => ManageAddress(home: false),
+                                                                                ),
+                                                                              );
+                                                                              checkoutState!(() {
+                                                                                _placeOrder = true;
+                                                                              });
+                                                                            } else if (double.parse(MIN_ALLOW_CART_AMT!) > oriPrice) {
+                                                                              setSnackbar(
+                                                                                "${getTranslated(context, 'MIN_CART_AMT')!} \u{20B9}${MIN_ALLOW_CART_AMT}",
+                                                                                _scaffoldKey as BuildContext,
+                                                                              );
+                                                                            } else if (payMethod == null || payMethod!.isEmpty) {
+                                                                              msg = getTranslated(context, 'payWarning');
+                                                                              Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (BuildContext context) => Payment(updateCheckout, msg),
+                                                                                ),
+                                                                              );
+                                                                              checkoutState!(() {
+                                                                                _placeOrder = true;
+                                                                              });
+                                                                            } else {
+                                                                              checkoutState!(() {
+                                                                                _placeOrder = false;
+                                                                              });
+                                                                              doPayment();
+                                                                            }
+                                                                          }
+                                                                        : null,
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  backgroundColor:
+                                                                      colors
+                                                                          .primary,
+                                                                  foregroundColor:
+                                                                      colors
+                                                                          .whiteTemp,
+                                                                  elevation: 2,
+                                                                  shape:
+                                                                      RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            5.0),
+                                                                  ),
+                                                                  padding: EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              8.0),
+                                                                ),
+                                                                child: Text(
+                                                                  'Place Order',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        13.0,
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    ],
+                                                  )),
+                                            ),
+                                            showCircularProgress(
+                                                _isProgress, colors.primary),
+                                          ],
+                                        ),
+                                      ),
+                                      // Bottom checkout button
+                                      // Container(
+                                      //   decoration: BoxDecoration(
+                                      //     color: Theme.of(context)
+                                      //         .colorScheme
+                                      //         .white,
+                                      //     boxShadow: [
+                                      //       BoxShadow(
+                                      //         color:
+                                      //             Colors.grey.withOpacity(0.3),
+                                      //         spreadRadius: 1,
+                                      //         blurRadius: 5,
+                                      //         offset: Offset(0, -2),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      //   padding: EdgeInsets.only(
+                                      //     left: 15.0,
+                                      //     right: 15.0,
+                                      //     top: 12.0,
+                                      //     bottom: MediaQuery.of(context)
+                                      //             .viewPadding
+                                      //             .bottom +
+                                      //         12.0,
+                                      //   ),
+                                      //   child: Row(
+                                      //     children: [
+                                      //       Expanded(
+                                      //         child: Column(
+                                      //           crossAxisAlignment:
+                                      //               CrossAxisAlignment.start,
+                                      //           mainAxisSize: MainAxisSize.min,
+                                      //           children: [
+                                      //             Text(
+                                      //               CUR_CURRENCY! +
+                                      //                   " " +
+                                      //                   finalTotal
+                                      //                       .toStringAsFixed(2),
+                                      //               style: TextStyle(
+                                      //                 color: Theme.of(context)
+                                      //                     .colorScheme
+                                      //                     .fontColor,
+                                      //                 fontWeight:
+                                      //                     FontWeight.bold,
+                                      //                 fontSize: 16,
+                                      //               ),
+                                      //             ),
+                                      //             Text(
+                                      //               "1 Item",
+                                      //               style: TextStyle(
+                                      //                 color: Theme.of(context)
+                                      //                     .colorScheme
+                                      //                     .fontColor
+                                      //                     .withOpacity(0.7),
+                                      //                 fontSize: 13.0,
+                                      //               ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //       ),
+                                      //       SizedBox(width: 12.0),
+                                      //       Container(
+                                      //         width: MediaQuery.of(context)
+                                      //                 .size
+                                      //                 .width *
+                                      //             0.35,
+                                      //         height: 42.0,
+                                      //         child: ElevatedButton(
+                                      //           onPressed: () {
+                                      //             // Place order logic
+                                      //             Navigator.pop(context);
+                                      //             setSnackbar(
+                                      //                 'Order placed successfully!',
+                                      //                 context);
+                                      //           },
+                                      //           style: ElevatedButton.styleFrom(
+                                      //             backgroundColor:
+                                      //                 colors.primary,
+                                      //             foregroundColor:
+                                      //                 colors.whiteTemp,
+                                      //           ),
+                                      //           child: Text('Place Order'),
+                                      //         ),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ),
+                                    ],
+                                  )
+                        : noInternet(context),
+                  ),
+                );
+              }),
+            ),
+          );
+        }).then((value) {
+      // Clear buy now data when modal closes
+      buyNowCartList.clear();
+      buyNowSelectedIndex = -1;
+    });
+  }
+
+  updateCheckout() {
+    if (mounted) checkoutState!(() {});
+  }
+
+  doPayment() {
+    if (payMethod == getTranslated(context, 'PAYPAL_LBL')) {
+      placeOrder('');
+    } else if (payMethod == getTranslated(context, 'RAZORPAY_LBL'))
+      razorpayPayment();
+    // else if (payMethod == getTranslated(context, 'FLUTTERWAVE_LBL'))
+    //   flutterwavePayment();
+    // else if (payMethod == getTranslated(context, 'STRIPE_LBL'))
+    //   razorpayPayment();
+    // else if (payMethod == getTranslated(context, 'BANKTRAN'))
+    //   bankTransfer();
+    else
+      placeOrder('');
+  }
+
+  razorpayPayment() async {
+    SettingProvider settingsProvider =
+        Provider.of<SettingProvider>(this.context, listen: false);
+    print("Payment Email ${settingsProvider.email}");
+    print("Payment Email ${settingsProvider.mobile}");
+    print("Payment Email ${settingsProvider.mobile}");
+    String? contact = settingsProvider.mobile;
+    // String? email = settingsProvider.email;
+
+    String amt =
+        ((double.parse(totalamount!.toString().replaceAll(",", ""))) * 100)
+            .toStringAsFixed(2);
+
+    if (contact != '') {
+      context.read<CartProvider>().setProgress(true);
+
+      checkoutState!(() {});
+      var options = {
+        // 'key': razorpayId, //rzp_test_1DP5mmOlF5G5ag
+        'key': 'rzp_test_1DP5mmOlF5G5ag',
+        'amount': "$amt",
+        'name': 'Place Order',
+        'prefill': {CONTACT: contact},
+      };
+
+      try {
+        _razorpay!.open(options);
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    } else {
+      // if (email == '')
+      //   setSnackbar(getTranslated(context, 'emailWarning')!, _checkscaffoldKey);
+      if (contact == '') ;
+      // setSnackbar(getTranslated(context, 'phoneWarning')!, _checkscaffoldKey);
+    }
+  }
+
+  Future<void> placeOrder(String? tranId) async {
+    _isNetworkAvail = await isNetworkAvailable();
+    if (_isNetworkAvail) {
+      context.read<CartProvider>().setProgress(true);
+      SettingProvider settingsProvider =
+          Provider.of<SettingProvider>(this.context, listen: false);
+
+      String? mob = settingsProvider.mobile;
+      String? varientId, quantity;
+      List<SectionModel> cartList;
+      bool isBuyNow = buyNowCartList.isNotEmpty && buyNowSelectedIndex != -1;
+
+      if (isBuyNow) {
+        cartList = buyNowCartList;
+        print("BUY NOW ORDER - Products: ${cartList.length}");
+      } else {
+        // Regular Cart - use all cart products
+        cartList = context.read<CartProvider>().cartList;
+        print("REGULAR CART ORDER - Products: ${cartList.length}");
+      }
+      for (SectionModel sec in cartList) {
+        varientId = varientId != null
+            ? varientId + "," + sec.varientId!
+            : sec.varientId;
+        quantity = quantity != null ? quantity + "," + sec.qty! : sec.qty;
+      }
+
+      String? payVia;
+      if (payMethod == getTranslated(context, 'COD_LBL'))
+        payVia = "COD";
+      else if (payMethod == getTranslated(context, 'PAYPAL_LBL'))
+        payVia = "PayPal";
+      else if (payMethod == getTranslated(context, 'PAYUMONEY_LBL'))
+        payVia = "PayUMoney";
+      else if (payMethod == getTranslated(context, 'RAZORPAY_LBL') ||
+          "Phonepe" == getTranslated(context, 'RAZORPAY_LBL'))
+        payVia = "Phonepe";
+      else if (payMethod == getTranslated(context, 'PAYSTACK_LBL'))
+        payVia = "Paystack";
+      else if (payMethod == getTranslated(context, 'FLUTTERWAVE_LBL'))
+        payVia = "Flutterwave";
+      else if (payMethod == getTranslated(context, 'STRIPE_LBL'))
+        payVia = "Stripe";
+      else if (payMethod == getTranslated(context, 'PAYTM_LBL'))
+        payVia = "Paytm";
+      else if (payMethod == "Wallet")
+        payVia = "Wallet";
+      else if (payMethod == getTranslated(context, 'BANKTRAN'))
+        payVia = "bank_transfer";
+
+      try {
+        double calculatedFinalTotal;
+        if (isBuyNow) {
+          calculatedFinalTotal = finalTotal;
+        } else {
+          calculatedFinalTotal = totalPrice;
+        }
+
+        var parameter = {
+          USER_ID: CUR_USERID,
+          MOBILE: mob,
+          PRODUCT_VARIENT_ID: varientId,
+          QUANTITY: quantity,
+          TOTAL: oriPrice.toString(),
+          FINAL_TOTAL: calculatedFinalTotal.toString(),
+          DEL_CHARGE: dCharge.toString(),
+          TAX_PER: taxAmount.toString(),
+          PAYMENT_METHOD: payVia,
+          ADD_ID: selAddress,
+          ISWALLETBALUSED: isUseWallet! ? "1" : "0",
+          WALLET_BAL_USED: usedBal.toString(),
+          ORDER_NOTE: noteC.text
+        };
+
+        if (isTimeSlot!) {
+          parameter[DELIVERY_TIME] = selTime ?? 'Anytime';
+          parameter[DELIVERY_DATE] = selDate ?? '';
+        }
+        if (isPromoValid!) {
+          parameter[PROMOCODE] = promocode;
+          parameter[PROMO_DIS] = promoAmt.toString();
+        }
+
+        if (payMethod == getTranslated(context, 'PAYPAL_LBL')) {
+          parameter[ACTIVE_STATUS] = WAITING;
+        } else if (payMethod == getTranslated(context, 'STRIPE_LBL')) {
+          if (tranId == "succeeded")
+            parameter[ACTIVE_STATUS] = PLACED;
+          else
+            parameter[ACTIVE_STATUS] = WAITING;
+        } else if (payMethod == getTranslated(context, 'BANKTRAN')) {
+          parameter[ACTIVE_STATUS] = WAITING;
+        }
+
+        print("ORDER TYPE: ${isBuyNow ? 'BUY NOW' : 'REGULAR CART'}");
+        print("PLACE ORDER PARAMETER: ${parameter}");
+        print("Product Variant IDs: $varientId");
+        print("Quantities: $quantity");
+
+        Response response =
+            await post(placeOrderApi, body: parameter, headers: headers)
+                .timeout(Duration(seconds: timeOut));
+
+        _placeOrder = true;
+        if (response.statusCode == 200) {
+          var getdata = json.decode(response.body);
+          bool error = getdata["error"];
+          String? msg = getdata["message"];
+          if (!error) {
+            String orderId = getdata["order_id"].toString();
+            if (payMethod == getTranslated(context, 'RAZORPAY_LBL')) {
+              addTransaction(tranId, orderId, SUCCESS, msg, true);
+              // } else if (payMethod == getTranslated(context, 'PAYPAL_LBL')) {
+              //   paypalPayment(orderId);
+              // } else if (payMethod == getTranslated(context, 'STRIPE_LBL')) {
+              //   addTransaction(stripePayId, orderId,
+              //       tranId == "succeeded" ? PLACED : WAITING, msg, true);
+              // } else if (payMethod == getTranslated(context, 'PAYSTACK_LBL')) {
+              //   addTransaction(tranId, orderId, SUCCESS, msg, true);
+              // } else if (payMethod == getTranslated(context, 'PAYTM_LBL')) {
+              //   addTransaction(tranId, orderId, SUCCESS, msg, true);
+            } else {
+              context.read<UserProvider>().setCartCount("0");
+              clearAll();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => OrderSuccess()),
+                  ModalRoute.withName('/home'));
+            }
+          } else {
+            // setSnackbar(msg!, _checkscaffoldKey);
+            context.read<CartProvider>().setProgress(false);
+          }
+        }
+      } on TimeoutException catch (_) {
+        if (mounted)
+          checkoutState!(() {
+            _placeOrder = true;
+          });
+        context.read<CartProvider>().setProgress(false);
+      }
+    } else {
+      if (mounted)
+        checkoutState!(() {
+          _isNetworkAvail = false;
+        });
+    }
+  }
+
+  Future<void> addTransaction(String? tranId, String orderID, String? status,
+      String? msg, bool redirect) async {
+    try {
+      var parameter = {
+        USER_ID: CUR_USERID,
+        ORDER_ID: orderID,
+        TYPE: payMethod,
+        TXNID: tranId,
+        AMOUNT: totalPrice.toString(),
+        STATUS: status,
+        MSG: msg
+      };
+      Response response =
+          await post(addTransactionApi, body: parameter, headers: headers)
+              .timeout(Duration(seconds: timeOut));
+
+      var getdata = json.decode(response.body);
+
+      bool error = getdata["error"];
+      String? msg1 = getdata["message"];
+      if (!error) {
+        if (redirect) {
+          // CUR_CART_COUNT = "0";
+
+          context.read<UserProvider>().setCartCount("0");
+          clearAll();
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => OrderSuccess()),
+              ModalRoute.withName('/home'));
+        }
+      } else {
+        // setSnackbar(msg1!, _checkscaffoldKey);
+      }
+    } on TimeoutException catch (_) {
+      // setSnackbar(getTranslated(context, 'somethingMSg')!, _checkscaffoldKey);
+    }
+  }
+
+  clearAll() {
+    totalPrice = 0;
+    oriPrice = 0;
+    cgstAmount = 0.0;
+    sgstAmount = 0.0;
+    taxPer = 0;
+    delCharge = 0;
+    addressList.clear();
+    // cartList.clear();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      context.read<CartProvider>().setCartlist([]);
+      context.read<CartProvider>().setProgress(false);
+    });
+
+    promoAmt = 0;
+    remWalBal = 0;
+    usedBal = 0;
+    payMethod = '';
+    isPromoValid = false;
+    isUseWallet = false;
+    isPayLayShow = true;
+    selectedMethod = null;
+  }
+
+  void getSetting() {
+    CUR_USERID = context.read<SettingProvider>().userId;
+    Map parameter = Map();
+    if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+    apiBaseHelper.postAPICall(getSettingApi, parameter).then((getdata) async {
+      bool error = getdata["error"];
+      String? msg = getdata["message"];
+
+      print("Get Setting Api${getSettingApi.toString()}");
+      print(parameter.toString());
+
+      if (!error) {
+        var data = getdata["data"]["system_settings"][0];
+        print(
+            "====in api========min cart amount =========${data[MIN_CART_AMT]}");
+        MIN_ALLOW_CART_AMT = data[MIN_CART_AMT];
+      } else {}
+    }, onError: (error) {});
+  }
+
+  Widget buyorderSummary(List<SectionModel> cartList) {
+    // Calculate values specifically for the selected product
+    double singleProductTotal = 0.0;
+    double singleProductTax = 0.0;
+    double singleProductCGST = 0.0;
+    double singleProductSGST = 0.0;
+    double deliveryCharge = dCharge?.toDouble() ?? 0.0;
+    double promoDiscount = (isPromoValid == true) ? promoAmt : 0.0;
+    double walletDeduction = (isUseWallet == true) ? usedBal : 0.0;
+
+    if (cartList.isNotEmpty) {
+      // Get the selected product details
+      SectionModel selectedProduct = cartList[0]; // Single product in buy now
+      int selectedPos = 0;
+
+      // Find correct variant position
+      for (int i = 0;
+          i < selectedProduct.productList![0].prVarientList!.length;
+          i++) {
+        if (selectedProduct.varientId ==
+            selectedProduct.productList![0].prVarientList![i].id) {
+          selectedPos = i;
+          break;
+        }
+      }
+
+      // Calculate product price
+      double price = double.parse(selectedProduct
+          .productList![0].prVarientList![selectedPos].disPrice!);
+      if (price == 0) {
+        price = double.parse(
+            selectedProduct.productList![0].prVarientList![selectedPos].price!);
+      }
+
+      // Calculate totals for single product
+      int quantity = int.parse(selectedProduct.qty!);
+      singleProductTotal = price * quantity;
+
+      // Calculate tax for single product
+      double taxRate = double.parse(selectedProduct.productList![0].tax ?? '0');
+      singleProductTax = (singleProductTotal * taxRate) / 100;
+
+      // Calculate CGST and SGST (usually half of total tax each)
+      singleProductCGST = singleProductTax / 2;
+      singleProductSGST = singleProductTax / 2;
+    }
+
+    // Calculate final total
+    double finalTotal = singleProductTotal +
+        singleProductTax +
+        deliveryCharge -
+        promoDiscount -
+        walletDeduction;
+
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              getTranslated(context, 'ORDER_SUMMARY')! +
+                  " (" +
+                  cartList.length.toString() +
+                  " item)", // Changed to singular
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.fontColor,
+                  fontWeight: FontWeight.bold),
+            ),
+            Divider(),
+
+            // Product Details
+            if (cartList.isNotEmpty)
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: CachedNetworkImage(
+                            imageUrl: cartList[0].productList![0].image!,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 60,
+                              height: 60,
+                              color: Colors.grey[300],
+                              child: Icon(Icons.image, color: Colors.grey[600]),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              width: 60,
+                              height: 60,
+                              color: Colors.grey[300],
+                              child: Icon(Icons.error, color: Colors.grey[600]),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                cartList[0].productList![0].name!,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              // SizedBox(height: 4),
+                              // Text(
+                              //   "Quantity: ${cartList[0].qty}",
+                              //   style: TextStyle(
+                              //     color: Theme.of(context)
+                              //         .colorScheme
+                              //         .onSurface
+                              //         .withOpacity(0.7),
+                              //     fontSize: 12,
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(height: 20),
+                  ],
+                ),
+              ),
+
+            // Subtotal
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  getTranslated(context, 'SUBTOTAL')!,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.lightBlack2),
+                ),
+                Text(
+                  CUR_CURRENCY! + " " + singleProductTotal.toStringAsFixed(2),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+
+            // CGST
+            if (singleProductCGST > 0)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'CGST',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.lightBlack2),
+                  ),
+                  Text(
+                    CUR_CURRENCY! + " " + singleProductCGST.toStringAsFixed(2),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+
+            // SGST
+            if (singleProductSGST > 0)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'SGST',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.lightBlack2),
+                  ),
+                  Text(
+                    CUR_CURRENCY! + " " + singleProductSGST.toStringAsFixed(2),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+
+            // Delivery Charge
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  getTranslated(context, 'DELIVERY_CHARGE')!,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.lightBlack2),
+                ),
+                Text(
+                  CUR_CURRENCY! + " " + deliveryCharge.toStringAsFixed(2),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+
+            // Promo Discount (if applicable)
+            if (isPromoValid == true)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    getTranslated(context, 'PROMO_CODE_DIS_LBL')!,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.lightBlack2),
+                  ),
+                  Text(
+                    "- " +
+                        CUR_CURRENCY! +
+                        " " +
+                        promoDiscount.toStringAsFixed(2),
+                    style: TextStyle(
+                        color: Colors.green, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+
+            // Wallet Balance (if used)
+            if (isUseWallet == true)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    getTranslated(context, 'WALLET_BAL')!,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.lightBlack2),
+                  ),
+                  Text(
+                    "- " +
+                        CUR_CURRENCY! +
+                        " " +
+                        walletDeduction.toStringAsFixed(2),
+                    style: TextStyle(
+                        color: Colors.green, fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+
+            Divider(height: 20),
+
+            // Total Amount
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  getTranslated(context, 'TOTAL_PRICE') ?? 'Total Amount',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+                Text(
+                  CUR_CURRENCY! + " " + finalTotal.toStringAsFixed(2),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buycartItems(List<SectionModel> cartList) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: cartList.length,
+      physics: NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return buycartItem(index, cartList);
+      },
+    );
+  }
+
+  Widget buycartItem(int index, List<SectionModel> cartList) {
+    if (cartList.isEmpty || index >= cartList.length) {
+      return Container();
+    }
+
+    int selectedPos = 0;
+    for (int i = 0;
+        i < cartList[index].productList![0].prVarientList!.length;
+        i++) {
+      if (cartList[index].varientId ==
+          cartList[index].productList![0].prVarientList![i].id) {
+        selectedPos = i;
+      }
+    }
+
+    double price = double.tryParse(cartList[index]
+                .productList?[0]
+                .prVarientList?[selectedPos]
+                .disPrice ??
+            "0") ??
+        0;
+    if (price == 0) {
+      price = double.tryParse(cartList[index]
+                  .productList?[0]
+                  .prVarientList?[selectedPos]
+                  .price ??
+              "0") ??
+          0;
+    }
+
+    cartList[index].perItemPrice = price.toString();
+    cartList[index].perItemTotal =
+        (price * double.tryParse(cartList[index].qty ?? "0")!).toString();
+
+    while (_controller.length <= index) {
+      _controller.add(TextEditingController());
+    }
+    _controller[index].text = cartList[index].qty ?? "0";
+
+    List att = [], val = [];
+    if (cartList[index].productList![0].prVarientList![selectedPos].attr_name !=
+        null) {
+      att = cartList[index]
+          .productList![0]
+          .prVarientList![selectedPos]
+          .attr_name!
+          .split(',');
+      val = cartList[index]
+          .productList![0]
+          .prVarientList![selectedPos]
+          .varient_value!
+          .split(',');
+    }
+
+    return InkWell(
+      onTap: () {},
+      child: Card(
+        elevation: 0.1,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Row(
+                children: <Widget>[
+                  Hero(
+                    tag:
+                        "buynow_${index}_${cartList[index].productList![0].id}",
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(7.0),
+                      child: CachedNetworkImage(
+                        imageUrl: cartList[index].productList![0].image!,
+                        height: 80.0,
+                        width: 80.0,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          height: 80.0,
+                          width: 80.0,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.image, color: Colors.grey[600]),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          height: 80.0,
+                          width: 80.0,
+                          color: Colors.grey[300],
+                          child: Icon(Icons.error, color: Colors.grey[600]),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                      top: 5.0),
+                                  child: Text(
+                                    cartList[index].productList![0].name!,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .lightBlack),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (cartList[index]
+                                      .productList![0]
+                                      .prVarientList![selectedPos]
+                                      .attr_name !=
+                                  null &&
+                              cartList[index]
+                                  .productList![0]
+                                  .prVarientList![selectedPos]
+                                  .attr_name!
+                                  .isNotEmpty)
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: att.length,
+                              itemBuilder: (context, attrIndex) {
+                                return Row(children: [
+                                  Flexible(
+                                    child: Text(
+                                      att[attrIndex].trim() + ":",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .lightBlack,
+                                          ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsetsDirectional.only(start: 5.0),
+                                    child: Text(
+                                      val[attrIndex],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .lightBlack,
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                ]);
+                              },
+                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    if (double.parse(cartList[index]
+                                            .productList![0]
+                                            .prVarientList![selectedPos]
+                                            .disPrice!) !=
+                                        0)
+                                      Flexible(
+                                        child: Text(
+                                          CUR_CURRENCY! +
+                                              " " +
+                                              cartList[index]
+                                                  .productList![0]
+                                                  .prVarientList![selectedPos]
+                                                  .price!,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall!
+                                              .copyWith(
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  letterSpacing: 0.7),
+                                        ),
+                                      ),
+                                    Text(
+                                      " " +
+                                          CUR_CURRENCY! +
+                                          " " +
+                                          price.toString(),
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .fontColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Container(
+                              //   padding: EdgeInsets.symmetric(
+                              //       horizontal: 8, vertical: 4),
+                              //   decoration: BoxDecoration(
+                              //     border:
+                              //         Border.all(color: Colors.grey.shade300),
+                              //     borderRadius: BorderRadius.circular(4),
+                              //   ),
+                              //   // child: Text(
+                              //   //   "Qty: ${cartList[index].qty}",
+                              //   //   style: TextStyle(
+                              //   //       fontSize: 12,
+                              //   //       color: Theme.of(context)
+                              //   //           .colorScheme
+                              //   //           .fontColor),
+                              //   // ),
+                              // ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              Divider(),
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        getTranslated(context, 'SUBTOTAL')!,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2),
+                      ),
+                      Text(
+                        CUR_CURRENCY! + " " + cartList[index].perItemTotal!,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2),
+                      )
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        getTranslated(context, 'TAXPER')!,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2),
+                      ),
+                      Text(
+                        cartList[index].productList![0].tax! + "%",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        getTranslated(context, 'TOTAL_PRICE') ?? 'Total',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.lightBlack2),
+                      ),
+                      Text(
+                        CUR_CURRENCY! +
+                            " " +
+                            (double.parse(cartList[index].perItemTotal!) *
+                                    (1 +
+                                        double.parse(cartList[index]
+                                                .productList![0]
+                                                .tax!) /
+                                            100))
+                                .toStringAsFixed(2),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.fontColor),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  address() {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.location_on),
+                Padding(
+                    padding: const EdgeInsetsDirectional.only(start: 8.0),
+                    child: Text(
+                      getTranslated(context, 'SHIPPING_DETAIL') ?? '',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.fontColor),
+                    )),
+              ],
+            ),
+            Divider(),
+            addressList.length > 0
+                ? GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => ManageAddress(
+                            home: false,
+                          ),
+                        ),
+                      ).then((value) {
+                        Navigator.pop(context);
+                      });
+                      checkoutState!(() {
+                        deliverable = false;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.only(start: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                      addressList[selectedAddress!].name!)),
+                              InkWell(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Text(
+                                    getTranslated(context, 'CHANGE')!,
+                                    style: TextStyle(
+                                      color: colors.primary,
+                                    ),
+                                  ),
+                                ),
+                                onTap: () async {
+                                  await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ManageAddress(
+                                                home: false,
+                                              ))).then((value) {
+                                    Navigator.pop(context);
+                                  });
+
+                                  checkoutState!(() {
+                                    deliverable = false;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          Text(
+                            [
+                              addressList[selectedAddress!]?.address ?? "",
+                              addressList[selectedAddress!]?.area ?? "",
+                              addressList[selectedAddress!]?.city ?? "",
+                              addressList[selectedAddress!]?.state ?? "",
+                              addressList[selectedAddress!]?.country ?? "",
+                              addressList[selectedAddress!]?.pincode ?? "",
+                              addressList[selectedAddress!]?.landmark ?? "",
+                              addressList[selectedAddress!]?.altMob ?? "",
+                            ].where((element) => element.isNotEmpty).join(", "),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  addressList[selectedAddress!].mobile!,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .lightBlack),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ))
+                : Padding(
+                    padding: const EdgeInsetsDirectional.only(start: 8.0),
+                    child: GestureDetector(
+                      child: Text(
+                        getTranslated(context, 'ADDADDRESS')!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.fontColor,
+                        ),
+                      ),
+                      onTap: () async {
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddAddress(
+                                    update: false,
+                                    index: addressList.length,
+                                  )),
+                        ).then((value) {
+                          print("object");
+                          Navigator.pop(context);
+                        });
+                        if (mounted) setState(() {});
+                      },
+                    ),
+                  )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _slider() {
@@ -2411,68 +4135,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
           ]),
         )
       ])),
-      // widget.model!.availability == "1" || widget.model!.stockType == "null"
-      //     ? Container(
-      //         height: 55,
-      //         decoration: BoxDecoration(
-      //           color: Theme.of(context).colorScheme.white,
-      //           boxShadow: [
-      //             BoxShadow(
-      //                 color: Theme.of(context).colorScheme.black26,
-      //                 blurRadius: 10)
-      //           ],
-      //         ),
-      //         padding: EdgeInsets.symmetric(horizontal: 20),
-      //         child: Row(
-      //           children: [
-      //             Expanded(
-      //               child: TextButton.icon(
-      //                   style: TextButton.styleFrom(
-      //                       backgroundColor:
-      //                           Theme.of(context).colorScheme.btnColor),
-      //                   onPressed: () {
-      //                     String qty = ((int.parse(qtyController.text)) + 0
-      //                         // (int.parse(widget.model!.qtyStepSize!))
-      //                         )
-      //                         .toString();
-      //                     addToCart(qty, true);
-      //                   },
-      //                   icon: Icon(
-      //                     Icons.shopping_bag,
-      //                     color: Theme.of(context).colorScheme.white,
-      //                   ),
-      //                   label: Padding(
-      //                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      //                     child: Text(
-      //                       getTranslated(context, 'BUYNOW')!,
-      //                       style: TextStyle(
-      //                           color: Theme.of(context).colorScheme.white,
-      //                           fontWeight: FontWeight.bold),
-      //                     ),
-      //                   )),
-      //             ),
-      //           ],
-      //         ),
-      //       )
-      //     : Container(
-      //         height: 55,
-      //         decoration: BoxDecoration(
-      //           color: Theme.of(context).colorScheme.white,
-      //           boxShadow: [
-      //             BoxShadow(
-      //                 color: Theme.of(context).colorScheme.black26,
-      //                 blurRadius: 10)
-      //           ],
-      //         ),
-      //         child: Center(
-      //             child: Text(
-      //           getTranslated(context, 'OUT_OF_STOCK_LBL')!,
-      //           style: Theme.of(context)
-      //               .textTheme
-      //               .labelLarge!
-      //               .copyWith(fontWeight: FontWeight.bold, color: Colors.red),
-      //         )),
-      //       ),
       widget.model!.availability == "1" || widget.model!.stockType == "null"
           ? Container(
               height: 55,
@@ -2494,9 +4156,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         backgroundColor: Theme.of(context).colorScheme.btnColor,
                       ),
                       onPressed: () {
-                        String qty =
-                            ((int.parse(qtyController.text)) + 0).toString();
-                        addToCart(qty, true);
+                        handleBuyNow();
                       },
                       icon: Icon(
                         Icons.shopping_bag,
@@ -2513,6 +4173,30 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
+                    // child: TextButton.icon(
+                    //   style: TextButton.styleFrom(
+                    //     backgroundColor: Theme.of(context).colorScheme.btnColor,
+                    //   ),
+                    //   onPressed: () {
+                    //     String qty =
+                    //         ((int.parse(qtyController.text)) + 0).toString();
+                    //     addToCart(qty, true);
+                    //   },
+                    //   icon: Icon(
+                    //     Icons.shopping_bag,
+                    //     color: Theme.of(context).colorScheme.white,
+                    //   ),
+                    //   label: Padding(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    //     child: Text(
+                    //       getTranslated(context, 'BUYNOW')!,
+                    //       style: TextStyle(
+                    //         color: Theme.of(context).colorScheme.white,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ),
                 ],
               ),
@@ -2561,6 +4245,26 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
             ),
     ]);
   }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    placeOrder(response.paymentId);
+
+    /// {aySucess
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    var getdata = json.decode(response.message!);
+    String errorMsg = getdata["error"]["description"];
+    // setSnackbar(errorMsg, _checkscaffoldKey);
+
+    if (mounted)
+      checkoutState!(() {
+        _placeOrder = true;
+      });
+    context.read<CartProvider>().setProgress(false);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {}
 
   Future<void> notifyWhenAvailable(String productId) async {
     var headers = {
@@ -3589,9 +5293,6 @@ class _ControlsOverlay extends StatelessWidget {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                // Using less vertical padding as the text is also longer
-                // horizontally, so it feels like it would need more spacing
-                // horizontally (matching the aspect ratio of the video).
                 vertical: 12,
                 horizontal: 16,
               ),

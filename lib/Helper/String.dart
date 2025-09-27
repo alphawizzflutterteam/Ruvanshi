@@ -11,6 +11,7 @@ final Uri getThemeApi = Uri.parse(baseUrl + 'get_active_theme');
 final Uri getSubcatApi =
     Uri.parse(baseUrl + 'get_subcategories_by_category_id');
 final Uri getProductApi = Uri.parse(baseUrl + 'get_products');
+final Uri getofferProductApi = Uri.parse(baseUrl + 'get_offers_with_products');
 final Uri manageCartApi = Uri.parse(baseUrl + 'manage_cart');
 final Uri getUserLoginApi = Uri.parse(baseUrl + 'login');
 final Uri getUserSignUpApi = Uri.parse(baseUrl + 'register_user');
@@ -159,6 +160,7 @@ const String ISCANCLEABLE = 'is_cancelable';
 const String ISPURCHASED = 'is_purchased';
 const String ISOUTOFSTOCK = 'out_of_stock';
 const String PRODUCT_VARIENT_ID = 'product_variant_id';
+const String PRODUCT_VARIENT_IDs = 'product_variant_ids';
 const String QTY = 'qty';
 const String CART_COUNT = 'cart_count';
 const String DEL_CHARGE = 'delivery_charge';

@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
+
 import 'package:provider/provider.dart';
 import '../Helper/notification_service.dart';
 import '../Provider/SettingProvider.dart';
@@ -68,7 +69,6 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             }
           },
         );
-
         setState(
           () {
             _selBottom = _tabController.index;
@@ -195,7 +195,11 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
               ),
               AllCategory(),
               Cart(fromBottom: true),
-              Offer(),
+              Offer(
+                fromSeller: false,
+                tag: false,
+                name: "Offer Section",
+              ),
             ],
           ),
           bottomNavigationBar: _getBottomBar(),
@@ -339,7 +343,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 _selBottom == 0
                     ? imagePath + "sel_home.svg"
                     : imagePath + "desel_home.svg",
-                color: _selBottom == 0 ? primaryColor : secondaryColor,
+                color: _selBottom == 0 ? secondaryColor : colors.blackTemp,
                 width: 28,
                 height: 28,
               ),
@@ -350,7 +354,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                 _selBottom == 1
                     ? imagePath + "category01.svg"
                     : imagePath + "category.svg",
-                color: _selBottom == 1 ? primaryColor : secondaryColor,
+                color: _selBottom == 1 ? secondaryColor : colors.blackTemp,
                 width: 26,
                 height: 26,
               ),
@@ -367,8 +371,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                           _selBottom == 2
                               ? imagePath + "cart01.svg"
                               : imagePath + "cart.svg",
-                          color:
-                              _selBottom == 2 ? primaryColor : secondaryColor,
+                          color: _selBottom == 2
+                              ? secondaryColor
+                              : colors.blackTemp,
                           width: 26,
                           height: 26,
                         ),
@@ -382,7 +387,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                               padding: EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: secondaryColor,
+                                color: _selBottom == 2
+                                    ? secondaryColor
+                                    : colors.blackTemp,
                                 border: Border.all(
                                   color: Theme.of(context).colorScheme.white,
                                   width: 1,
@@ -422,14 +429,13 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
                   fit: BoxFit.cover,
                 ),
               ),
-              // text: getTranslated(context, 'OFFERS'),
             ),
           ],
           indicator: UnderlineTabIndicator(
             insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
           ),
-          labelColor: primaryColor,
-          unselectedLabelColor: secondaryColor,
+          labelColor: secondaryColor,
+          unselectedLabelColor: colors.blackTemp,
           labelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           unselectedLabelStyle:
               TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
