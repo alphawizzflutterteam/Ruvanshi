@@ -505,11 +505,11 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
       bool error = getdata["error"];
       if (!error) {
         var data = getdata["data"];
-        var colors = data["colors"];
-        String? primaryHex = colors[PRIMARY_COLOR]?.toString();
-        String? secondaryHex = colors[SECONDARY_COLOR]?.toString();
-        String? backgroundHex = colors[BACKGROUND_COLOR]?.toString();
-        String? textHex = colors[TEXT_COLOR]?.toString();
+        var colorValue = data["colors"];
+        String? primaryHex = colorValue[PRIMARY_COLOR]?.toString();
+        String? secondaryHex = colorValue[SECONDARY_COLOR]?.toString();
+        String? backgroundHex = colorValue[BACKGROUND_COLOR]?.toString();
+        String? textHex = colorValue[TEXT_COLOR]?.toString();
 
         if (primaryHex != null && primaryHex.isNotEmpty) {
           primaryColor = hexToColor(primaryHex);
@@ -527,6 +527,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         if (logoPath != null && logoPath.isNotEmpty) {
           appLogo = BASE_URL + logoPath;
         }
+
+        dynamicColor.buttonColor = secondaryColor;
+
         print("Primary: $primaryColor");
         print("Secondary: $secondaryColor");
         print("Background: $backgroundColor");

@@ -141,7 +141,7 @@ getAppBar(
               padding: EdgeInsets.all(0),
               icon: SvgPicture.asset(
                 imagePath + "desel_fav.svg",
-                color: Colors.red,
+                color: Colors.black,
               ),
               onPressed: () {
                 CUR_USERID != null

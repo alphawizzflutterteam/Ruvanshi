@@ -115,3 +115,11 @@ extension colors on ColorScheme {
     text = text;
   }
 }
+
+class dynamicColor {
+  static set setButtonColor(Color newColor) {
+    buttonColor = newColor;
+  }
+
+  static Color buttonColor = Color(0xFF1C1C1C);
+}

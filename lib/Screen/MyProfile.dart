@@ -1432,12 +1432,12 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
               child: Text(
                 title,
                 style: TextStyle(
-                  color: colors.whiteTemp,
+                  color: colors.blackTemp,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
             ),
           ),
         ),

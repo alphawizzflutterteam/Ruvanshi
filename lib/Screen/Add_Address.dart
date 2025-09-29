@@ -1561,12 +1561,12 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
             child: MaterialButton(
               height: 45.0,
-              textColor: Theme.of(context).colorScheme.white,
+              textColor: Theme.of(context).colorScheme.black,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               onPressed: onBtnSelected,
               child: Text(title),
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
             ),
           ),
         ),

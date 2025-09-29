@@ -56,7 +56,7 @@ class StateSuccess extends State<OrderSuccess> {
                     height: 45,
                     alignment: FractionalOffset.center,
                     decoration: new BoxDecoration(
-                      color: colors.primary,
+                      color: dynamicColor.buttonColor,
                       // gradient: LinearGradient(
                       //     begin: Alignment.topLeft,
                       //     end: Alignment.bottomRight,
@@ -68,7 +68,7 @@ class StateSuccess extends State<OrderSuccess> {
                     child: Text(getTranslated(context, 'CONTINUE_SHOPPING')!,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.white,
+                            color: Theme.of(context).colorScheme.black,
                             fontWeight: FontWeight.normal))),
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(

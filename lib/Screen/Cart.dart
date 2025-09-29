@@ -9,12 +9,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:http/http.dart' as http;
+
 import '../Helper/AppBtn.dart';
 import '../Helper/Color.dart';
 import '../Helper/Constant.dart';
 import '../Helper/Session.dart';
 import '../Helper/SimBtn.dart';
 import '../Helper/String.dart';
+import '../Model/Coupon_Model.dart';
 import '../Model/Model.dart';
 import '../Model/Section_Model.dart';
 import '../Model/User.dart';
@@ -33,8 +36,13 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class Cart extends StatefulWidget {
   final bool fromBottom;
+  final Product? model;
 
-  const Cart({Key? key, required this.fromBottom}) : super(key: key);
+  const Cart({
+    Key? key,
+    required this.fromBottom,
+    this.model,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => StateCart();
@@ -45,6 +53,7 @@ List<SectionModel> buyNowCartList = [];
 int buyNowSelectedIndex = -1;
 //List<SectionModel> cartList = [];
 List<Promo> promoList = [];
+List<Promo> productpromoList = [];
 double totalPrice = 0, oriPrice = 0, delCharge = 0, taxPer = 0, taxAmount = 0;
 int? selectedAddress = 0;
 String? selAddress, payMethod = '', selTime, selDate, promocode;
@@ -181,6 +190,43 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
     try {
       await labelLargeController!.forward();
     } on TickerCanceled {}
+  }
+
+  CouponListModel? couponListModel;
+  Future<void> getCouponList({String? productId}) async {
+    try {
+      var request =
+          http.MultipartRequest('POST', Uri.parse('${baseUrl}get_promo_codes'));
+
+      request.fields.addAll({
+        'user_id': CUR_USERID.toString(),
+        PRODUCT_ID: widget.model!.id.toString(),
+        'promo_code_type': 'product'
+      });
+
+      print('Promo API Request: ${request.fields}');
+
+      http.StreamedResponse response = await request.send();
+      var jsonString = await response.stream.bytesToString();
+      var json = jsonDecode(jsonString);
+
+      print('Promo API Response: $json');
+
+      if (response.statusCode == 200) {
+        couponListModel = CouponListModel.fromJson(json);
+        if (mounted) setState(() {});
+      } else {
+        print('Error: ${response.reasonPhrase}');
+        if (mounted) {
+          setSnackbar('Failed to load coupons', _scaffoldKey);
+        }
+      }
+    } catch (e) {
+      print('Exception in getCouponList: $e');
+      if (mounted) {
+        setSnackbar('Error loading coupons', _scaffoldKey);
+      }
+    }
   }
 
   void getSetting() {
@@ -622,14 +668,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                               ),
                             ],
                           ),
-                          onTap: () {
-                            productpromoSheet(
-                              "WELCOME100", // Promo Code
-                              "https://example.com/promo.png", // Promo Image
-                              "Get 100₹ off on this product", // Promo Message
-                              "2 Days Left", // Promo Day
-                            );
-                          },
+                          onTap: productpromoSheet,
                         ),
                       )
                     : Container(),
@@ -1467,7 +1506,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                 (promo as List).map((e) => new Promo.fromJson(e)).toList();
           }
         } else {
-          if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
+          // if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
         }
 
         if (mounted) {
@@ -1566,7 +1605,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
             _controller.add(new TextEditingController());
           }
         } else {
-          if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
+          // if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
         }
 
         if (mounted) {
@@ -1588,51 +1627,247 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
     }
   }
 
-  productpromoSheet(String productPromoCode, String productPromoImage,
-      String productPromoMsg, String productPromoDay) {
+  // productpromoSheet() async {
+  //   await getCouponList();
+  //
+  //   showModalBottomSheet<dynamic>(
+  //       context: context,
+  //       isScrollControlled: true,
+  //       shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.only(
+  //               topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+  //       builder: (builder) {
+  //         return StatefulBuilder(
+  //             builder: (BuildContext context, StateSetter setState) {
+  //           return Padding(
+  //             padding: MediaQuery.of(context).viewInsets,
+  //             child: Container(
+  //                 padding: EdgeInsets.only(left: 10, right: 10, top: 50),
+  //                 constraints: BoxConstraints(
+  //                     maxHeight: MediaQuery.of(context).size.height * 0.9),
+  //                 child: ListView(shrinkWrap: true, children: <Widget>[
+  //                   // Promo code input field
+  //                   Stack(
+  //                     alignment: Alignment.centerRight,
+  //                     children: [
+  //                       Container(
+  //                           margin: const EdgeInsetsDirectional.only(end: 20),
+  //                           decoration: BoxDecoration(
+  //                               color: Theme.of(context).colorScheme.white,
+  //                               borderRadius:
+  //                                   BorderRadiusDirectional.circular(10)),
+  //                           child: TextField(
+  //                             controller: promoC,
+  //                             style: Theme.of(context).textTheme.titleMedium,
+  //                             decoration: InputDecoration(
+  //                               contentPadding:
+  //                                   EdgeInsets.symmetric(horizontal: 10),
+  //                               border: InputBorder.none,
+  //                               hintText:
+  //                                   getTranslated(context, 'PROMOCODE_LBL'),
+  //                             ),
+  //                           )),
+  //                       Positioned.directional(
+  //                         textDirection: Directionality.of(context),
+  //                         end: 0,
+  //                         child: Row(
+  //                           mainAxisSize: MainAxisSize.min,
+  //                           children: [
+  //                             if (promoAmt != 0 && isPromoValid!)
+  //                               Padding(
+  //                                 padding: const EdgeInsets.all(8.0),
+  //                                 child: InkWell(
+  //                                   child: Icon(
+  //                                     Icons.close,
+  //                                     size: 15,
+  //                                     color: Theme.of(context)
+  //                                         .colorScheme
+  //                                         .fontColor,
+  //                                   ),
+  //                                   onTap: () {
+  //                                     if (promoAmt != 0 && isPromoValid!) {
+  //                                       if (mounted)
+  //                                         setState(() {
+  //                                           totalPrice = totalPrice + promoAmt;
+  //                                           promoC.text = '';
+  //                                           isPromoValid = false;
+  //                                           promoAmt = 0;
+  //                                           promocode = '';
+  //                                         });
+  //                                     }
+  //                                   },
+  //                                 ),
+  //                               ),
+  //                             InkWell(
+  //                               child: Container(
+  //                                   padding: EdgeInsets.all(11),
+  //                                   decoration: BoxDecoration(
+  //                                     shape: BoxShape.circle,
+  //                                     color: colors.primary,
+  //                                   ),
+  //                                   child: Icon(
+  //                                     Icons.arrow_forward,
+  //                                     color:
+  //                                         Theme.of(context).colorScheme.white,
+  //                                   )),
+  //                               onTap: () {
+  //                                 if (promoC.text.trim().isEmpty)
+  //                                   setSnackbar(
+  //                                       getTranslated(context, 'ADD_PROMO')!,
+  //                                       _checkscaffoldKey);
+  //                                 else if (!isPromoValid!) {
+  //                                   validatePromo(false);
+  //                                   Navigator.pop(context);
+  //                                 }
+  //                               },
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(vertical: 18.0),
+  //                     child: Text(
+  //                       getTranslated(context, 'Choose_PROMO') ?? '',
+  //                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
+  //                           color: Theme.of(context).colorScheme.fontColor),
+  //                     ),
+  //                   ),
+  //                   couponListModel == null ||
+  //                           couponListModel!.data == null ||
+  //                           couponListModel!.data!.isEmpty
+  //                       ? Center(
+  //                           child: Padding(
+  //                           padding: const EdgeInsets.all(20.0),
+  //                           child: Text(
+  //                             "No Coupons Available",
+  //                             style: TextStyle(
+  //                                 color: Theme.of(context)
+  //                                     .colorScheme
+  //                                     .lightBlack2),
+  //                           ),
+  //                         ))
+  //                       : ListView.builder(
+  //                           physics: NeverScrollableScrollPhysics(),
+  //                           shrinkWrap: true,
+  //                           itemCount: couponListModel!.data!.length,
+  //                           itemBuilder: (context, index) {
+  //                             final coupon = couponListModel!.data![index];
+  //                             return Card(
+  //                               elevation: 0,
+  //                               margin: EdgeInsets.symmetric(
+  //                                   vertical: 8, horizontal: 4),
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.all(8.0),
+  //                                 child: Row(
+  //                                   children: [
+  //                                     Container(
+  //                                       height: 80,
+  //                                       width: 80,
+  //                                       child: ClipRRect(
+  //                                         borderRadius:
+  //                                             BorderRadius.circular(7.0),
+  //                                         child: Image.network(
+  //                                           coupon.image ?? '',
+  //                                           height: 80,
+  //                                           width: 80,
+  //                                           fit: BoxFit.cover,
+  //                                           errorBuilder:
+  //                                               (context, error, stackTrace) =>
+  //                                                   erroWidget(80),
+  //                                         ),
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(width: 12),
+  //                                     Expanded(
+  //                                       child: Column(
+  //                                         crossAxisAlignment:
+  //                                             CrossAxisAlignment.start,
+  //                                         children: [
+  //                                           Text(
+  //                                             coupon.promoCode ?? '',
+  //                                             style: TextStyle(
+  //                                                 fontWeight: FontWeight.bold,
+  //                                                 fontSize: 16),
+  //                                           ),
+  //                                           SizedBox(height: 4),
+  //                                           Text(
+  //                                             coupon.message ?? '',
+  //                                             style: TextStyle(fontSize: 12),
+  //                                             maxLines: 2,
+  //                                             overflow: TextOverflow.ellipsis,
+  //                                           ),
+  //                                           SizedBox(height: 4),
+  //                                           Text(
+  //                                             "Valid till: ${coupon.endDate ?? ''}",
+  //                                             style: TextStyle(
+  //                                                 fontSize: 10,
+  //                                                 color: Colors.grey),
+  //                                           ),
+  //                                         ],
+  //                                       ),
+  //                                     ),
+  //                                     SizedBox(width: 8),
+  //                                     SimBtn(
+  //                                       size: 0.25,
+  //                                       title: getTranslated(context, "APPLY"),
+  //                                       onBtnSelected: () {
+  //                                         promoC.text = coupon.promoCode ?? '';
+  //                                         if (!isPromoValid!)
+  //                                           validatePromo(false);
+  //                                         Navigator.of(context).pop();
+  //                                       },
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                             );
+  //                           }),
+  //                 ])),
+  //           );
+  //         });
+  //       });
+  // }
+  productpromoSheet() {
     showModalBottomSheet<dynamic>(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-      ),
-      builder: (builder) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+        builder: (builder) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
             return Padding(
               padding: MediaQuery.of(context).viewInsets,
               child: Container(
-                padding: EdgeInsets.only(left: 10, right: 10, top: 50),
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.9,
-                ),
-                child: ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    // 🔹 Input Box
+                  padding: EdgeInsets.only(left: 10, right: 10, top: 50),
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.9),
+                  child: ListView(shrinkWrap: true, children: <Widget>[
                     Stack(
                       alignment: Alignment.centerRight,
                       children: [
                         Container(
-                          margin: const EdgeInsetsDirectional.only(end: 20),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.white,
-                            borderRadius: BorderRadiusDirectional.circular(10),
-                          ),
-                          child: TextField(
-                            controller: promoC,
-                            style: Theme.of(context).textTheme.titleMedium,
-                            decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.symmetric(horizontal: 10),
-                              border: InputBorder.none,
-                              hintText: getTranslated(context, 'PROMOCODE_LBL'),
-                            ),
-                          ),
-                        ),
+                            margin: const EdgeInsetsDirectional.only(end: 20),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.white,
+                                borderRadius:
+                                    BorderRadiusDirectional.circular(10)),
+                            child: TextField(
+                              controller: promoC,
+                              style: Theme.of(context).textTheme.titleMedium,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 10),
+                                border: InputBorder.none,
+                                //isDense: true,
+                                hintText:
+                                    getTranslated(context, 'PROMOCODE_LBL'),
+                              ),
+                            )),
                         Positioned.directional(
                           textDirection: Directionality.of(context),
                           end: 0,
@@ -1652,7 +1887,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                         ),
                                         onTap: () {
                                           if (promoAmt != 0 && isPromoValid!) {
-                                            if (mounted) {
+                                            if (mounted)
                                               setState(() {
                                                 totalPrice =
                                                     totalPrice + promoAmt;
@@ -1661,7 +1896,6 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                 promoAmt = 0;
                                                 promocode = '';
                                               });
-                                            }
                                           }
                                         },
                                       ),
@@ -1669,23 +1903,22 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                   : Container(),
                               InkWell(
                                 child: Container(
-                                  padding: EdgeInsets.all(11),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: colors.primary,
-                                  ),
-                                  child: Icon(
-                                    Icons.arrow_forward,
-                                    color: Theme.of(context).colorScheme.white,
-                                  ),
-                                ),
+                                    padding: EdgeInsets.all(11),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: colors.primary,
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      color:
+                                          Theme.of(context).colorScheme.white,
+                                    )),
                                 onTap: () {
-                                  if (promoC.text.trim().isEmpty) {
+                                  if (promoC.text.trim().isEmpty)
                                     setSnackbar(
-                                      getTranslated(context, 'ADD_PROMO')!,
-                                      _checkscaffoldKey,
-                                    );
-                                  } else if (!isPromoValid!) {
+                                        getTranslated(context, 'ADD_PROMO')!,
+                                        _checkscaffoldKey);
+                                  else if (!isPromoValid!) {
                                     validatePromo(false);
                                     Navigator.pop(context);
                                   }
@@ -1696,60 +1929,75 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                         ),
                       ],
                     ),
-
-                    SizedBox(height: 20),
-                    Card(
-                      elevation: 0,
-                      child: Row(
-                        children: [
-                          Container(
-                            height: 80,
-                            width: 80,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(7.0),
-                              child: Image.network(
-                                productPromoImage,
-                                height: 80,
-                                width: 80,
-                                fit: BoxFit.fill,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    erroWidget(80),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(productPromoMsg),
-                                  Text(productPromoCode),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Text(productPromoDay),
-                          SimBtn(
-                            size: 0.3,
-                            title: getTranslated(context, "APPLY"),
-                            onBtnSelected: () {
-                              promoC.text = productPromoCode;
-                              if (!isPromoValid!) validatePromo(false);
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 18.0),
+                      child: Text(
+                        getTranslated(context, 'Choose_PROMO') ?? '',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            color: Theme.of(context).colorScheme.fontColor),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                    ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: promoList.isNotEmpty ? 1 : 0,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            elevation: 0,
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 80,
+                                  width: 80,
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(7.0),
+                                      child: Image.network(
+                                        promoList[index].image!,
+                                        height: 80,
+                                        width: 80,
+                                        fit: BoxFit.fill,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                erroWidget(
+                                          80,
+                                        ),
+                                      )),
+                                ),
+
+                                //errorWidget: (context, url, e) => placeHolder(width),
+
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(promoList[index].msg ?? ""),
+                                        Text(promoList[index].promoCode ?? ''),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Text(promoList[index].day ?? ''),
+                                SimBtn(
+                                  size: 0.3,
+                                  title: getTranslated(context, "APPLY"),
+                                  onBtnSelected: () {
+                                    promoC.text = promoList[index].promoCode!;
+                                    if (!isPromoValid!) validatePromo(false);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                  ])),
             );
-          },
-        );
-      },
-    );
+            //});
+          });
+        });
   }
 
   promoSheet() {
@@ -1951,7 +2199,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           for (int i = 0; i < cartList.length; i++)
             _controller.add(new TextEditingController());
         } else {
-          if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
+          // if (msg != 'Cart Is Empty !') setSnackbar(msg!, _scaffoldKey);
         }
         if (mounted) setState(() {});
       } on TimeoutException catch (_) {
@@ -3590,7 +3838,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                     : null,
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor:
-                                                      colors.primary,
+                                                      dynamicColor.buttonColor,
                                                   foregroundColor:
                                                       colors.whiteTemp,
                                                   elevation: 2,
@@ -3605,9 +3853,10 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                 child: Text(
                                                   'Place Order',
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 13.0,
-                                                  ),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13.0,
+                                                      color: Colors.black),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -3860,7 +4109,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                     : null,
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor:
-                                                      colors.primary,
+                                                      dynamicColor.buttonColor,
                                                   foregroundColor:
                                                       colors.whiteTemp,
                                                   elevation: 2,
@@ -3875,9 +4124,10 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                 child: Text(
                                                   'Place Order',
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 13.0,
-                                                  ),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13.0,
+                                                      color: Colors.black),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -4433,6 +4683,155 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
     return 'ChargedFrom${platform}_${DateTime.now().millisecondsSinceEpoch}';
   }
 
+  // address() {
+  //   return Card(
+  //     elevation: 0,
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Row(
+  //             children: [
+  //               Icon(Icons.location_on),
+  //               Padding(
+  //                   padding: const EdgeInsetsDirectional.only(start: 8.0),
+  //                   child: Text(
+  //                     getTranslated(context, 'SHIPPING_DETAIL') ?? '',
+  //                     style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Theme.of(context).colorScheme.fontColor),
+  //                   )),
+  //             ],
+  //           ),
+  //           Divider(),
+  //           addressList.length > 0
+  //               ? GestureDetector(
+  //                   onTap: () async {
+  //                     await Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                         builder: (BuildContext context) => ManageAddress(
+  //                           home: false,
+  //                         ),
+  //                       ),
+  //                     ).then((value) {
+  //                       Navigator.pop(context);
+  //                     });
+  //                     checkoutState!(() {
+  //                       deliverable = false;
+  //                     });
+  //                   },
+  //                   child: Padding(
+  //                     padding: const EdgeInsetsDirectional.only(start: 8.0),
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Row(
+  //                           children: [
+  //                             Expanded(
+  //                                 child: Text(
+  //                                     addressList[selectedAddress!].name!)),
+  //                             InkWell(
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.symmetric(
+  //                                     horizontal: 8.0),
+  //                                 child: Text(
+  //                                   getTranslated(context, 'CHANGE')!,
+  //                                   style: TextStyle(
+  //                                     color: colors.primary,
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                               onTap: () async {
+  //                                 await Navigator.push(
+  //                                     context,
+  //                                     MaterialPageRoute(
+  //                                         builder: (BuildContext context) =>
+  //                                             ManageAddress(
+  //                                               home: false,
+  //                                             ))).then((value) {
+  //                                   Navigator.pop(context);
+  //                                 });
+  //
+  //                                 checkoutState!(() {
+  //                                   deliverable = false;
+  //                                 });
+  //                               },
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         Text(
+  //                           [
+  //                             addressList[selectedAddress!]?.address ?? "",
+  //                             addressList[selectedAddress!]?.area ?? "",
+  //                             addressList[selectedAddress!]?.city ?? "",
+  //                             addressList[selectedAddress!]?.state ?? "",
+  //                             addressList[selectedAddress!]?.country ?? "",
+  //                             addressList[selectedAddress!]?.pincode ?? "",
+  //                             addressList[selectedAddress!]?.landmark ?? "",
+  //                             addressList[selectedAddress!]?.altMob ?? "",
+  //                           ].where((element) => element.isNotEmpty).join(", "),
+  //                           style: Theme.of(context)
+  //                               .textTheme
+  //                               .bodySmall
+  //                               ?.copyWith(
+  //                                 color:
+  //                                     Theme.of(context).colorScheme.onSurface,
+  //                               ),
+  //                         ),
+  //                         Padding(
+  //                           padding: const EdgeInsets.symmetric(vertical: 5.0),
+  //                           child: Row(
+  //                             children: [
+  //                               Text(
+  //                                 addressList[selectedAddress!].mobile!,
+  //                                 style: Theme.of(context)
+  //                                     .textTheme
+  //                                     .bodySmall!
+  //                                     .copyWith(
+  //                                         color: Theme.of(context)
+  //                                             .colorScheme
+  //                                             .lightBlack),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         )
+  //                       ],
+  //                     ),
+  //                   ))
+  //               : Padding(
+  //                   padding: const EdgeInsetsDirectional.only(start: 8.0),
+  //                   child: GestureDetector(
+  //                     child: Text(
+  //                       getTranslated(context, 'ADDADDRESS')!,
+  //                       style: TextStyle(
+  //                         color: Theme.of(context).colorScheme.fontColor,
+  //                       ),
+  //                     ),
+  //                     onTap: () async {
+  //                       ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  //                       Navigator.push(
+  //                         context,
+  //                         MaterialPageRoute(
+  //                             builder: (context) => AddAddress(
+  //                                   update: false,
+  //                                   index: addressList.length,
+  //                                 )),
+  //                       ).then((value) {
+  //                         print("object");
+  //                         Navigator.pop(context);
+  //                       });
+  //                       if (mounted) setState(() {});
+  //                     },
+  //                   ),
+  //                 )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   address() {
     return Card(
       elevation: 0,
@@ -4457,7 +4856,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
             ),
             Divider(),
             addressList.length > 0
-                ? GestureDetector(
+                ? InkWell(
                     onTap: () async {
                       await Navigator.push(
                         context,
@@ -4483,53 +4882,41 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                               Expanded(
                                   child: Text(
                                       addressList[selectedAddress!].name!)),
-                              InkWell(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Text(
-                                    getTranslated(context, 'CHANGE')!,
-                                    style: TextStyle(
-                                      color: colors.primary,
-                                    ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  getTranslated(context, 'CHANGE')!,
+                                  style: TextStyle(
+                                    color: colors.primary,
                                   ),
                                 ),
-                                onTap: () async {
-                                  await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              ManageAddress(
-                                                home: false,
-                                              ))).then((value) {
-                                    Navigator.pop(context);
-                                  });
-
-                                  checkoutState!(() {
-                                    deliverable = false;
-                                  });
-                                },
                               ),
                             ],
                           ),
-                          Text(
-                            [
-                              addressList[selectedAddress!]?.address ?? "",
-                              addressList[selectedAddress!]?.area ?? "",
-                              addressList[selectedAddress!]?.city ?? "",
-                              addressList[selectedAddress!]?.state ?? "",
-                              addressList[selectedAddress!]?.country ?? "",
-                              addressList[selectedAddress!]?.pincode ?? "",
-                              addressList[selectedAddress!]?.landmark ?? "",
-                              addressList[selectedAddress!]?.altMob ?? "",
-                            ].where((element) => element.isNotEmpty).join(", "),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              [
+                                addressList[selectedAddress!]?.address ?? "",
+                                addressList[selectedAddress!]?.area ?? "",
+                                addressList[selectedAddress!]?.city ?? "",
+                                addressList[selectedAddress!]?.state ?? "",
+                                addressList[selectedAddress!]?.country ?? "",
+                                addressList[selectedAddress!]?.pincode ?? "",
+                                addressList[selectedAddress!]?.landmark ?? "",
+                                addressList[selectedAddress!]?.altMob ?? "",
+                              ]
+                                  .where((element) => element.isNotEmpty)
+                                  .join(", "),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -4553,11 +4940,14 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                     ))
                 : Padding(
                     padding: const EdgeInsetsDirectional.only(start: 8.0),
-                    child: GestureDetector(
-                      child: Text(
-                        getTranslated(context, 'ADDADDRESS')!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
+                    child: InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          getTranslated(context, 'ADDADDRESS')!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.fontColor,
+                          ),
                         ),
                       ),
                       onTap: () async {
@@ -4734,41 +5124,41 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                   children: [
                     Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: cartList[0].productList![0].image!,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              width: 60,
-                              height: 60,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.image, color: Colors.grey[600]),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              width: 60,
-                              height: 60,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.error, color: Colors.grey[600]),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 12),
+                        // ClipRRect(
+                        //   borderRadius: BorderRadius.circular(8),
+                        //   child: CachedNetworkImage(
+                        //     imageUrl: cartList[0].productList![0].image!,
+                        //     width: 60,
+                        //     height: 60,
+                        //     fit: BoxFit.cover,
+                        //     placeholder: (context, url) => Container(
+                        //       width: 60,
+                        //       height: 60,
+                        //       color: Colors.grey[300],
+                        //       child: Icon(Icons.image, color: Colors.grey[600]),
+                        //     ),
+                        //     errorWidget: (context, url, error) => Container(
+                        //       width: 60,
+                        //       height: 60,
+                        //       color: Colors.grey[300],
+                        //       child: Icon(Icons.error, color: Colors.grey[600]),
+                        //     ),
+                        //   ),
+                        // ),
+                        // SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                cartList[0].productList![0].name!,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              // Text(
+                              //   cartList[0].productList![0].name!,
+                              //   style: TextStyle(
+                              //     fontWeight: FontWeight.w500,
+                              //     fontSize: 14,
+                              //   ),
+                              //   maxLines: 2,
+                              //   overflow: TextOverflow.ellipsis,
+                              // ),
                               // SizedBox(height: 4),
                               // Text(
                               //   "Quantity: ${cartList[0].qty}",

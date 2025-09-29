@@ -293,6 +293,42 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     return buyNowItem;
   }
 
+  // void handleBuyNow() async {
+  //   if (widget.model!.availability == "0") {
+  //     setSnackbar('This product is out of stock!', context);
+  //     return;
+  //   }
+  //   if (CUR_USERID == null) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => Login()),
+  //     );
+  //     return;
+  //   }
+  //
+  //   if (mounted) {
+  //     setState(() {
+  //       _isProgress = true;
+  //     });
+  //   }
+  //
+  //   try {
+  //     SectionModel buyNowItem = createBuyNowCartItem();
+  //     buyNowSelectedIndex = 0;
+  //     buyNowCartList = [buyNowItem];
+  //     await _getBuyCart([buyNowItem], 0);
+  //     buycheckout(buyNowCartList);
+  //   } catch (e) {
+  //     print('Buy Now Error: $e');
+  //     setSnackbar('Something went wrong. Please try again.', context);
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         _isProgress = false;
+  //       });
+  //     }
+  //   }
+  // }
   void handleBuyNow() async {
     if (widget.model!.availability == "0") {
       setSnackbar('This product is out of stock!', context);
@@ -303,6 +339,17 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
         context,
         MaterialPageRoute(builder: (context) => Login()),
       );
+      return;
+    }
+    String currentQty = qtyController.text.trim();
+    if (currentQty.isEmpty || currentQty == "0") {
+      setSnackbar('Please add quantity before buying!', context);
+      return;
+    }
+    int qty = int.parse(currentQty);
+    if (qty < widget.model!.minOrderQuntity!) {
+      setSnackbar('Minimum order quantity is ${widget.model!.minOrderQuntity}',
+          context);
       return;
     }
 
@@ -415,9 +462,9 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
             promoList = (promo as List).map((e) => Promo.fromJson(e)).toList();
           }
         } else {
-          if (msg != 'Cart Is Empty !') {
-            setSnackbar(msg!, context);
-          }
+          // if (msg != 'Cart Is Empty !') {
+          //   setSnackbar(msg!, context);
+          // }
         }
       } on TimeoutException catch (_) {
         setSnackbar(getTranslated(context, 'somethingMSg')!, context);
@@ -819,8 +866,8 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                                                 style: ElevatedButton
                                                                     .styleFrom(
                                                                   backgroundColor:
-                                                                      colors
-                                                                          .primary,
+                                                                      dynamicColor
+                                                                          .buttonColor,
                                                                   foregroundColor:
                                                                       colors
                                                                           .whiteTemp,
@@ -838,14 +885,14 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                                                 ),
                                                                 child: Text(
                                                                   'Place Order',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    fontSize:
-                                                                        13.0,
-                                                                  ),
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          13.0,
+                                                                      color: Colors
+                                                                          .black),
                                                                   textAlign:
                                                                       TextAlign
                                                                           .center,
@@ -1337,41 +1384,41 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                   children: [
                     Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: CachedNetworkImage(
-                            imageUrl: cartList[0].productList![0].image!,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              width: 60,
-                              height: 60,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.image, color: Colors.grey[600]),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              width: 60,
-                              height: 60,
-                              color: Colors.grey[300],
-                              child: Icon(Icons.error, color: Colors.grey[600]),
-                            ),
-                          ),
-                        ),
+                        // ClipRRect(
+                        //   borderRadius: BorderRadius.circular(8),
+                        //   child: CachedNetworkImage(
+                        //     imageUrl: cartList[0].productList![0].image!,
+                        //     width: 60,
+                        //     height: 60,
+                        //     fit: BoxFit.cover,
+                        //     placeholder: (context, url) => Container(
+                        //       width: 60,
+                        //       height: 60,
+                        //       color: Colors.grey[300],
+                        //       child: Icon(Icons.image, color: Colors.grey[600]),
+                        //     ),
+                        //     errorWidget: (context, url, error) => Container(
+                        //       width: 60,
+                        //       height: 60,
+                        //       color: Colors.grey[300],
+                        //       child: Icon(Icons.error, color: Colors.grey[600]),
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                cartList[0].productList![0].name!,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              // Text(
+                              //   cartList[0].productList![0].name!,
+                              //   style: TextStyle(
+                              //     fontWeight: FontWeight.w500,
+                              //     fontSize: 14,
+                              //   ),
+                              //   maxLines: 2,
+                              //   overflow: TextOverflow.ellipsis,
+                              // ),
                               // SizedBox(height: 4),
                               // Text(
                               //   "Quantity: ${cartList[0].qty}",
@@ -1850,6 +1897,155 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     );
   }
 
+  // address() {
+  //   return Card(
+  //     elevation: 0,
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           Row(
+  //             children: [
+  //               Icon(Icons.location_on),
+  //               Padding(
+  //                   padding: const EdgeInsetsDirectional.only(start: 8.0),
+  //                   child: Text(
+  //                     getTranslated(context, 'SHIPPING_DETAIL') ?? '',
+  //                     style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Theme.of(context).colorScheme.fontColor),
+  //                   )),
+  //             ],
+  //           ),
+  //           Divider(),
+  //           addressList.length > 0
+  //               ? GestureDetector(
+  //                   onTap: () async {
+  //                     await Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                         builder: (BuildContext context) => ManageAddress(
+  //                           home: false,
+  //                         ),
+  //                       ),
+  //                     ).then((value) {
+  //                       Navigator.pop(context);
+  //                     });
+  //                     checkoutState!(() {
+  //                       deliverable = false;
+  //                     });
+  //                   },
+  //                   child: Padding(
+  //                     padding: const EdgeInsetsDirectional.only(start: 8.0),
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Row(
+  //                           children: [
+  //                             Expanded(
+  //                                 child: Text(
+  //                                     addressList[selectedAddress!].name!)),
+  //                             InkWell(
+  //                               child: Padding(
+  //                                 padding: const EdgeInsets.symmetric(
+  //                                     horizontal: 8.0),
+  //                                 child: Text(
+  //                                   getTranslated(context, 'CHANGE')!,
+  //                                   style: TextStyle(
+  //                                     color: colors.primary,
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                               onTap: () async {
+  //                                 await Navigator.push(
+  //                                     context,
+  //                                     MaterialPageRoute(
+  //                                         builder: (BuildContext context) =>
+  //                                             ManageAddress(
+  //                                               home: false,
+  //                                             ))).then((value) {
+  //                                   Navigator.pop(context);
+  //                                 });
+  //
+  //                                 checkoutState!(() {
+  //                                   deliverable = false;
+  //                                 });
+  //                               },
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         Text(
+  //                           [
+  //                             addressList[selectedAddress!]?.address ?? "",
+  //                             addressList[selectedAddress!]?.area ?? "",
+  //                             addressList[selectedAddress!]?.city ?? "",
+  //                             addressList[selectedAddress!]?.state ?? "",
+  //                             addressList[selectedAddress!]?.country ?? "",
+  //                             addressList[selectedAddress!]?.pincode ?? "",
+  //                             addressList[selectedAddress!]?.landmark ?? "",
+  //                             addressList[selectedAddress!]?.altMob ?? "",
+  //                           ].where((element) => element.isNotEmpty).join(", "),
+  //                           style: Theme.of(context)
+  //                               .textTheme
+  //                               .bodySmall
+  //                               ?.copyWith(
+  //                                 color:
+  //                                     Theme.of(context).colorScheme.onSurface,
+  //                               ),
+  //                         ),
+  //                         Padding(
+  //                           padding: const EdgeInsets.symmetric(vertical: 5.0),
+  //                           child: Row(
+  //                             children: [
+  //                               Text(
+  //                                 addressList[selectedAddress!].mobile!,
+  //                                 style: Theme.of(context)
+  //                                     .textTheme
+  //                                     .bodySmall!
+  //                                     .copyWith(
+  //                                         color: Theme.of(context)
+  //                                             .colorScheme
+  //                                             .lightBlack),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         )
+  //                       ],
+  //                     ),
+  //                   ))
+  //               : Padding(
+  //                   padding: const EdgeInsetsDirectional.only(start: 8.0),
+  //                   child: GestureDetector(
+  //                     child: Text(
+  //                       getTranslated(context, 'ADDADDRESS')!,
+  //                       style: TextStyle(
+  //                         color: Theme.of(context).colorScheme.fontColor,
+  //                       ),
+  //                     ),
+  //                     onTap: () async {
+  //                       ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  //                       Navigator.push(
+  //                         context,
+  //                         MaterialPageRoute(
+  //                             builder: (context) => AddAddress(
+  //                                   update: false,
+  //                                   index: addressList.length,
+  //                                 )),
+  //                       ).then((value) {
+  //                         print("object");
+  //                         Navigator.pop(context);
+  //                       });
+  //                       if (mounted) setState(() {});
+  //                     },
+  //                   ),
+  //                 )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   address() {
     return Card(
       elevation: 0,
@@ -1874,7 +2070,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
             ),
             Divider(),
             addressList.length > 0
-                ? GestureDetector(
+                ? InkWell(
                     onTap: () async {
                       await Navigator.push(
                         context,
@@ -1900,53 +2096,41 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                               Expanded(
                                   child: Text(
                                       addressList[selectedAddress!].name!)),
-                              InkWell(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Text(
-                                    getTranslated(context, 'CHANGE')!,
-                                    style: TextStyle(
-                                      color: colors.primary,
-                                    ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  getTranslated(context, 'CHANGE')!,
+                                  style: TextStyle(
+                                    color: colors.primary,
                                   ),
                                 ),
-                                onTap: () async {
-                                  await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              ManageAddress(
-                                                home: false,
-                                              ))).then((value) {
-                                    Navigator.pop(context);
-                                  });
-
-                                  checkoutState!(() {
-                                    deliverable = false;
-                                  });
-                                },
                               ),
                             ],
                           ),
-                          Text(
-                            [
-                              addressList[selectedAddress!]?.address ?? "",
-                              addressList[selectedAddress!]?.area ?? "",
-                              addressList[selectedAddress!]?.city ?? "",
-                              addressList[selectedAddress!]?.state ?? "",
-                              addressList[selectedAddress!]?.country ?? "",
-                              addressList[selectedAddress!]?.pincode ?? "",
-                              addressList[selectedAddress!]?.landmark ?? "",
-                              addressList[selectedAddress!]?.altMob ?? "",
-                            ].where((element) => element.isNotEmpty).join(", "),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              [
+                                addressList[selectedAddress!]?.address ?? "",
+                                addressList[selectedAddress!]?.area ?? "",
+                                addressList[selectedAddress!]?.city ?? "",
+                                addressList[selectedAddress!]?.state ?? "",
+                                addressList[selectedAddress!]?.country ?? "",
+                                addressList[selectedAddress!]?.pincode ?? "",
+                                addressList[selectedAddress!]?.landmark ?? "",
+                                addressList[selectedAddress!]?.altMob ?? "",
+                              ]
+                                  .where((element) => element.isNotEmpty)
+                                  .join(", "),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -1970,11 +2154,14 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                     ))
                 : Padding(
                     padding: const EdgeInsetsDirectional.only(start: 8.0),
-                    child: GestureDetector(
-                      child: Text(
-                        getTranslated(context, 'ADDADDRESS')!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
+                    child: InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          getTranslated(context, 'ADDADDRESS')!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.fontColor,
+                          ),
                         ),
                       ),
                       onTap: () async {
@@ -2337,7 +2524,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24.0, vertical: 12.0),
                                   decoration: BoxDecoration(
-                                    color: Colors.black,
+                                    color: dynamicColor.buttonColor,
                                     borderRadius: BorderRadius.circular(10.0),
                                     boxShadow: [
                                       BoxShadow(
@@ -2354,7 +2541,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                       Text(
                                         "ADD",
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                         ),
@@ -3599,49 +3786,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     _isNetworkAvail = await isNetworkAvailable();
     if (_isNetworkAvail) {
       Product model = widget.model!;
-
-      // if (await checkVenderIdExistOrNot(model.seller_id ?? '')) {
-      //   var result = await showDialog(
-      //       context: context,
-      //       barrierDismissible: false,
-      //       builder: (BuildContext buildContext) {
-      //         return AlertDialog(
-      //           title: const Text("Are you sure"),
-      //           content: const Text("Do you went to reset the cart"),
-      //           actions: <Widget>[
-      //             ElevatedButton(
-      //               style: ElevatedButton.styleFrom(
-      //                   backgroundColor: colors.primary),
-      //               child: const Text("YES"),
-      //               onPressed: () {
-      //                 Navigator.of(buildContext).pop(true);
-      //               },
-      //             ),
-      //             ElevatedButton(
-      //               style: ElevatedButton.styleFrom(
-      //                   backgroundColor: colors.primary),
-      //               child: Text("NO"),
-      //               onPressed: () {
-      //                 Navigator.of(buildContext).pop(false);
-      //               },
-      //             )
-      //           ],
-      //         );
-      //       });
-      //   print('PrintData:_____${result}______');
-      //
-      //   if (result == true) {
-      //     // await removeFromCart();
-      //     // // await _getCart('0');
-      //     // addToCart(qty == '0' ? '1' : qty, intent);
-      //     // //await cleanCartValue(qty, intent);
-      //
-      //     // return;
-      //   } else {
-      //     return;
-      //   }
-      // }
-
       if (CUR_USERID != null) {
         try {
           if (mounted)
@@ -3659,6 +3803,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
             QTY: qty,
             'seller_id': model.seller_id ?? '',
           };
+          print('jfhkjfkfvl:_____$parameter{}______');
 
           Response response =
               await post(manageCartApi, body: parameter, headers: headers)
@@ -4153,21 +4298,21 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                   Expanded(
                     child: TextButton.icon(
                       style: TextButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.btnColor,
+                        backgroundColor: dynamicColor.buttonColor,
                       ),
                       onPressed: () {
                         handleBuyNow();
                       },
                       icon: Icon(
                         Icons.shopping_bag,
-                        color: Theme.of(context).colorScheme.white,
+                        color: Theme.of(context).colorScheme.black,
                       ),
                       label: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           getTranslated(context, 'BUYNOW')!,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.white,
+                            color: Theme.of(context).colorScheme.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
