@@ -195,7 +195,8 @@ class _CustomerSupportState extends State<CustomerSupport>
         getTranslated(context, 'SELECT_TYPE')!,
         style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
             color: Theme.of(context).colorScheme.fontColor,
-            fontWeight: FontWeight.normal),
+            fontWeight: FontWeight.normal,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       decoration: InputDecoration(
         filled: true,
@@ -229,6 +230,7 @@ class _CustomerSupportState extends State<CustomerSupport>
           value: user.id,
           child: Text(
             user.title!,
+            style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
           ),
         );
       }).toList(),
@@ -501,7 +503,9 @@ class _CustomerSupportState extends State<CustomerSupport>
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -616,7 +620,10 @@ class _CustomerSupportState extends State<CustomerSupport>
             children: [
               Row(
                 children: [
-                  Text("Type : " + ticketList[index].type!),
+                  Text(
+                    "Type : " + ticketList[index].type!,
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                  ),
                   Spacer(),
                   Container(
                     margin: EdgeInsets.only(left: 8),
@@ -627,8 +634,9 @@ class _CustomerSupportState extends State<CustomerSupport>
                             new BorderRadius.all(const Radius.circular(4.0))),
                     child: Text(
                       status,
-                      style:
-                          TextStyle(color: Theme.of(context).colorScheme.white),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.white,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   )
                 ],
@@ -642,10 +650,14 @@ class _CustomerSupportState extends State<CustomerSupport>
                     ticketList[index].desc!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
               ),
-              Text(getTranslated(context, "DATE")! +
-                  " : " +
-                  ticketList[index].date!),
+              Text(
+                getTranslated(context, "DATE")! +
+                    " : " +
+                    ticketList[index].date!,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Row(
@@ -667,7 +679,8 @@ class _CustomerSupportState extends State<CustomerSupport>
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.fontColor,
-                                fontSize: 11),
+                                fontSize: 11,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
                         onTap: () {
@@ -697,7 +710,8 @@ class _CustomerSupportState extends State<CustomerSupport>
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.fontColor,
-                                fontSize: 11),
+                                fontSize: 11,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
                         onTap: () {
@@ -730,7 +744,8 @@ class _CustomerSupportState extends State<CustomerSupport>
           getTranslated(context, 'SELECT_TYPE')!,
           style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
               color: Theme.of(context).colorScheme.fontColor,
-              fontWeight: FontWeight.normal),
+              fontWeight: FontWeight.normal,
+              fontFamily: dynamicFontFamily.fontFamily),
         ),
         decoration: InputDecoration(
           filled: true,
@@ -764,6 +779,7 @@ class _CustomerSupportState extends State<CustomerSupport>
             value: user.id,
             child: Text(
               user.title!,
+              style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
             ),
           );
         }).toList(),

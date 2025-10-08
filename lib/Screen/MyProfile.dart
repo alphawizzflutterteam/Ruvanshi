@@ -200,9 +200,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                 .textTheme
                                 .titleMedium!
                                 .copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.fontColor,
-                                ),
+                                    color:
+                                        Theme.of(context).colorScheme.fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           );
                         }),
                     Selector<UserProvider, String>(
@@ -218,7 +218,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .fontColor,
-                                          fontWeight: FontWeight.normal),
+                                          fontWeight: FontWeight.normal,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 )
                               : Container(
                                   height: 0,
@@ -239,7 +241,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .fontColor,
-                                          fontWeight: FontWeight.normal),
+                                          fontWeight: FontWeight.normal,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 )
                               : Container(
                                   height: 0,
@@ -272,9 +276,11 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                         .textTheme
                                         .bodySmall!
                                         .copyWith(
-                                          color: colors.primary,
-                                          decoration: TextDecoration.underline,
-                                        )),
+                                            color: colors.primary,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            fontFamily:
+                                                dynamicFontFamily.fontFamily)),
                                 onTap: () {
                                   Navigator.push(
                                       context,
@@ -365,7 +371,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .lightBlack),
+                                            .lightBlack,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                               ))
                         ],
                       ),
@@ -457,7 +465,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.fontColor,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.lightWhite,
       elevation: 1.0,
@@ -497,10 +507,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                             label: Text(
                               getTranslated(context, 'MY_ORDERS_LBL') ??
                                   'My Orders',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colors.whiteTemp,
@@ -534,10 +544,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                             label: Text(
                               getTranslated(context, 'MY_COUPON_LBL') ??
                                   'My Coupons',
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colors.whiteTemp,
@@ -670,7 +680,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
         title: Text(
           title,
           style: TextStyle(
-              color: Theme.of(context).colorScheme.lightBlack, fontSize: 15),
+              color: Theme.of(context).colorScheme.lightBlack,
+              fontSize: 15,
+              fontFamily: dynamicFontFamily.fontFamily),
         ),
         onTap: () async {
           if (title == getTranslated(context, 'MY_ORDERS_LBL')) {
@@ -872,7 +884,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .lightBlack),
+                                            .lightBlack,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                               ))
                         ],
                       ),
@@ -965,10 +979,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
               borderRadius: BorderRadius.all(Radius.circular(5.0))),
           content: Text(
             getTranslated(context, 'Delete Account') ?? 'Delete Account',
-            style: Theme.of(this.context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.fontColor),
+            style: Theme.of(this.context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.fontColor,
+                fontFamily: dynamicFontFamily.fontFamily),
           ),
           actions: <Widget>[
             new TextButton(
@@ -976,7 +989,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                   getTranslated(context, 'NO')!,
                   style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                       color: Theme.of(context).colorScheme.lightBlack,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop(false);
@@ -986,7 +1000,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                   getTranslated(context, 'YES')!,
                   style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                       color: Theme.of(context).colorScheme.fontColor,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 onPressed: () {
                   deleteAccount(CUR_USERID);
@@ -1013,10 +1028,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
               borderRadius: BorderRadius.all(Radius.circular(5.0))),
           content: Text(
             getTranslated(context, 'LOGOUTTXT')!,
-            style: Theme.of(this.context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.fontColor),
+            style: Theme.of(this.context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.fontColor,
+                fontFamily: dynamicFontFamily.fontFamily),
           ),
           actions: <Widget>[
             new TextButton(
@@ -1024,7 +1038,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                   getTranslated(context, 'NO')!,
                   style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                       color: Theme.of(context).colorScheme.lightBlack,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop(false);
@@ -1034,7 +1049,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                   getTranslated(context, 'YES')!,
                   style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                       color: Theme.of(context).colorScheme.fontColor,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 onPressed: () {
                   SettingProvider settingProvider =
@@ -1244,7 +1260,12 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                                       MediaQuery.of(context).size.width * 0.6,
                                   color: colors.primary,
                                   alignment: Alignment.center,
-                                  child: Text("Edit Bank passBook"))),
+                                  child: Text(
+                                    "Edit Bank passBook",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ))),
                     ),
                     savelabelLarge(getTranslated(context, "SAVE_LBL")!, () {
                       validateAndSave(_changeUserDetailsKey);
@@ -1367,8 +1388,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                       "NAME_LBL",
                     )!,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                        color: Theme.of(context).colorScheme.primary,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   fillColor: Theme.of(context).colorScheme.primary,
                   border: InputBorder.none),
@@ -1402,8 +1423,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
                   label: Text(
                     getTranslated(context, "EMAILHINT_LBL")!,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                        color: Theme.of(context).colorScheme.primary,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   fillColor: Theme.of(context).colorScheme.primary,
                   border: InputBorder.none),
@@ -1432,8 +1453,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
               child: Text(
                 title,
                 style: TextStyle(
-                  color: colors.blackTemp,
+                  color: dynamicColor.buttonTxtColor,
                   fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily,
                   fontSize: 16,
                 ),
               ),
@@ -1475,7 +1497,8 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       getTranslated(context, title)!,
       style: Theme.of(context).textTheme.titleLarge!.copyWith(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.fontColor),
+          color: Theme.of(context).colorScheme.fontColor,
+          fontFamily: dynamicFontFamily.fontFamily),
     );
   }
 
@@ -1655,7 +1678,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
               color: Theme.of(context).colorScheme.fontColor,
             ),
             decoration: InputDecoration(
-              label: Text(getTranslated(context, "CUR_PASS_LBL")!),
+              label: Text(
+                getTranslated(context, "CUR_PASS_LBL")!,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
               fillColor: Theme.of(context).colorScheme.white,
               border: InputBorder.none,
               suffixIcon: IconButton(
@@ -1693,7 +1719,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
       child: Align(
         alignment: Alignment.centerRight,
         child: InkWell(
-          child: Text(getTranslated(context, "FORGOT_PASSWORD_LBL")!),
+          child: Text(
+            getTranslated(context, "FORGOT_PASSWORD_LBL")!,
+            style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+          ),
           onTap: () {
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => SendOtp()));
@@ -1758,7 +1787,9 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
             ),
             decoration: InputDecoration(
               label: Text(
-                  getTranslated(context, "NEW_PASS_LBL") ?? "New Password"),
+                getTranslated(context, "NEW_PASS_LBL") ?? "New Password",
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
               fillColor: Theme.of(context).colorScheme.white,
               border: InputBorder.none,
               suffixIcon: IconButton(
@@ -1848,7 +1879,10 @@ class StateProfile extends State<MyProfile> with TickerProviderStateMixin {
               fontWeight: FontWeight.bold,
             ),
             decoration: InputDecoration(
-              label: Text(getTranslated(context, "CONFIRMPASSHINT_LBL")!),
+              label: Text(
+                getTranslated(context, "CONFIRMPASSHINT_LBL")!,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
               fillColor: Theme.of(context).colorScheme.white,
               border: InputBorder.none,
               suffixIcon: IconButton(

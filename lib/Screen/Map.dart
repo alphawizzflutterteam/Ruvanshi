@@ -120,7 +120,9 @@ class _MapState extends State<Map> {
               style: ElevatedButton.styleFrom(backgroundColor: colors.primary),
               child: Text(
                 "Update Location",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontFamily: dynamicFontFamily.fontFamily),
               ),
               onPressed: () {
                 if (widget.from == getTranslated(context, 'ADDADDRESS')) {

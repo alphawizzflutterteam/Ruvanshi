@@ -10,6 +10,7 @@ import 'package:TGSawadesiMartUser/Screen/Favorite.dart';
 import 'package:TGSawadesiMartUser/Screen/Login.dart';
 import 'package:TGSawadesiMartUser/Screen/MyProfile.dart';
 import 'package:TGSawadesiMartUser/Screen/Product_Detail.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
@@ -38,12 +39,14 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
   int _selBottom = 0;
   late TabController _tabController;
   bool _isNetworkAvail = true;
+  String offerImg = "";
 
   @override
   void initState() {
     _setStatusBarColor();
     _getAppBar();
     dynamicGradient();
+    getOfferGif();
     super.initState();
     getSetting();
     initDynamicLinks();
@@ -167,7 +170,10 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             lastPressed = now;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("Press back again to exit"),
+                content: Text(
+                  "Press back again to exit",
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
                 duration: Duration(seconds: 2),
               ),
             );
@@ -191,6 +197,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
               HomePage(
                 callback: () {
                   getSetting();
+                  getOfferGif();
                 },
               ),
               AllCategory(),
@@ -212,7 +219,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     String? title;
     if (_selBottom == 1)
       title = getTranslated(context, 'CATEGORY');
-    else if (_selBottom == 2) title = getTranslated(context, 'MYBAG');
+    else if (_selBottom == 2) title = getTranslated(context, 'CART');
     // else if (_selBottom == 3) title = getTranslated(context, 'PROFILE');
 
     return AppBar(
@@ -439,12 +446,34 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             ),
             Tab(
               icon: SizedBox(
-                width: 132,
-                height: 132,
-                child: Image.asset(
-                  "assets/images/offer.gif",
-                  fit: BoxFit.cover,
-                ),
+                width: 130,
+                height: 130,
+                child: offerImg.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: offerImg,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => Container(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(colors.primary),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: Icon(
+                            Icons.image_not_supported,
+                            color: Colors.grey[400],
+                            size: 30,
+                          ),
+                        ),
+                      )
+                    : Image.asset(
+                        "assets/images/offer.gif",
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
           ],
@@ -505,6 +534,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
       bool error = getdata["error"];
       if (!error) {
         var data = getdata["data"];
+        print("jhgjkfb $data");
         var colorValue = data["colors"];
         String? primaryHex = colorValue[PRIMARY_COLOR]?.toString();
         String? secondaryHex = colorValue[SECONDARY_COLOR]?.toString();
@@ -529,6 +559,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         }
 
         dynamicColor.buttonColor = secondaryColor;
+        dynamicColor.buttonTxtColor = textColor;
+        dynamicColor.appBarBgColor = primaryColor;
+        dynamicFontFamily.fontFamily = "Poppins";
 
         print("Primary: $primaryColor");
         print("Secondary: $secondaryColor");
@@ -537,6 +570,31 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         print("App Logo: $appLogo");
 
         if (mounted) setState(() {});
+      }
+    }, onError: (error) {
+      print("API Error: $error");
+    });
+  }
+
+  void getOfferGif() {
+    CUR_USERID = context.read<SettingProvider>().userId;
+    Map<String, dynamic> parameter = {};
+    if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+
+    apiBaseHelper.postAPICall(getOfferApi, parameter).then((getdata) async {
+      bool error = getdata["error"];
+      if (!error) {
+        var data = getdata["gif_urls"];
+        print("jhgjkfbss $data");
+
+        if (data != null) {
+          if (data.length > 0) {
+            setState(() {
+              offerImg = data[0];
+            });
+          }
+        }
+        // if (mounted) setState(() {});
       }
     }, onError: (error) {
       print("API Error: $error");

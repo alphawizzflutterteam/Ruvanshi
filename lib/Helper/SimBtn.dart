@@ -30,10 +30,10 @@ class SimBtn extends StatelessWidget {
           child: Text(title!,
               textAlign: TextAlign.center,
               // style: TextStyle(color: primaryColor))),
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(color: textColor, fontWeight: FontWeight.normal))),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: dynamicColor.buttonTxtColor,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: dynamicFontFamily.fontFamily))),
       onPressed: () {
         onBtnSelected!();
       },

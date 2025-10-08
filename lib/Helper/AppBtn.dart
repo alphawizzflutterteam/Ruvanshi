@@ -38,7 +38,9 @@ class AppBtn extends StatelessWidget {
                   title!,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: colors.whiteTemp, fontWeight: FontWeight.normal),
+                      color: colors.whiteTemp,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 )
               : const CircularProgressIndicator(),
         ),

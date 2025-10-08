@@ -181,21 +181,21 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Step 3 of 3",
               style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
+                  fontSize: 14,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
             Text(
               getTranslated(context, 'PAYMENT_METHOD_LBL')!,
-              style: const TextStyle(
-                color: colors.primary,
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-              ),
+              style: TextStyle(
+                  color: colors.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
           ],
         ),
@@ -302,7 +302,10 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
                                                     fontSize: 15,
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .black),
+                                                        .black,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                               ),
                                             ),
                                           ),
@@ -324,12 +327,13 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
                                               getTranslated(
                                                   context, 'PREFERED_TIME')!,
                                               style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .fontColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .fontColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                           ),
                                           Divider(),
@@ -373,12 +377,13 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
                                               getTranslated(
                                                   context, 'SELECT_PAYMENT')!,
                                               style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .fontColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .fontColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                           ),
                                           Divider(),
@@ -441,7 +446,9 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -464,7 +471,8 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
               style: TextStyle(
                   color: selectedDate == index
                       ? Theme.of(context).colorScheme.white
-                      : Theme.of(context).colorScheme.lightBlack2),
+                      : Theme.of(context).colorScheme.lightBlack2,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
             Padding(
               padding: const EdgeInsets.all(5.0),
@@ -474,7 +482,8 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold,
                     color: selectedDate == index
                         ? Theme.of(context).colorScheme.white
-                        : Theme.of(context).colorScheme.lightBlack2),
+                        : Theme.of(context).colorScheme.lightBlack2,
+                    fontFamily: dynamicFontFamily.fontFamily),
               ),
             ),
             Text(
@@ -482,7 +491,8 @@ class StatePayment extends State<Payment> with TickerProviderStateMixin {
               style: TextStyle(
                   color: selectedDate == index
                       ? Theme.of(context).colorScheme.white
-                      : Theme.of(context).colorScheme.lightBlack2),
+                      : Theme.of(context).colorScheme.lightBlack2,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
           ],
         ),

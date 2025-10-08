@@ -96,10 +96,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       appBar: AppBar(
         title: Text(
           getTranslated(context, "MYSUBSCRIPTIONS") ?? "",
-          style: const TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.w600,
+              fontFamily: dynamicFontFamily.fontFamily),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -117,10 +117,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               Text(
                 "Choose Your Plan",
                 style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    fontFamily: dynamicFontFamily.fontFamily),
               ),
               SizedBox(height: height * 0.05),
               // Text(
@@ -141,13 +141,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   : plansModel!.data == null || plansModel!.data!.isEmpty
                       ? SizedBox(
                           height: height * 0.6,
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               "No Plans Available",
                               style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              ),
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                             ),
                           ),
                         )
@@ -213,11 +213,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             child: Text(
               planName,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
           ),
           Expanded(
@@ -238,6 +238,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     const SizedBox(height: 16),
                     Container(
                       width: double.infinity,
+                      height: 100,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.grey[50],
@@ -287,10 +288,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       item.price == 0 ? "free" : "${item.price}",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: planColor,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                          color: planColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -318,12 +319,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
+                        child: Text(
                           "Buy Plan",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ),
                     ),

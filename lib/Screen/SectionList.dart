@@ -268,6 +268,7 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                     getTranslated(context, 'FILTER')!,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.fontColor,
+                      fontFamily: dynamicFontFamily.fontFamily,
                     ),
                   )),
               TextButton.icon(
@@ -279,8 +280,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                 label: Text(
                   getTranslated(context, 'SORT_BY')!,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.fontColor,
-                  ),
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
               ),
               InkWell(
@@ -389,7 +390,10 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                     .copyWith(
                                                         color: Colors.red,
                                                         fontWeight:
-                                                            FontWeight.bold)),
+                                                            FontWeight.bold,
+                                                        fontFamily:
+                                                            dynamicFontFamily
+                                                                .fontFamily)),
                                           ),
                                         )
                                       : Container(),
@@ -411,7 +415,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                               style: TextStyle(
                                                   color: colors.whiteTemp,
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 9),
+                                                  fontSize: 9,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                           ),
                                           margin: EdgeInsets.all(5),
@@ -435,7 +441,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                       .copyWith(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .lightBlack),
+                                              .lightBlack,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -461,7 +469,10 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                     .copyWith(
                                                         color: Theme.of(context)
                                                             .colorScheme
-                                                            .lightBlack),
+                                                            .lightBlack,
+                                                        fontFamily:
+                                                            dynamicFontFamily
+                                                                .fontFamily),
                                               ),
                                             ),
                                             Padding(
@@ -478,7 +489,10 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                             .colorScheme
                                                             .lightBlack,
                                                         fontWeight:
-                                                            FontWeight.bold),
+                                                            FontWeight.bold,
+                                                        fontFamily:
+                                                            dynamicFontFamily
+                                                                .fontFamily),
                                               ),
                                             )
                                           ]);
@@ -505,7 +519,11 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                             " (" + model.noOfRating! + ")",
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .labelSmall,
+                                                .labelSmall
+                                                ?.copyWith(
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                           )
                                         ],
                                       )
@@ -524,7 +542,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                 color: Theme.of(context)
                                                     .colorScheme
                                                     .fontColor,
-                                                fontWeight: FontWeight.bold)),
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily)),
                                     Text(
                                       double.parse(model
                                                   .prVarientList![
@@ -666,8 +686,12 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                                               value) {
                                                                         return new PopupMenuItem(
                                                                             child:
-                                                                                new Text(value),
-                                                                            value: value);
+                                                                                new Text(
+                                                                              value,
+                                                                              style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                                                                            ),
+                                                                            value:
+                                                                                value);
                                                                       }).toList();
                                                                     },
                                                                   ),
@@ -994,7 +1018,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                           EdgeInsetsDirectional.only(top: 19.0, bottom: 16.0),
                       child: Text(
                         getTranslated(context, 'SORT_BY')!,
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                     ),
                   ),
@@ -1020,9 +1045,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                               .copyWith(
                                   color: sortBy == ''
                                       ? Theme.of(context).colorScheme.white
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .fontColor)),
+                                      : Theme.of(context).colorScheme.fontColor,
+                                  fontFamily: dynamicFontFamily.fontFamily)),
                     ),
                   ),
                   InkWell(
@@ -1043,7 +1067,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                           ? Theme.of(context).colorScheme.white
                                           : Theme.of(context)
                                               .colorScheme
-                                              .fontColor))),
+                                              .fontColor,
+                                      fontFamily:
+                                          dynamicFontFamily.fontFamily))),
                       onTap: () {
                         sortBy = 'p.date_added';
                         orderBy = 'DESC';
@@ -1070,7 +1096,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                         ? Theme.of(context).colorScheme.white
                                         : Theme.of(context)
                                             .colorScheme
-                                            .fontColor),
+                                            .fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           )),
                       onTap: () {
                         sortBy = 'p.date_added';
@@ -1098,7 +1125,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                         ? Theme.of(context).colorScheme.white
                                         : Theme.of(context)
                                             .colorScheme
-                                            .fontColor),
+                                            .fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           )),
                       onTap: () {
                         sortBy = 'pv.price';
@@ -1126,7 +1154,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                         ? Theme.of(context).colorScheme.white
                                         : Theme.of(context)
                                             .colorScheme
-                                            .fontColor),
+                                            .fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           )),
                       onTap: () {
                         sortBy = 'pv.price';
@@ -1262,8 +1291,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                   title: Text(
                     getTranslated(context, 'FILTER')!,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.fontColor,
-                    ),
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   centerTitle: true,
                   elevation: 5,
@@ -1314,7 +1343,10 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                         .colorScheme
                                                         .lightBlack,
                                                     fontWeight:
-                                                        FontWeight.normal),
+                                                        FontWeight.normal,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 2,
                                           )))),
@@ -1394,7 +1426,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                 .white
                                             : Theme.of(context)
                                                 .colorScheme
-                                                .fontColor)),
+                                                .fontColor,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily)),
                               );
                             }
 
@@ -1456,6 +1490,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .fontColor,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily,
                                               fontWeight: FontWeight.normal),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
@@ -1534,7 +1570,11 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                           widget.section_model!.selectedId!.clear();
                         });
                     },
-                    child: Text(getTranslated(context, 'DISCARD')!),
+                    child: Text(
+                      getTranslated(context, 'DISCARD')!,
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ),
                   ),
                 ),
                 Spacer(),
@@ -1659,9 +1699,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                   .textTheme
                                   .titleSmall!
                                   .copyWith(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -1683,7 +1723,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                 style: TextStyle(
                                     color: colors.whiteTemp,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 9),
+                                    fontSize: 9,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                               ),
                             ),
                             margin: EdgeInsets.all(5),
@@ -1944,7 +1985,10 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                     ),
                     Text(
                       " (" + model.noOfRating! + ")",
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
                     )
                   ],
                 ),
@@ -1954,7 +1998,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                   Text(" " + CUR_CURRENCY! + " " + price.toString() + " ",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   double.parse(model
                               .prVarientList![model.selVarient!].disPrice!) !=
                           0
@@ -1981,7 +2026,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                       .copyWith(
                                           decoration:
                                               TextDecoration.lineThrough,
-                                          letterSpacing: 0),
+                                          letterSpacing: 0,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 ),
                               ),
                             ],
@@ -2018,7 +2065,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                           .copyWith(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .lightBlack),
+                                                  .lightBlack,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                     ),
                                   ),
                                   Flexible(
@@ -2036,6 +2085,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                                                 color: Theme.of(context)
                                                     .colorScheme
                                                     .lightBlack,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily,
                                                 fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -2053,7 +2104,8 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
                 child: Text(
                   model.name!,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.lightBlack),
+                      color: Theme.of(context).colorScheme.lightBlack,
+                      fontFamily: dynamicFontFamily.fontFamily),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -2223,7 +2275,9 @@ class StateSection extends State<SectionList> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,

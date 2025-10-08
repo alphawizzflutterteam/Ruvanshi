@@ -380,10 +380,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                                   .textTheme
                                   .titleSmall!
                                   .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .lightBlack,
-                                  ),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .lightBlack,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -414,7 +414,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                                       .copyWith(
                                           decoration:
                                               TextDecoration.lineThrough,
-                                          letterSpacing: 0),
+                                          letterSpacing: 0,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 ),
                               ],
                             ),
@@ -438,7 +440,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                                                 .copyWith(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .lightBlack),
+                                                        .lightBlack,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                           ),
                                         ),
                                         Padding(
@@ -453,8 +458,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                                                     color: Theme.of(context)
                                                         .colorScheme
                                                         .lightBlack,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                           ),
                                         )
                                       ]);
@@ -481,7 +488,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                                           ")",
                                       style: Theme.of(context)
                                           .textTheme
-                                          .labelSmall,
+                                          .labelSmall
+                                          ?.copyWith(
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                     )
                                   ],
                                 ),
@@ -666,7 +676,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
               productList[index].availability == "0"
                   ? Text(getTranslated(context, 'OUT_OF_STOCK_LBL')!,
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          color: Colors.red, fontWeight: FontWeight.bold))
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily))
                   : Container(),
             ],
           ),
@@ -940,7 +952,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -964,7 +978,9 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           selected: false,
           label: Text(tagList[i],
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.white, fontSize: 11)),
+                  color: Theme.of(context).colorScheme.white,
+                  fontSize: 11,
+                  fontFamily: dynamicFontFamily.fontFamily)),
           backgroundColor: colors.primary,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           shape: RoundedRectangleBorder(
@@ -994,7 +1010,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
           tagList.length > 0
               ? Padding(
                   padding: const EdgeInsetsDirectional.only(start: 8.0),
-                  child: Text('Discover more'),
+                  child: Text(
+                    'Discover more',
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                  ),
                 )
               : Container(),
           Padding(
@@ -1215,10 +1234,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
         title: Text(
           getTranslated(context, "SEarchHint")!,
           style: TextStyle(
-            color: Theme.of(context).colorScheme.fontColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+              color: Theme.of(context).colorScheme.fontColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              fontFamily: dynamicFontFamily.fontFamily),
           textAlign: TextAlign.center,
         ),
         content: Column(
@@ -1252,7 +1271,10 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(lastWords),
+              child: Text(
+                lastWords,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
             ),
             Container(
               padding: EdgeInsets.symmetric(vertical: 20),
@@ -1263,13 +1285,15 @@ class _SearchState extends State<Search> with TickerProviderStateMixin {
                         "I'm listening...",
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: Theme.of(context).colorScheme.fontColor,
-                            fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       )
                     : Text(
                         'Not listening',
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: Theme.of(context).colorScheme.fontColor,
-                            fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
               ),
             ),
@@ -1309,7 +1333,8 @@ class _SuggestionList extends StatelessWidget {
               suggestion.name!,
               style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   color: Theme.of(context).colorScheme.lightBlack,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1319,7 +1344,8 @@ class _SuggestionList extends StatelessWidget {
                 : Text(
                     "In " + suggestion.catName!,
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.fontColor),
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
             leading: textController!.text.toString().trim().isEmpty ||
                     suggestion.history!

@@ -173,8 +173,10 @@ class _ChatState extends State<Chat> {
                     Padding(
                       padding: EdgeInsets.only(left: 5.0),
                       child: Text(capitalize(message.name!),
-                          style:
-                              TextStyle(color: colors.primary, fontSize: 12)),
+                          style: TextStyle(
+                              color: colors.primary,
+                              fontSize: 12,
+                              fontFamily: dynamicFontFamily.fontFamily)),
                     )
                   ],
                 ),
@@ -202,13 +204,15 @@ class _ChatState extends State<Chat> {
                     children: <Widget>[
                       Text("${message.msg}",
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.black)),
+                              color: Theme.of(context).colorScheme.black,
+                              fontFamily: dynamicFontFamily.fontFamily)),
                       Padding(
                         padding: const EdgeInsetsDirectional.only(top: 5),
                         child: Text(message.date!,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.lightBlack,
-                                fontSize: 9)),
+                                fontSize: 9,
+                                fontFamily: dynamicFontFamily.fontFamily)),
                       ),
                     ],
                   ),
@@ -418,7 +422,9 @@ class _ChatState extends State<Chat> {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -559,7 +565,8 @@ class _ChatState extends State<Chat> {
                   child: Text(message.date!,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.lightBlack,
-                          fontSize: 9)),
+                          fontSize: 9,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                 ),
               ),
             ],

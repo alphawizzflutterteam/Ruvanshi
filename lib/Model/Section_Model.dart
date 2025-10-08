@@ -59,6 +59,7 @@ class SectionModel {
   }
 
   factory SectionModel.fromCart(Map<String, dynamic> parsedJson) {
+    print("parsedJson $parsedJson");
     List<Product> productList = (parsedJson[PRODUCT_DETAIL] as List)
         .map((data) => new Product.fromJson(data))
         .toList();
@@ -106,6 +107,7 @@ class Product {
   List<Attribute>? attributeList;
   List<String>? selectedId = [];
   List<String>? tagList = [];
+  List<ProductPromo>? promos = [];
   int? minOrderQuntity;
   String? isFav,
       isReturnable,
@@ -208,6 +210,7 @@ class Product {
       this.estimated_time,
       this.food_person,
       this.open_close_status,
+      this.promos,
       this.address});
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -235,6 +238,14 @@ class Product {
         json[TOTALALOOW] != null ? int.parse(json[TOTALALOOW]) : 10, (i) {
       return ((i + 1) * int.parse(json[QTYSTEP])).toString();
     });
+    List<ProductPromo>? promoCodes = [];
+    if (json["product_promos"] != null) {
+      if (json["product_promos"].length > 0) {
+        promoCodes = (json["product_promos"] as List)
+            .map((data) => new ProductPromo.fromJson(data))
+            .toList();
+      }
+    }
 
     var reviewImg = (json[REV_IMG] as List?);
     List<ReviewImg> reviewList = [];
@@ -279,6 +290,7 @@ class Product {
       videType: json[VIDEO_TYPE],
       tagList: tags,
       itemsCounter: items,
+      promos: promoCodes,
       warranty: json[WARRANTY],
       minOrderQuntity: int.parse(json[MINORDERQTY]),
       qtyStepSize: json[QTYSTEP],
@@ -448,6 +460,83 @@ class ReviewImg {
       reviewList = reviewImg.map((data) => new User.forReview(data)).toList();
 
     return new ReviewImg(totalImg: json[TOTALIMG], productRating: reviewList);
+  }
+}
+
+class ProductPromo {
+  String? id;
+  String? promoCode;
+  String? message;
+  String? startDate;
+  String? endDate;
+  String? discount;
+  String? repeatUsage;
+  String? minOrderAmt;
+  String? noOfUsers;
+  String? discountType;
+  String? maxDiscountAmt;
+  String? image;
+  String? noOfRepeatUsage;
+  String? status;
+  String? remainingDays;
+  String? productIds;
+
+  ProductPromo(
+      {this.id,
+      this.promoCode,
+      this.message,
+      this.startDate,
+      this.endDate,
+      this.discount,
+      this.repeatUsage,
+      this.minOrderAmt,
+      this.noOfUsers,
+      this.discountType,
+      this.maxDiscountAmt,
+      this.image,
+      this.noOfRepeatUsage,
+      this.status,
+      this.remainingDays,
+      this.productIds});
+
+  ProductPromo.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    promoCode = json['promo_code'];
+    message = json['message'];
+    startDate = json['start_date'];
+    endDate = json['end_date'];
+    discount = json['discount'];
+    repeatUsage = json['repeat_usage'];
+    minOrderAmt = json['min_order_amt'];
+    noOfUsers = json['no_of_users'];
+    discountType = json['discount_type'];
+    maxDiscountAmt = json['max_discount_amt'];
+    image = json['image'];
+    noOfRepeatUsage = json['no_of_repeat_usage'];
+    status = json['status'];
+    remainingDays = json['remaining_days'];
+    productIds = json['product_ids'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['promo_code'] = this.promoCode;
+    data['message'] = this.message;
+    data['start_date'] = this.startDate;
+    data['end_date'] = this.endDate;
+    data['discount'] = this.discount;
+    data['repeat_usage'] = this.repeatUsage;
+    data['min_order_amt'] = this.minOrderAmt;
+    data['no_of_users'] = this.noOfUsers;
+    data['discount_type'] = this.discountType;
+    data['max_discount_amt'] = this.maxDiscountAmt;
+    data['image'] = this.image;
+    data['no_of_repeat_usage'] = this.noOfRepeatUsage;
+    data['status'] = this.status;
+    data['remaining_days'] = this.remainingDays;
+    data['product_ids'] = this.productIds;
+    return data;
   }
 }
 

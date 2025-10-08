@@ -497,7 +497,11 @@ class _ControlsOverlay extends StatelessWidget {
                 for (final speed in _examplePlaybackRates)
                   PopupMenuItem(
                     value: speed,
-                    child: Text('${speed}x'),
+                    child: Text(
+                      '${speed}x',
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ),
                   )
               ];
             },
@@ -509,7 +513,10 @@ class _ControlsOverlay extends StatelessWidget {
                 vertical: 12,
                 horizontal: 16,
               ),
-              child: Text('${controller!.value.playbackSpeed}x'),
+              child: Text(
+                '${controller!.value.playbackSpeed}x',
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
             ),
           ),
         ),

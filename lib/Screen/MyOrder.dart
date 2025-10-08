@@ -231,7 +231,11 @@ class StateMyOrder extends State<MyOrder> with TickerProviderStateMixin {
                       Expanded(
                         child: searchList.length == 0
                             ? Center(
-                                child: Text(getTranslated(context, 'noItem')!))
+                                child: Text(
+                                getTranslated(context, 'noItem')!,
+                                style: TextStyle(
+                                    fontFamily: dynamicFontFamily.fontFamily),
+                              ))
                             : RefreshIndicator(
                                 color: colors.primary,
                                 key: _refreshIndicatorKey,
@@ -423,7 +427,9 @@ class StateMyOrder extends State<MyOrder> with TickerProviderStateMixin {
       content: Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -484,7 +490,8 @@ class StateMyOrder extends State<MyOrder> with TickerProviderStateMixin {
                                   .copyWith(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .lightBlack),
+                                          .lightBlack,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                             ),
                             Padding(
                                 padding:
@@ -498,7 +505,9 @@ class StateMyOrder extends State<MyOrder> with TickerProviderStateMixin {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .lightBlack2,
-                                          fontWeight: FontWeight.normal),
+                                          fontWeight: FontWeight.normal,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 )),
@@ -616,7 +625,8 @@ class StateMyOrder extends State<MyOrder> with TickerProviderStateMixin {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                                color: Theme.of(context).colorScheme.fontColor),
+                                color: Theme.of(context).colorScheme.fontColor,
+                                fontFamily: dynamicFontFamily.fontFamily),
                       )),
                   Divider(color: Theme.of(context).colorScheme.lightBlack),
                   Flexible(
@@ -647,9 +657,9 @@ class StateMyOrder extends State<MyOrder> with TickerProviderStateMixin {
                               .textTheme
                               .titleSmall!
                               .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .lightBlack)),
+                                  color:
+                                      Theme.of(context).colorScheme.lightBlack,
+                                  fontFamily: dynamicFontFamily.fontFamily)),
                       onPressed: () {
                         setState(() {
                           activeStatus = index == 0 ? null : statusList[index];

@@ -198,10 +198,12 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
                                                     .textTheme
                                                     .bodySmall!
                                                     .copyWith(
-                                                      color: Colors.red,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                        color: Colors.red,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily:
+                                                            dynamicFontFamily
+                                                                .fontFamily),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ),
@@ -220,7 +222,9 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
                                             style: TextStyle(
                                                 color: colors.whiteTemp,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 9),
+                                                fontSize: 9,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
                                           ),
                                         ),
                                         margin: EdgeInsets.all(5),
@@ -246,7 +250,9 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
                                         .copyWith(
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .lightBlack),
+                                                .lightBlack,
+                                            fontFamily:
+                                                dynamicFontFamily.fontFamily),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -288,7 +294,10 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
                                         " (" + favList[index].noOfRating! + ")",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .labelSmall,
+                                            .labelSmall
+                                            ?.copyWith(
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
                                       )
                                     ],
                                   )
@@ -301,7 +310,8 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .fontColor,
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 ),
                                 Text(
                                   double.parse(favList[index]
@@ -320,7 +330,9 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
                                       .copyWith(
                                           decoration:
                                               TextDecoration.lineThrough,
-                                          letterSpacing: 0.7),
+                                          letterSpacing: 0.7,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 ),
                               ],
                             ),
@@ -681,7 +693,12 @@ class StateFav extends State<Favorite> with TickerProviderStateMixin {
           return data.item1
               ? shimmer(context)
               : data.item2.length == 0
-                  ? Center(child: Text(getTranslated(context, 'noFav')!))
+                  ? Center(
+                      child: Text(
+                      getTranslated(context, 'noFav')!,
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ))
                   : RefreshIndicator(
                       color: colors.primary,
                       key: _refreshIndicatorKey,

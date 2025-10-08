@@ -120,7 +120,11 @@ class StateNoti extends State<NotificationList> with TickerProviderStateMixin {
                         padding: const EdgeInsetsDirectional.only(
                             top: kToolbarHeight),
                         child: Center(
-                            child: Text(getTranslated(context, 'noNoti')!)))
+                            child: Text(
+                          getTranslated(context, 'noNoti')!,
+                          style: TextStyle(
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        )))
                     : RefreshIndicator(
                         color: colors.primary,
                         key: _refreshIndicatorKey,
@@ -155,16 +159,23 @@ class StateNoti extends State<NotificationList> with TickerProviderStateMixin {
                 children: <Widget>[
                   Text(
                     model.date!,
-                    style: TextStyle(color: colors.primary),
+                    style: TextStyle(
+                        color: colors.primary,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Text(
                       model.title!,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ),
-                  Text(model.desc!)
+                  Text(
+                    model.desc!,
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                  )
                 ],
               ),
             ),
@@ -299,7 +310,9 @@ class StateNoti extends State<NotificationList> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,

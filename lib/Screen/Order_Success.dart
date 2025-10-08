@@ -41,12 +41,17 @@ class StateSuccess extends State<OrderSuccess> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 getTranslated(context, 'ORD_PLC')!,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
               ),
             ),
             Text(
               getTranslated(context, 'ORD_PLC_SUCC')!,
-              style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.fontColor,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
             Padding(
               padding: const EdgeInsetsDirectional.only(top: 28.0),
@@ -68,7 +73,8 @@ class StateSuccess extends State<OrderSuccess> {
                     child: Text(getTranslated(context, 'CONTINUE_SHOPPING')!,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.black,
+                            color: dynamicColor.buttonTxtColor,
+                            fontFamily: dynamicFontFamily.fontFamily,
                             fontWeight: FontWeight.normal))),
                 onPressed: () {
                   Navigator.of(context).pushNamedAndRemoveUntil(

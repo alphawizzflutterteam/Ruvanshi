@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import 'Color.dart';
+
 class NoDataFound extends StatelessWidget {
   final String slug;
 
@@ -19,7 +21,10 @@ class NoDataFound extends StatelessWidget {
           Center(
               child: Text(
             "No $slug Found",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: dynamicFontFamily.fontFamily),
           ))
         ],
       ),

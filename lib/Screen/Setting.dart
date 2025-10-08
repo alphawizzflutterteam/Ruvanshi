@@ -62,7 +62,9 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.fontColor,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.lightWhite,
       elevation: 1.0,
@@ -143,7 +145,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                             .titleSmall!
                             .copyWith(
                                 color: Theme.of(context).colorScheme.lightBlack,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                       )),
                   Spacer(),
                   Padding(
@@ -181,7 +184,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                               .copyWith(
                                   color:
                                       Theme.of(context).colorScheme.lightBlack,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                         )),
                     Spacer(),
                     Padding(
@@ -218,7 +222,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                               .copyWith(
                                   color:
                                       Theme.of(context).colorScheme.lightBlack,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                         )),
                     Spacer(),
                     Padding(
@@ -254,7 +259,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                               .copyWith(
                                   color:
                                       Theme.of(context).colorScheme.lightBlack,
-                                  fontWeight: FontWeight.bold))),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: dynamicFontFamily.fontFamily))),
                   Spacer(),
                   Padding(
                       padding: EdgeInsetsDirectional.only(end: 15.0),
@@ -296,7 +302,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                               .copyWith(
                                   color:
                                       Theme.of(context).colorScheme.lightBlack,
-                                  fontWeight: FontWeight.bold))),
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: dynamicFontFamily.fontFamily))),
                   Spacer(),
                   Padding(
                       padding: EdgeInsetsDirectional.only(end: 15.0),
@@ -344,7 +351,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                                   .copyWith(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .fontColor),
+                                          .fontColor,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                             )),
                         Divider(
                             color: Theme.of(context).colorScheme.lightBlack),
@@ -502,7 +510,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                           .titleSmall!
                           .copyWith(
                               color: Theme.of(context).colorScheme.lightBlack,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                              fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     onPressed: () {
                       Navigator.pop(context);
@@ -515,7 +524,8 @@ class StateSetting extends State<Setting> with TickerProviderStateMixin {
                           .titleSmall!
                           .copyWith(
                               color: Theme.of(context).colorScheme.fontColor,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                              fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     onPressed: () {
                       final form = _formkey.currentState!;

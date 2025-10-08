@@ -8,9 +8,12 @@ final Uri updateUserApi = Uri.parse(baseUrl + 'update_user');
 final Uri getSectionApi = Uri.parse(baseUrl + 'get_sections');
 final Uri getSettingApi = Uri.parse(baseUrl + 'get_settings');
 final Uri getThemeApi = Uri.parse(baseUrl + 'get_active_theme');
+final Uri getOfferApi = Uri.parse(baseUrl + 'get_offer_gif_urls');
 final Uri getSubcatApi =
     Uri.parse(baseUrl + 'get_subcategories_by_category_id');
 final Uri getProductApi = Uri.parse(baseUrl + 'get_products');
+final Uri getProductByCoupanApi =
+    Uri.parse(baseUrl + 'get_products_by_promo_code');
 final Uri getofferProductApi = Uri.parse(baseUrl + 'get_offers_with_products');
 final Uri manageCartApi = Uri.parse(baseUrl + 'manage_cart');
 final Uri getUserLoginApi = Uri.parse(baseUrl + 'login');

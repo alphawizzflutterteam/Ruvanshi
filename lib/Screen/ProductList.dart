@@ -10,6 +10,7 @@ import 'package:TGSawadesiMartUser/Provider/UserProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart';
@@ -84,6 +85,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     controller.addListener(_scrollListener);
+    controller.addListener(_scrollListenerFilter);
     getProduct("0");
 
     buttonController = new AnimationController(
@@ -204,7 +206,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: Theme.of(context).colorScheme.white,
-                      fontWeight: FontWeight.normal)),
+                      fontWeight: FontWeight.normal,
+                      fontFamily: dynamicFontFamily.fontFamily)),
             ),
           ),
         )));
@@ -290,10 +293,12 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                       .textTheme
                                                       .bodySmall!
                                                       .copyWith(
-                                                        color: Colors.red,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontFamily:
+                                                              dynamicFontFamily
+                                                                  .fontFamily),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -312,7 +317,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                               style: TextStyle(
                                                   color: colors.whiteTemp,
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 9),
+                                                  fontSize: 9,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                           ),
                                           margin: EdgeInsets.all(5),
@@ -353,7 +360,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .lightBlack),
+                                            .lightBlack,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -379,7 +388,10 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                   .copyWith(
                                                       color: Theme.of(context)
                                                           .colorScheme
-                                                          .lightBlack),
+                                                          .lightBlack,
+                                                      fontFamily:
+                                                          dynamicFontFamily
+                                                              .fontFamily),
                                             ),
                                           ),
                                           Padding(
@@ -395,7 +407,10 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                           .colorScheme
                                                           .lightBlack,
                                                       fontWeight:
-                                                          FontWeight.bold),
+                                                          FontWeight.bold,
+                                                      fontFamily:
+                                                          dynamicFontFamily
+                                                              .fontFamily),
                                             ),
                                           )
                                         ]);
@@ -422,7 +437,10 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                           " (" + model.noOfRating! + ")",
                                           style: Theme.of(context)
                                               .textTheme
-                                              .labelSmall,
+                                              .labelSmall
+                                              ?.copyWith(
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                         )
                                       ],
                                     ),
@@ -431,7 +449,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                   Text(
                                       CUR_CURRENCY! +
                                           " " +
-                                          price.toString() +
+                                          price.toStringAsFixed(2) +
                                           " ",
                                       style: Theme.of(context)
                                           .textTheme
@@ -440,7 +458,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .fontColor,
-                                              fontWeight: FontWeight.bold)),
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: dynamicFontFamily
+                                                  .fontFamily)),
                                   Text(
                                     double.parse(model
                                                 .prVarientList![
@@ -449,10 +469,12 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                             0
                                         ? CUR_CURRENCY! +
                                             "" +
-                                            model
-                                                .prVarientList![
-                                                    model.selVarient!]
-                                                .price!
+                                            double.parse(model
+                                                        .prVarientList![
+                                                            model.selVarient!]
+                                                        .price! ??
+                                                    '0.0')
+                                                .toStringAsFixed(2)
                                         : "",
                                     style: Theme.of(context)
                                         .textTheme
@@ -462,7 +484,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                 TextDecoration.lineThrough,
                                             letterSpacing: 0,
                                             fontSize: 15,
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily:
+                                                dynamicFontFamily.fontFamily),
                                   ),
                                 ],
                               ),
@@ -677,7 +701,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                 ? Positioned.directional(
                     textDirection: Directionality.of(context),
                     bottom: 5,
-                    end: 45,
+                    end: 50,
                     child: InkWell(
                       onTap: () {
                         if (_isProgress == false)
@@ -696,7 +720,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                           padding: const EdgeInsets.all(8.0),
                           child: Icon(
                             Icons.shopping_cart_outlined,
-                            size: 20,
+                            size: 24,
                           ),
                         ),
                       ),
@@ -731,7 +755,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                     !data.contains(model.id)
                                         ? Icons.favorite_border
                                         : Icons.favorite,
-                                    size: 20,
+                                    size: 24,
                                   ),
                                 ),
                                 onTap: () {
@@ -960,6 +984,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
       parameter[MAXPRICE] = _currentRangeValues!.end.round().toString();
     }
 
+    print("ufjparameter ${parameter}");
+
     apiBaseHelper.postAPICall(getProductApi, parameter).then((getdata) {
       bool error = getdata["error"];
       String? msg = getdata["message"];
@@ -1109,9 +1135,10 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                         .textTheme
                                         .bodySmall!
                                         .copyWith(
-                                          color: Colors.red,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily:
+                                                dynamicFontFamily.fontFamily),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
@@ -1143,7 +1170,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                   style: TextStyle(
                                       color: colors.whiteTemp,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 9),
+                                      fontSize: 9,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 ),
                               ),
                               margin: EdgeInsets.all(5),
@@ -1204,7 +1232,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                           padding: const EdgeInsets.all(8.0),
                                           child: Icon(
                                             Icons.shopping_cart_outlined,
-                                            size: 15,
+                                            size: 20,
                                           ),
                                         ),
                                       ),
@@ -1369,7 +1397,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                               !data.contains(model.id)
                                                   ? Icons.favorite_border
                                                   : Icons.favorite,
-                                              size: 15,
+                                              size: 20,
                                             ),
                                           ),
                                           onTap: () {
@@ -1416,7 +1444,11 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                         ),
                         Text(
                           " (" + model.noOfRating! + ")",
-                          style: Theme.of(context).textTheme.labelSmall,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall
+                              ?.copyWith(
+                                  fontFamily: dynamicFontFamily.fontFamily),
                         )
                       ],
                     ),
@@ -1425,7 +1457,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                   Text(" " + CUR_CURRENCY! + " " + price.toString() + " ",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   double.parse(model
                               .prVarientList![model.selVarient!].disPrice!) !=
                           0
@@ -1452,7 +1485,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                       .copyWith(
                                           decoration:
                                               TextDecoration.lineThrough,
-                                          letterSpacing: 0),
+                                          letterSpacing: 0,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 ),
                               ),
                             ],
@@ -1489,7 +1524,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                           .copyWith(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .lightBlack),
+                                                  .lightBlack,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                     ),
                                   ),
                                   Flexible(
@@ -1507,7 +1544,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                 color: Theme.of(context)
                                                     .colorScheme
                                                     .lightBlack,
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
                                       ),
                                     ),
                                   )
@@ -1524,7 +1563,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                 child: Text(
                   model.name!,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.lightBlack),
+                      color: Theme.of(context).colorScheme.lightBlack,
+                      fontFamily: dynamicFontFamily.fontFamily),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1579,7 +1619,11 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                             EdgeInsetsDirectional.only(top: 19.0, bottom: 16.0),
                         child: Text(
                           getTranslated(context, 'SORT_BY')!,
-                          style: Theme.of(context).textTheme.titleLarge,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(
+                                  fontFamily: dynamicFontFamily.fontFamily),
                         )),
                   ),
                   InkWell(
@@ -1610,9 +1654,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                               .copyWith(
                                   color: sortBy == ''
                                       ? Theme.of(context).colorScheme.white
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .fontColor)),
+                                      : Theme.of(context).colorScheme.fontColor,
+                                  fontFamily: dynamicFontFamily.fontFamily)),
                     ),
                   ),
                   InkWell(
@@ -1633,7 +1676,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                           ? Theme.of(context).colorScheme.white
                                           : Theme.of(context)
                                               .colorScheme
-                                              .fontColor))),
+                                              .fontColor,
+                                      fontFamily:
+                                          dynamicFontFamily.fontFamily))),
                       onTap: () {
                         sortBy = 'p.date_added';
                         orderBy = 'DESC';
@@ -1666,7 +1711,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                         ? Theme.of(context).colorScheme.white
                                         : Theme.of(context)
                                             .colorScheme
-                                            .fontColor),
+                                            .fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           )),
                       onTap: () {
                         sortBy = 'p.date_added';
@@ -1700,7 +1746,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                         ? Theme.of(context).colorScheme.white
                                         : Theme.of(context)
                                             .colorScheme
-                                            .fontColor),
+                                            .fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           )),
                       onTap: () {
                         sortBy = 'pv.price';
@@ -1734,7 +1781,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                         ? Theme.of(context).colorScheme.white
                                         : Theme.of(context)
                                             .colorScheme
-                                            .fontColor),
+                                            .fontColor,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           )),
                       onTap: () {
                         sortBy = 'pv.price';
@@ -1830,6 +1878,45 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
     }
   }
 
+  // Add these variables to your StateProduct class
+  bool _showFilterOptions = true;
+  double _lastScrollOffset = 0.0;
+
+// Update your _scrollListener method
+  _scrollListenerFilter() {
+    // Handle pagination
+    if (controller.offset >= controller.position.maxScrollExtent &&
+        !controller.position.outOfRange) {
+      if (this.mounted) {
+        if (mounted)
+          setState(() {
+            isLoadingmore = true;
+            if (offset < total) getProduct("0");
+          });
+      }
+    }
+
+    // Handle filter options visibility based on scroll direction
+    if (controller.position.userScrollDirection == ScrollDirection.reverse) {
+      // Scrolling down - hide filter options
+      if (_showFilterOptions) {
+        setState(() {
+          _showFilterOptions = false;
+        });
+      }
+    } else if (controller.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      // Scrolling up - show filter options
+      if (!_showFilterOptions) {
+        setState(() {
+          _showFilterOptions = true;
+        });
+      }
+    }
+
+    _lastScrollOffset = controller.offset;
+  }
+
   _showForm(BuildContext context) {
     return /*RefreshIndicator(
         key: _refreshIndicatorKey,
@@ -1837,49 +1924,71 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
         child: */
         Column(
       children: [
-        Container(
-          color: Theme.of(context).colorScheme.white,
-          padding: EdgeInsets.symmetric(vertical: 15),
-          child: Column(
-            children: [
-              if (widget.fromSeller!) Container() else _tags(),
-              filterOptions(),
-            ],
-          ),
-        ),
         Expanded(
           child: productList.length == 0
               ? getNoItem(context)
               : listType
-                  ? ListView.builder(
-                      controller: controller,
-                      itemCount: (offset < total)
-                          ? productList.length + 1
-                          : productList.length,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return (index == productList.length && isLoadingmore)
-                            ? singleItemSimmer(context)
-                            : listItem(index);
+                  ? RefreshIndicator(
+                      color: colors.primary,
+                      onRefresh: () async {
+                        getProduct("0");
                       },
-                    )
-                  : GridView.count(
-                      padding: EdgeInsetsDirectional.only(top: 5),
-                      crossAxisCount: 2,
-                      controller: controller,
-                      childAspectRatio: 0.78,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      children: List.generate(
-                        (offset < total)
+                      child: ListView.builder(
+                        controller: controller,
+                        itemCount: (offset < total)
                             ? productList.length + 1
                             : productList.length,
-                        (index) {
+                        physics: AlwaysScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
                           return (index == productList.length && isLoadingmore)
-                              ? simmerSingleProduct(context)
-                              : productItem(
-                                  index, index % 2 == 0 ? true : false);
+                              ? singleItemSimmer(context)
+                              : listItem(index);
                         },
-                      )),
+                      ),
+                    )
+                  : RefreshIndicator(
+                      color: colors.primary,
+                      onRefresh: () async {
+                        getProduct("0");
+                      },
+                      child: GridView.count(
+                          padding: EdgeInsetsDirectional.only(top: 5),
+                          crossAxisCount: 2,
+                          controller: controller,
+                          childAspectRatio: 0.78,
+                          physics: AlwaysScrollableScrollPhysics(),
+                          children: List.generate(
+                            (offset < total)
+                                ? productList.length + 1
+                                : productList.length,
+                            (index) {
+                              return (index == productList.length &&
+                                      isLoadingmore)
+                                  ? simmerSingleProduct(context)
+                                  : productItem(
+                                      index, index % 2 == 0 ? true : false);
+                            },
+                          )),
+                    ),
+        ),
+        AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          height: _showFilterOptions ? null : 0,
+          child: AnimatedOpacity(
+            duration: Duration(milliseconds: 300),
+            opacity: _showFilterOptions ? 1.0 : 0.0,
+            child: Container(
+              color: Theme.of(context).colorScheme.white,
+              // padding: EdgeInsets.only(bottom: 15),
+              child: Column(
+                children: [
+                  if (widget.fromSeller!) Container() else _tags(),
+                  filterOptions(),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -1892,7 +2001,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
         tagChip = ChoiceChip(
           selected: false,
           label: Text(tagList![i],
-              style: TextStyle(color: Theme.of(context).colorScheme.white)),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.white,
+                  fontFamily: dynamicFontFamily.fontFamily)),
           backgroundColor: colors.primary,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           shape: RoundedRectangleBorder(
@@ -1930,7 +2041,7 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
 
   filterOptions() {
     return Container(
-      color: Theme.of(context).colorScheme.gray,
+      color: dynamicColor.appBarBgColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -1938,32 +2049,32 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
             onPressed: filterDialog,
             icon: Icon(
               Icons.filter_list,
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
             ),
             label: Text(
               getTranslated(context, 'FILTER')!,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.fontColor,
-              ),
+                  color: dynamicColor.buttonColor,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
           ),
           TextButton.icon(
             onPressed: sortDialog,
             icon: Icon(
               Icons.swap_vert,
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
             ),
             label: Text(
               getTranslated(context, 'SORT_BY')!,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.fontColor,
-              ),
+                  color: dynamicColor.buttonColor,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
           ),
           InkWell(
             child: Icon(
               listType ? Icons.grid_view : Icons.list,
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
             ),
             onTap: () {
               productList.length != 0
@@ -1996,8 +2107,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                   title: Text(
                     getTranslated(context, 'FILTER')!,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.fontColor,
-                    ),
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   centerTitle: true,
                   elevation: 5,
@@ -2048,7 +2159,10 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                         .colorScheme
                                                         .lightBlack,
                                                     fontWeight:
-                                                        FontWeight.normal),
+                                                        FontWeight.normal,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 2,
                                           )))),
@@ -2122,7 +2236,9 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                                     .white
                                                 : Theme.of(context)
                                                     .colorScheme
-                                                    .fontColor)),
+                                                    .fontColor,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily)),
                               );
                             }
 
@@ -2179,6 +2295,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .fontColor,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily,
                                               fontWeight: FontWeight.normal),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,

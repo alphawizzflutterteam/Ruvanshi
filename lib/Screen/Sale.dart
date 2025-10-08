@@ -92,10 +92,10 @@ class _SaleState extends State<Sale>
                         child: Text(
                           getTranslated(context, 'CHOOSE_DIS')!,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.fontColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                              color: Theme.of(context).colorScheme.fontColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ),
                       discountRow(),
@@ -152,10 +152,10 @@ class _SaleState extends State<Sale>
             child: Text(
               title,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.fontColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
+                  color: Theme.of(context).colorScheme.fontColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontFamily: dynamicFontFamily.fontFamily),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -168,17 +168,19 @@ class _SaleState extends State<Sale>
               children: [
                 Expanded(
                   child: Text(saleList[index].shortDesc ?? "",
-                      style: Theme.of(context).textTheme.titleSmall),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall
+                          ?.copyWith(fontFamily: dynamicFontFamily.fontFamily)),
                 ),
                 InkWell(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
                       getTranslated(context, 'seeAll')!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall!
-                          .copyWith(color: colors.primary),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: colors.primary,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ),
                   onTap: () {
@@ -299,7 +301,8 @@ class _SaleState extends State<Sale>
               Text(" " + CUR_CURRENCY! + " " + price.toString(),
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.fontColor,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily)),
               Padding(
                 padding: const EdgeInsetsDirectional.only(
                     start: 5.0, bottom: 5, top: 3),
@@ -322,7 +325,8 @@ class _SaleState extends State<Sale>
                                 .labelSmall!
                                 .copyWith(
                                     decoration: TextDecoration.lineThrough,
-                                    letterSpacing: 0),
+                                    letterSpacing: 0,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           ),
                           Flexible(
                             child: Text(" | " + "-$offPer%",
@@ -333,7 +337,9 @@ class _SaleState extends State<Sale>
                                     .labelSmall!
                                     .copyWith(
                                         color: colors.primary,
-                                        letterSpacing: 0)),
+                                        letterSpacing: 0,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily)),
                           ),
                         ],
                       )
@@ -426,7 +432,8 @@ class _SaleState extends State<Sale>
               Text(" " + CUR_CURRENCY! + " " + price.toString(),
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.fontColor,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily)),
               Padding(
                 padding: const EdgeInsetsDirectional.only(
                     start: 5.0, bottom: 5, top: 3),
@@ -455,7 +462,8 @@ class _SaleState extends State<Sale>
                                 .labelSmall!
                                 .copyWith(
                                     decoration: TextDecoration.lineThrough,
-                                    letterSpacing: 0),
+                                    letterSpacing: 0,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           ),
                           Flexible(
                             child: Text(" | " + "-$offPer%",
@@ -466,7 +474,9 @@ class _SaleState extends State<Sale>
                                     .labelSmall!
                                     .copyWith(
                                         color: colors.primary,
-                                        letterSpacing: 0)),
+                                        letterSpacing: 0,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily)),
                           ),
                         ],
                       )
@@ -563,10 +573,9 @@ class _SaleState extends State<Sale>
                     child: ListTile(
                       title: Text(
                         getTranslated(context, 'seeAll')!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: colors.primary),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: colors.primary,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                       trailing: Icon(
                         Icons.keyboard_arrow_right,
@@ -737,13 +746,15 @@ class _SaleState extends State<Sale>
       return AlertDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        title: Text(getTranslated(context, 'UPDATE_APP')!),
+        title: Text(
+          getTranslated(context, 'UPDATE_APP')!,
+          style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+        ),
         content: Text(
           getTranslated(context, 'UPDATE_AVAIL')!,
-          style: Theme.of(this.context)
-              .textTheme
-              .titleMedium!
-              .copyWith(color: Theme.of(context).colorScheme.fontColor),
+          style: Theme.of(this.context).textTheme.titleMedium!.copyWith(
+              color: Theme.of(context).colorScheme.fontColor,
+              fontFamily: dynamicFontFamily.fontFamily),
         ),
         actions: <Widget>[
           new TextButton(
@@ -751,6 +762,7 @@ class _SaleState extends State<Sale>
                 getTranslated(context, 'NO')!,
                 style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                     color: Theme.of(context).colorScheme.lightBlack,
+                    fontFamily: dynamicFontFamily.fontFamily,
                     fontWeight: FontWeight.bold),
               ),
               onPressed: () {
@@ -761,6 +773,7 @@ class _SaleState extends State<Sale>
                 getTranslated(context, 'YES')!,
                 style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                     color: Theme.of(context).colorScheme.fontColor,
+                    fontFamily: dynamicFontFamily.fontFamily,
                     fontWeight: FontWeight.bold),
               ),
               onPressed: () async {
@@ -1003,7 +1016,11 @@ class _SaleState extends State<Sale>
                                           Navigator.pop(context);
                                         },
                                         child: Text(
-                                            getTranslated(context, 'All')!),
+                                          getTranslated(context, 'All')!,
+                                          style: TextStyle(
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
+                                        ),
                                       ),
                                     ),
                                     Spacer(),
@@ -1137,7 +1154,8 @@ class _SaleState extends State<Sale>
                         style: TextStyle(
                             color: curDis == index
                                 ? colors.blackTemp
-                                : Theme.of(context).colorScheme.fontColor),
+                                : Theme.of(context).colorScheme.fontColor,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                     ),
                   ],

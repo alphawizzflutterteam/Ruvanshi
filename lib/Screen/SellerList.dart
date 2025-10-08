@@ -37,7 +37,9 @@ class _SellerListState extends State<SellerList> {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -71,7 +73,8 @@ class _SellerListState extends State<SellerList> {
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 14,
-                  fontWeight: FontWeight.bold))
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily))
         ],
       ),
       onTap: () {

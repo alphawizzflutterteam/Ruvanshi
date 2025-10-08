@@ -138,7 +138,9 @@ class _EditProfileState extends State<EditProfile> {
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
-                                      color: colors.primary)))
+                                      color: colors.primary,
+                                      fontFamily:
+                                          dynamicFontFamily.fontFamily)))
                           : TextButton(
                               onPressed: () async {
                                 if (dob != null) {
@@ -175,12 +177,15 @@ class _EditProfileState extends State<EditProfile> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
-                                    color: colors.primary),
+                                    color: colors.primary,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                               ))
                     ],
                     title: Text(
                       "Profile",
-                      style: TextStyle(color: colors.primary),
+                      style: TextStyle(
+                          color: colors.primary,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ),
                   body: ListView(
@@ -226,35 +231,94 @@ class _EditProfileState extends State<EditProfile> {
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.person),
-                                  title: Text("User Name"),
-                                  trailing: Text("${user!.date![0].username}"),
+                                  title: Text(
+                                    "User Name",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                  trailing: Text(
+                                    "${user!.date![0].username}",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.email),
-                                  title: Text("Email Id"),
-                                  trailing: Text("${user!.date![0].email}"),
+                                  title: Text(
+                                    "Email Id",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                  trailing: Text(
+                                    "${user!.date![0].email}",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.call),
-                                  title: Text("Phone Number"),
-                                  trailing: Text("${user!.date![0].mobile}"),
-                                ),
-                                ListTile(
-                                  leading: Icon(Icons.accessibility),
-                                  title: Text("Gender"),
-                                  trailing: Text("${user!.date![0].gender}"),
-                                ),
-                                ListTile(
-                                  leading: Icon(Icons.accessibility),
-                                  title: Text("City"),
+                                  title: Text(
+                                    "Phone Number",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
                                   trailing: Text(
-                                      "${cityList[selCityPos!].name ?? ""}"),
+                                    "${user!.date![0].mobile}",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.accessibility),
+                                  title: Text(
+                                    "Gender",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                  trailing: Text(
+                                    "${user!.date![0].gender}",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                ),
+                                ListTile(
+                                  leading: Icon(Icons.accessibility),
+                                  title: Text(
+                                    "City",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                  trailing: Text(
+                                    "${cityList[selCityPos!].name ?? ""}",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.date_range),
-                                  title: Text("Date Of Birth"),
+                                  title: Text(
+                                    "Date Of Birth",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
                                   trailing: user!.date![0].dob != null
-                                      ? Text("${user!.date![0].dob}")
+                                      ? Text(
+                                          "${user!.date![0].dob}",
+                                          style: TextStyle(
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
+                                        )
                                       : TextButton(
                                           onPressed: () {
                                             setState(() {
@@ -266,17 +330,32 @@ class _EditProfileState extends State<EditProfile> {
                                               dob = user!.date![0].dob;
                                             });
                                           },
-                                          child: Text("Update")),
+                                          child: Text(
+                                            "Update",
+                                            style: TextStyle(
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
+                                          )),
                                 ),
                                 ListTile(
                                   leading: Icon(Icons.document_scanner),
-                                  title: Text("Upload Passbook"),
+                                  title: Text(
+                                    "Upload Passbook",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
                                   trailing: TextButton(
                                     onPressed: () {
                                       typeImage = "pas";
                                       getImage();
                                     },
-                                    child: Text("Upload"),
+                                    child: Text(
+                                      "Upload",
+                                      style: TextStyle(
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
+                                    ),
                                   ),
                                   subtitle: user!.date![0].bankPass != ""
                                       ? Container(
@@ -298,12 +377,18 @@ class _EditProfileState extends State<EditProfile> {
                                     TextField(
                                       controller: userNameController,
                                       decoration: InputDecoration(
-                                          label: Text("User Name")),
+                                          label: Text("User Name",
+                                              style: TextStyle(
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily))),
                                     ),
                                     TextField(
                                       controller: emailController,
-                                      decoration:
-                                          InputDecoration(label: Text("Email")),
+                                      decoration: InputDecoration(
+                                          label: Text("Email",
+                                              style: TextStyle(
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily))),
                                     ),
                                     getDob(),
                                     setCities()
@@ -353,17 +438,21 @@ class _EditProfileState extends State<EditProfile> {
                         Text(
                           getTranslated(context, 'CITYSELECT_LBL') ??
                               'Select City',
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  fontFamily: dynamicFontFamily.fontFamily),
                         ),
                         Text(
                           selCityPos != null && selCityPos != -1
                               ? cityList[selCityPos!].name ?? ""
                               : "Select a city",
                           style: TextStyle(
-                            color: selCityPos != null
-                                ? Theme.of(context).colorScheme.onSurface
-                                : Colors.grey,
-                          ),
+                              color: selCityPos != null
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : Colors.grey,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ],
                     ),
@@ -389,8 +478,19 @@ class _EditProfileState extends State<EditProfile> {
         onTap: () {
           _selectDate(context);
         },
-        title: Text("Select Date Of Birth"),
-        subtitle: dob != null ? Text(dob) : Text("dd-mm-yy"),
+        title: Text(
+          "Select Date Of Birth",
+          style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+        ),
+        subtitle: dob != null
+            ? Text(
+                dob,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              )
+            : Text(
+                "dd-mm-yy",
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
         trailing: Icon(Icons.calendar_today_outlined),
       ),
     );
@@ -432,8 +532,8 @@ class _EditProfileState extends State<EditProfile> {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontFamily: dynamicFontFamily.fontFamily),
                       ),
                     ),
                   ),
@@ -462,11 +562,11 @@ class _EditProfileState extends State<EditProfile> {
                                 getTranslated(context, 'NO_CITY_FOUND') ??
                                     'No city found',
                                 style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                               ),
                             ),
                           )
@@ -489,7 +589,9 @@ class _EditProfileState extends State<EditProfile> {
                                       city.name ?? '',
                                       style: TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w500),
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                     ),
                                   ),
                                 );

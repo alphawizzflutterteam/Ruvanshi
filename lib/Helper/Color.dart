@@ -122,4 +122,10 @@ class dynamicColor {
   }
 
   static Color buttonColor = Color(0xFF1C1C1C);
+  static Color buttonTxtColor = Color(0xFF1C1C1C);
+  static Color appBarBgColor = Color(0xFF1C1C1C);
+}
+
+class dynamicFontFamily {
+  static String fontFamily = "Poppins";
 }

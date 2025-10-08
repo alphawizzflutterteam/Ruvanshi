@@ -228,10 +228,9 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                 padding: EdgeInsets.fromLTRB(20.0, 20.0, 0, 2.0),
                 child: Text(
                   getTranslated(context, 'ADD_MONEY')!,
-                  style: Theme.of(this.context)
-                      .textTheme
-                      .titleSmall!
-                      .copyWith(color: Theme.of(context).colorScheme.fontColor),
+                  style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
               ),
               Divider(color: Theme.of(context).colorScheme.lightBlack),
@@ -293,7 +292,11 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                           padding: EdgeInsets.fromLTRB(20.0, 10, 20.0, 5),
                           child: Text(
                             getTranslated(context, 'SELECT_PAYMENT')!,
-                            style: Theme.of(context).textTheme.titleSmall,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
                         Divider(),
@@ -306,7 +309,10 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall!
-                                      .copyWith(color: Colors.red),
+                                      .copyWith(
+                                          color: Colors.red,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 ),
                               )
                             : Container(),
@@ -326,7 +332,8 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                 getTranslated(context, 'CANCEL')!,
                 style: Theme.of(this.context).textTheme.titleMedium!.copyWith(
                     color: Theme.of(context).colorScheme.lightBlack,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: dynamicFontFamily.fontFamily),
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -336,7 +343,8 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                 getTranslated(context, 'SEND')!,
                 style: Theme.of(this.context).textTheme.titleMedium!.copyWith(
                     color: Theme.of(context).colorScheme.fontColor,
-                    fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: dynamicFontFamily.fontFamily),
               ),
               onPressed: () {
                 final form = _formkey.currentState!;
@@ -564,19 +572,28 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                                 tranList[index].amt!,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.fontColor,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
-                        Text(tranList[index].date!),
+                        Text(
+                          tranList[index].date!,
+                          style: TextStyle(
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        ),
                       ],
                     ),
                     Divider(),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        Text(getTranslated(context, 'ID_LBL')! +
-                            " : " +
-                            tranList[index].id!),
+                        Text(
+                          getTranslated(context, 'ID_LBL')! +
+                              " : " +
+                              tranList[index].id!,
+                          style: TextStyle(
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        ),
                         Spacer(),
                         Container(
                           margin: EdgeInsets.only(left: 8),
@@ -589,16 +606,21 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                           child: Text(
                             tranList[index].type!,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.white),
+                                color: Theme.of(context).colorScheme.white,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         )
                       ],
                     ),
                     tranList[index].msg != null &&
                             tranList[index].msg!.isNotEmpty
-                        ? Text(getTranslated(context, 'MSG')! +
-                            " : " +
-                            tranList[index].msg!)
+                        ? Text(
+                            getTranslated(context, 'MSG')! +
+                                " : " +
+                                tranList[index].msg!,
+                            style: TextStyle(
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          )
                         : Container(),
                   ]))),
     );
@@ -764,7 +786,9 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -908,7 +932,8 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                                 .copyWith(
                                     color:
                                         Theme.of(context).colorScheme.fontColor,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ],
                       ),
@@ -925,7 +950,8 @@ class StateWallet extends State<MyWallet> with TickerProviderStateMixin {
                                 .copyWith(
                                     color:
                                         Theme.of(context).colorScheme.fontColor,
-                                    fontWeight: FontWeight.bold));
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: dynamicFontFamily.fontFamily));
                       }),
                       SimBtn(
                         size: 0.8,

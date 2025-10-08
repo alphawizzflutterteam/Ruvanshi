@@ -38,7 +38,8 @@ class _ReferEarnState extends State<ReferEarn> {
                   child: Text(
                     getTranslated(context, 'REFEREARN')!,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.fontColor),
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                 ),
                 Padding(
@@ -46,6 +47,7 @@ class _ReferEarnState extends State<ReferEarn> {
                   child: Text(
                     getTranslated(context, 'REFER_TEXT')!,
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
                   ),
                 ),
                 Padding(
@@ -53,7 +55,8 @@ class _ReferEarnState extends State<ReferEarn> {
                   child: Text(
                     getTranslated(context, 'YOUR_CODE')!,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.fontColor),
+                        color: Theme.of(context).colorScheme.fontColor,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   ),
                 ),
                 Padding(
@@ -75,7 +78,8 @@ class _ReferEarnState extends State<ReferEarn> {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                                color: Theme.of(context).colorScheme.fontColor),
+                                color: Theme.of(context).colorScheme.fontColor,
+                                fontFamily: dynamicFontFamily.fontFamily),
                       ),
                     ),
                   ),
@@ -92,8 +96,8 @@ class _ReferEarnState extends State<ReferEarn> {
                       getTranslated(context, 'TAP_TO_COPY')!,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.fontColor,
-                          ),
+                          color: Theme.of(context).colorScheme.fontColor,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ),
                   onPressed: () {
@@ -127,7 +131,9 @@ class _ReferEarnState extends State<ReferEarn> {
         content: new Text(
           msg,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Theme.of(context).colorScheme.black),
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.black,
+              fontFamily: dynamicFontFamily.fontFamily),
         ),
         backgroundColor: Theme.of(context).colorScheme.white,
         elevation: 1.0,

@@ -92,7 +92,9 @@ class StateRate extends State<ReviewList> {
                 label: Text(
                   getTranslated(context, "WRITE_REVIEW_LBL")!,
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.white, fontSize: 14),
+                      color: Theme.of(context).colorScheme.white,
+                      fontSize: 14,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 onPressed: () {
                   openBottomSheet(context, widget.id);
@@ -133,11 +135,16 @@ class StateRate extends State<ReviewList> {
                     children: [
                       Text(
                         "$averageRating",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                       Text(
-                          "${reviewList.length}  ${getTranslated(context, "RATINGS")!}")
+                        "${reviewList.length}  ${getTranslated(context, "RATINGS")!}",
+                        style:
+                            TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                      )
                     ],
                   ),
                 ),
@@ -204,7 +211,9 @@ class StateRate extends State<ReviewList> {
                           padding: const EdgeInsets.all(5.0),
                           child: Text(
                             "${getTranslated(context, "REVIEW_BY_CUST")!}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
                         const Divider(),
@@ -223,8 +232,10 @@ class StateRate extends State<ReviewList> {
                   children: [
                     Text(
                       "${reviewList.length} ${getTranslated(context, "REVIEW_LBL")}",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 24),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -267,7 +278,9 @@ class StateRate extends State<ReviewList> {
                           ),
                           Text(
                             "${getTranslated(context, "WITH_PHOTO")}",
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ],
                       )
@@ -303,8 +316,10 @@ class StateRate extends State<ReviewList> {
                                 children: [
                                   Text(
                                     reviewList[index].username!,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                                   ),
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -328,6 +343,8 @@ class StateRate extends State<ReviewList> {
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .lightBlack2,
+                                            fontFamily:
+                                                dynamicFontFamily.fontFamily,
                                             fontSize: 11),
                                       )
                                     ],
@@ -337,6 +354,9 @@ class StateRate extends State<ReviewList> {
                                       ? Text(
                                           reviewList[index].comment ?? '',
                                           textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                         )
                                       : Container(),
                                   isPhotoVisible
@@ -438,7 +458,8 @@ class StateRate extends State<ReviewList> {
                                   style: TextStyle(
                                       color:
                                           Theme.of(context).colorScheme.white,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 )),
                               )
                             : Container()
@@ -616,7 +637,9 @@ class StateRate extends State<ReviewList> {
       content: Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -678,7 +701,10 @@ class StateRate extends State<ReviewList> {
         height: 20,
         child: Text(
           totalStar,
-          style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              fontFamily: dynamicFontFamily.fontFamily),
         ));
   }
 }

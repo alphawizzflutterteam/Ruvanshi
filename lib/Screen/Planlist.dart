@@ -61,56 +61,64 @@ class _PlanListScreenState extends State<PlanListScreen> {
                   Text("User Name: ${plan.username ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("User Mobile: ${plan.mobile ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("Plan Name: ${plan.planName ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("Amount: ${plan.price ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("Start Date: ${plan.startDate ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("End Date: ${plan.endDate ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("Duration: ${plan.billingInfo ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
                     height: 2,
                   ),
                   Text("Description: ${plan.description ?? ''}",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          fontFamily: dynamicFontFamily.fontFamily)),
                 ],
               ),
             );

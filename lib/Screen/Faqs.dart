@@ -167,8 +167,8 @@ class StateFaqs extends State<Faqs> with TickerProviderStateMixin {
                             .textTheme
                             .titleMedium!
                             .copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.lightBlack),
+                                color: Theme.of(context).colorScheme.lightBlack,
+                                fontFamily: dynamicFontFamily.fontFamily),
                       )),
                   selectedIndex != index || flag
                       ? Row(
@@ -188,7 +188,9 @@ class StateFaqs extends State<Faqs> with TickerProviderStateMixin {
                                               color: Theme.of(context)
                                                   .colorScheme
                                                   .black
-                                                  .withOpacity(0.7)),
+                                                  .withOpacity(0.7),
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ))),
@@ -212,7 +214,9 @@ class StateFaqs extends State<Faqs> with TickerProviderStateMixin {
                                                 color: Theme.of(context)
                                                     .colorScheme
                                                     .black
-                                                    .withOpacity(0.7)),
+                                                    .withOpacity(0.7),
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
                                       ))),
                               Icon(Icons.keyboard_arrow_up)
                             ]),
@@ -262,7 +266,9 @@ class StateFaqs extends State<Faqs> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,

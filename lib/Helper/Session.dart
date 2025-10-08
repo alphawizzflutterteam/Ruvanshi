@@ -99,7 +99,7 @@ getAppBar(
 ) {
   return AppBar(
     titleSpacing: 0,
-    backgroundColor: Theme.of(context).colorScheme.white,
+    backgroundColor: dynamicColor.appBarBgColor,
     leading: Builder(
       builder: (BuildContext context) {
         return Container(
@@ -110,7 +110,7 @@ getAppBar(
             child: Center(
               child: Icon(
                 Icons.arrow_back_ios_rounded,
-                color: colors.primary,
+                color: dynamicColor.buttonColor,
               ),
             ),
           ),
@@ -119,14 +119,15 @@ getAppBar(
     ),
     title: Text(
       title,
-      style: TextStyle(color: colors.primary, fontWeight: FontWeight.normal),
+      style: TextStyle(
+          color: dynamicColor.buttonColor, fontWeight: FontWeight.normal),
     ),
     actions: <Widget>[
       IconButton(
           icon: SvgPicture.asset(
             imagePath + "search.svg",
             height: 20,
-            color: colors.primary,
+            color: dynamicColor.buttonColor,
           ),
           onPressed: () {
             Navigator.push(
@@ -141,7 +142,7 @@ getAppBar(
               padding: EdgeInsets.all(0),
               icon: SvgPicture.asset(
                 imagePath + "desel_fav.svg",
-                color: Colors.black,
+                color: dynamicColor.buttonColor,
               ),
               onPressed: () {
                 CUR_USERID != null
@@ -167,7 +168,7 @@ getAppBar(
                 Center(
                     child: SvgPicture.asset(
                   imagePath + "appbarCart.svg",
-                  color: colors.primary,
+                  color: dynamicColor.buttonColor,
                 )),
                 (data != null && data.isNotEmpty && data != "0")
                     ? new Positioned(
@@ -176,7 +177,8 @@ getAppBar(
                         child: Container(
                           //  height: 20,
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: colors.primary),
+                              shape: BoxShape.circle,
+                              color: dynamicColor.buttonColor),
                           child: new Center(
                             child: Padding(
                               padding: EdgeInsets.all(3),
@@ -225,7 +227,7 @@ getSimpleAppBar(
 ) {
   return AppBar(
     titleSpacing: 0,
-    backgroundColor: Theme.of(context).colorScheme.white,
+    backgroundColor: dynamicColor.appBarBgColor,
     leading: Builder(builder: (BuildContext context) {
       return Container(
         margin: EdgeInsets.all(10),
@@ -235,7 +237,7 @@ getSimpleAppBar(
           child: Center(
             child: Icon(
               Icons.arrow_back_ios_rounded,
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
             ),
           ),
         ),
@@ -243,7 +245,8 @@ getSimpleAppBar(
     }),
     title: Text(
       title,
-      style: TextStyle(color: colors.primary, fontWeight: FontWeight.normal),
+      style: TextStyle(
+          color: dynamicColor.buttonColor, fontWeight: FontWeight.normal),
     ),
   );
 }
@@ -252,7 +255,7 @@ noIntImage() {
   return SvgPicture.asset(
     'assets/images/no_internet.svg',
     fit: BoxFit.contain,
-    color: colors.primary,
+    color: dynamicColor.buttonColor,
   );
 }
 
@@ -274,10 +277,8 @@ String imagePath = 'assets/images/';
 noIntText(BuildContext context) {
   return Container(
       child: Text(getTranslated(context, 'NO_INTERNET')!,
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: colors.primary, fontWeight: FontWeight.normal)));
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: dynamicColor.buttonColor, fontWeight: FontWeight.normal)));
 }
 
 noIntDec(BuildContext context) {

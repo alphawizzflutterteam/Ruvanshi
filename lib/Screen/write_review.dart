@@ -97,7 +97,10 @@ class _Write_ReviewState extends State<Write_Review> {
       child: Text(
         getTranslated(context, 'REVIEW_OPINION')!,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.titleMedium!,
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium!
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
       ),
     );
   }
@@ -155,7 +158,8 @@ class _Write_ReviewState extends State<Write_Review> {
                     getTranslated(context, 'ADD_YOUR_PHOTOS')!,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.lightBlack,
-                        fontSize: 11),
+                        fontSize: 11,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   )
                 ],
               ),
@@ -237,7 +241,10 @@ class _Write_ReviewState extends State<Write_Review> {
                       widget.screenContext);
                 }
               },
-              child: Text(getTranslated(context, 'SEND_REVIEW')!),
+              child: Text(
+                getTranslated(context, 'SEND_REVIEW')!,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
               color: colors.primary,
             ),
           ),
@@ -251,10 +258,9 @@ class _Write_ReviewState extends State<Write_Review> {
   ) {
     return Text(
       getTranslated(context, title)!,
-      style: Theme.of(context)
-          .textTheme
-          .titleLarge!
-          .copyWith(fontWeight: FontWeight.bold),
+      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+          fontWeight: FontWeight.bold,
+          fontFamily: dynamicFontFamily.fontFamily),
     );
   }
 

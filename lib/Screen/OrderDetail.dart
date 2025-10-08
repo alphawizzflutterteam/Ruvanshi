@@ -366,7 +366,8 @@ class StateOrder extends State<OrderDetail>
                   child: Text(getTranslated(context, 'PRICE_DETAIL')!,
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                           color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.bold))),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily))),
               Divider(
                 color: Theme.of(context).colorScheme.lightBlack,
               ),
@@ -378,12 +379,13 @@ class StateOrder extends State<OrderDetail>
                     Text(
                       "${getTranslated(context, 'PRICE_LBL')!} :",
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2,
-                          ),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     Text("${CUR_CURRENCY!} ${widget.model!.subTotal!}",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2))
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily))
                   ],
                 ),
               ),
@@ -410,7 +412,8 @@ class StateOrder extends State<OrderDetail>
                     Text(
                       (getTranslated(context, 'CGST') ?? "CGST") + " " + ":",
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.lightBlack2),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     Text(
                       "+ " +
@@ -418,7 +421,8 @@ class StateOrder extends State<OrderDetail>
                           " " +
                           (widget.model?.cgstAmount ?? "0"),
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.lightBlack2),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     )
                   ],
                 ),
@@ -447,7 +451,8 @@ class StateOrder extends State<OrderDetail>
                     Text(
                       (getTranslated(context, 'SGST') ?? "SGST") + " " + ":",
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.lightBlack2),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     Text(
                       "+ " +
@@ -455,7 +460,8 @@ class StateOrder extends State<OrderDetail>
                           " " +
                           (widget.model?.sgstAmount ?? "0"),
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.lightBlack2),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -467,10 +473,12 @@ class StateOrder extends State<OrderDetail>
                   children: [
                     Text(getTranslated(context, 'DELIVERY_CHARGE')! + " " + ":",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2)),
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily)),
                     Text("+ " + CUR_CURRENCY! + " " + widget.model!.delCharge!,
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2))
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily))
                   ],
                 ),
               ),
@@ -484,10 +492,12 @@ class StateOrder extends State<OrderDetail>
                             " " +
                             ":",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2)),
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily)),
                     Text("- " + CUR_CURRENCY! + " " + widget.model!.promoDis!,
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2))
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily))
                   ],
                 ),
               ),
@@ -498,10 +508,12 @@ class StateOrder extends State<OrderDetail>
                   children: [
                     Text(getTranslated(context, 'WALLET_BAL')! + " " + ":",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2)),
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily)),
                     Text("- " + CUR_CURRENCY! + " " + widget.model!.walBal!,
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2))
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily))
                   ],
                 ),
               ),
@@ -532,11 +544,13 @@ class StateOrder extends State<OrderDetail>
                     Text(getTranslated(context, 'PAYABLE')! + " " + ":",
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: Theme.of(context).colorScheme.lightBlack,
-                            fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: dynamicFontFamily.fontFamily)),
                     Text(CUR_CURRENCY! + " " + widget.model!.payable!,
                         style: Theme.of(context).textTheme.labelLarge!.copyWith(
                             color: Theme.of(context).colorScheme.lightBlack,
-                            fontWeight: FontWeight.bold))
+                            fontWeight: FontWeight.bold,
+                            fontFamily: dynamicFontFamily.fontFamily))
                   ],
                 ),
               ),
@@ -555,6 +569,7 @@ class StateOrder extends State<OrderDetail>
                   child: Text(getTranslated(context, 'SHIPPING_DETAIL')!,
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
                           color: Theme.of(context).colorScheme.fontColor,
+                          fontFamily: dynamicFontFamily.fontFamily,
                           fontWeight: FontWeight.bold))),
               Divider(
                 color: Theme.of(context).colorScheme.lightBlack,
@@ -563,18 +578,20 @@ class StateOrder extends State<OrderDetail>
                   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                   child: Text(
                     widget.model!.name! + ",",
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
                   )),
               Padding(
                   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                   child: Text(widget.model!.address!,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.lightBlack2))),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily))),
               Padding(
                   padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
                   child: Text(widget.model!.mobile!,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2,
-                      ))),
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily))),
             ])));
   }
 
@@ -643,7 +660,8 @@ class StateOrder extends State<OrderDetail>
                                       color: Theme.of(context)
                                           .colorScheme
                                           .lightBlack,
-                                      fontWeight: FontWeight.normal),
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -664,7 +682,10 @@ class StateOrder extends State<OrderDetail>
                                                 .copyWith(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .lightBlack2),
+                                                        .lightBlack2,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                           ),
                                         ),
                                         Padding(
@@ -678,7 +699,10 @@ class StateOrder extends State<OrderDetail>
                                                 .copyWith(
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .lightBlack),
+                                                        .lightBlack,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
                                           ),
                                         )
                                       ]);
@@ -694,7 +718,9 @@ class StateOrder extends State<OrderDetail>
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .lightBlack2),
+                                            .lightBlack2,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                               ),
                               Padding(
                                 padding: EdgeInsetsDirectional.only(start: 5.0),
@@ -706,7 +732,9 @@ class StateOrder extends State<OrderDetail>
                                       .copyWith(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .lightBlack),
+                                              .lightBlack,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                 ),
                               )
                             ]),
@@ -718,7 +746,8 @@ class StateOrder extends State<OrderDetail>
                                   .copyWith(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .fontColor),
+                                          .fontColor,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                             ),
                             //  Text(orderItem.status)
                           ],
@@ -765,13 +794,15 @@ class StateOrder extends State<OrderDetail>
                             "${getTranslated(context, "OTP")!} : ",
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.lightBlack,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                           Text(
                             "Order Remark : ",
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.lightBlack,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                           orderItem.courier_agency! != ""
                               ? Text(
@@ -780,7 +811,8 @@ class StateOrder extends State<OrderDetail>
                                       color: Theme.of(context)
                                           .colorScheme
                                           .lightBlack,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 )
                               : Container(),
                           orderItem.tracking_id! != ""
@@ -790,7 +822,8 @@ class StateOrder extends State<OrderDetail>
                                       color: Theme.of(context)
                                           .colorScheme
                                           .lightBlack,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 )
                               : Container(),
                         ],
@@ -823,23 +856,25 @@ class StateOrder extends State<OrderDetail>
                           Text(
                             "${orderItem.item_otp} ",
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.lightBlack2,
-                            ),
+                                color:
+                                    Theme.of(context).colorScheme.lightBlack2,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                           Text(
                             "${model.orderNote}",
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.lightBlack2,
-                            ),
+                                color:
+                                    Theme.of(context).colorScheme.lightBlack2,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                           orderItem.courier_agency! != ""
                               ? Text(
                                   "${orderItem.courier_agency!}",
                                   style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .lightBlack2,
-                                  ),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .lightBlack2,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 )
                               : Container(),
                           orderItem.tracking_id! != ""
@@ -851,7 +886,9 @@ class StateOrder extends State<OrderDetail>
                                         color: Theme.of(context)
                                             .colorScheme
                                             .lightBlack,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                                   ),
                                   TextSpan(
                                       text: "${orderItem.courier_agency!}",
@@ -955,7 +992,8 @@ class StateOrder extends State<OrderDetail>
                           child: Text(
                             getTranslated(context, 'SUBMIT_LBL')!,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.fontColor),
+                                color: Theme.of(context).colorScheme.fontColor,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
                         onTap: () {
@@ -976,7 +1014,9 @@ class StateOrder extends State<OrderDetail>
                         Icon(Icons.rate_review_outlined, color: colors.primary),
                     label: Text(
                       getTranslated(context, "WRITE_REVIEW_LBL")!,
-                      style: TextStyle(color: colors.primary),
+                      style: TextStyle(
+                          color: colors.primary,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(
@@ -1010,14 +1050,18 @@ class StateOrder extends State<OrderDetail>
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .colorScheme
-                                                      .fontColor),
+                                                      .fontColor,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                             content: Text(
                                               "Would you like to cancel this order?",
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .colorScheme
-                                                      .fontColor),
+                                                      .fontColor,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                             actions: [
                                               TextButton(
@@ -1025,7 +1069,10 @@ class StateOrder extends State<OrderDetail>
                                                   getTranslated(
                                                       context, 'YES')!,
                                                   style: TextStyle(
-                                                      color: colors.primary),
+                                                      color: colors.primary,
+                                                      fontFamily:
+                                                          dynamicFontFamily
+                                                              .fontFamily),
                                                 ),
                                                 onPressed: () {
                                                   Navigator.pop(context);
@@ -1043,7 +1090,10 @@ class StateOrder extends State<OrderDetail>
                                                 child: Text(
                                                   getTranslated(context, 'NO')!,
                                                   style: TextStyle(
-                                                      color: colors.primary),
+                                                      color: colors.primary,
+                                                      fontFamily:
+                                                          dynamicFontFamily
+                                                              .fontFamily),
                                                 ),
                                                 onPressed: () {
                                                   Navigator.pop(context);
@@ -1055,8 +1105,11 @@ class StateOrder extends State<OrderDetail>
                                       );
                                     }
                                   : null,
-                              child:
-                                  Text(getTranslated(context, 'ITEM_CANCEL')!),
+                              child: Text(
+                                getTranslated(context, 'ITEM_CANCEL')!,
+                                style: TextStyle(
+                                    fontFamily: dynamicFontFamily.fontFamily),
+                              ),
                             )),
                       ),
                     // else
@@ -1080,21 +1133,27 @@ class StateOrder extends State<OrderDetail>
                                           style: TextStyle(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .fontColor),
+                                                  .fontColor,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                         ),
                                         content: Text(
                                           "Would you like to return this product?",
                                           style: TextStyle(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .fontColor),
+                                                  .fontColor,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
                                         ),
                                         actions: [
                                           TextButton(
                                             child: Text(
                                               getTranslated(context, 'YES')!,
                                               style: TextStyle(
-                                                  color: colors.primary),
+                                                  color: colors.primary,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                             onPressed: () {
                                               Navigator.pop(context);
@@ -1112,7 +1171,9 @@ class StateOrder extends State<OrderDetail>
                                             child: Text(
                                               getTranslated(context, 'NO')!,
                                               style: TextStyle(
-                                                  color: colors.primary),
+                                                  color: colors.primary,
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily),
                                             ),
                                             onPressed: () {
                                               Navigator.pop(context);
@@ -1124,7 +1185,11 @@ class StateOrder extends State<OrderDetail>
                                   );
                                 }
                               : null,
-                          child: Text(getTranslated(context, 'ITEM_RETURN')!),
+                          child: Text(
+                            getTranslated(context, 'ITEM_RETURN')!,
+                            style: TextStyle(
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          ),
                         ),
                       )
                     // : Container(),
@@ -1167,7 +1232,8 @@ class StateOrder extends State<OrderDetail>
                           "Attachment " + (i + 1).toString(),
                           style: TextStyle(
                               decoration: TextDecoration.underline,
-                              color: Theme.of(context).colorScheme.fontColor),
+                              color: Theme.of(context).colorScheme.fontColor,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                         onTap: () {
                           _launchURL(model.attachList![i].attachment!);
@@ -1183,7 +1249,10 @@ class StateOrder extends State<OrderDetail>
                     color: clr, borderRadius: BorderRadius.circular(5)),
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: Text(status),
+                  child: Text(
+                    status,
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                  ),
                 ))
           ],
         ));
@@ -1219,11 +1288,13 @@ class StateOrder extends State<OrderDetail>
             children: [
               Text(
                 getTranslated(context, 'ORDER_NPLACED')!,
-                style: TextStyle(fontSize: 8),
+                style: TextStyle(
+                    fontSize: 8, fontFamily: dynamicFontFamily.fontFamily),
               ),
               Text(
                 pDate,
-                style: TextStyle(fontSize: 8),
+                style: TextStyle(
+                    fontSize: 8, fontFamily: dynamicFontFamily.fontFamily),
               ),
             ],
           ),
@@ -1260,11 +1331,15 @@ class StateOrder extends State<OrderDetail>
                   children: [
                     Text(
                       getTranslated(context, 'ORDER_PROCESSED')!,
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     Text(
                       prDate ?? " ",
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -1300,11 +1375,15 @@ class StateOrder extends State<OrderDetail>
                       children: [
                         Text(
                           getTranslated(context, 'ORDER_PROCESSED')!,
-                          style: TextStyle(fontSize: 8),
+                          style: TextStyle(
+                              fontSize: 8,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                         Text(
                           prDate,
-                          style: TextStyle(fontSize: 8),
+                          style: TextStyle(
+                              fontSize: 8,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ],
                     ),
@@ -1341,12 +1420,16 @@ class StateOrder extends State<OrderDetail>
                   children: [
                     Text(
                       getTranslated(context, 'ORDER_SHIPPED')!,
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                       textAlign: TextAlign.center,
                     ),
                     Text(
                       sDate ?? " ",
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -1381,12 +1464,16 @@ class StateOrder extends State<OrderDetail>
                       children: [
                         Text(
                           getTranslated(context, 'ORDER_SHIPPED')!,
-                          style: TextStyle(fontSize: 8),
+                          style: TextStyle(
+                              fontSize: 8,
+                              fontFamily: dynamicFontFamily.fontFamily),
                           textAlign: TextAlign.center,
                         ),
                         Text(
                           sDate,
-                          style: TextStyle(fontSize: 8),
+                          style: TextStyle(
+                              fontSize: 8,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ],
                     ),
@@ -1423,12 +1510,16 @@ class StateOrder extends State<OrderDetail>
                   children: [
                     Text(
                       getTranslated(context, 'ORDER_DELIVERED')!,
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                       textAlign: TextAlign.center,
                     ),
                     Text(
                       dDate ?? " ",
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -1467,11 +1558,15 @@ class StateOrder extends State<OrderDetail>
                   children: [
                     Text(
                       getTranslated(context, 'ORDER_CANCLED')!,
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     Text(
                       cDate,
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(
+                          fontSize: 8,
+                          fontFamily: dynamicFontFamily.fontFamily),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -1510,11 +1605,15 @@ class StateOrder extends State<OrderDetail>
                     children: [
                       Text(
                         getTranslated(context, 'ORDER_RETURNED')!,
-                        style: TextStyle(fontSize: 8),
+                        style: TextStyle(
+                            fontSize: 8,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                       Text(
                         rDate ?? " ",
-                        style: TextStyle(fontSize: 8),
+                        style: TextStyle(
+                            fontSize: 8,
+                            fontFamily: dynamicFontFamily.fontFamily),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -1566,7 +1665,9 @@ class StateOrder extends State<OrderDetail>
       content: Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -1589,10 +1690,9 @@ class StateOrder extends State<OrderDetail>
             ),
             title: Text(
               getTranslated(context, 'DWNLD_INVOICE')!,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall!
-                  .copyWith(color: Theme.of(context).colorScheme.lightBlack),
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  color: Theme.of(context).colorScheme.lightBlack,
+                  fontFamily: dynamicFontFamily.fontFamily),
             ),
           ),
           onTap: () async {
@@ -1677,7 +1777,9 @@ class StateOrder extends State<OrderDetail>
                 content: Text(
                   "${getTranslated(context, 'INVOICE_PATH')} $targetFileName",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Theme.of(context).colorScheme.black),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.black,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 action: SnackBarAction(
                     label: getTranslated(context, 'VIEW')!,
@@ -1807,7 +1909,8 @@ class StateOrder extends State<OrderDetail>
                       child: Text(
                         "${getTranslated(context, 'PREFER_DATE_TIME')!}: ${model.delDate!} - ${model.delTime!}",
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack2),
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                     ),
                   )
@@ -1839,7 +1942,8 @@ class StateOrder extends State<OrderDetail>
                       Text(
                         getTranslated(context, 'BANKRECEIPT')!,
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: Theme.of(context).colorScheme.lightBlack),
+                            color: Theme.of(context).colorScheme.lightBlack,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                       Container(
                         height: 30,
@@ -1908,7 +2012,8 @@ class StateOrder extends State<OrderDetail>
                               getTranslated(context, 'SUBMIT_LBL')!,
                               style: TextStyle(
                                   color:
-                                      Theme.of(context).colorScheme.fontColor),
+                                      Theme.of(context).colorScheme.fontColor,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                             ),
                           ),
                           onTap: () {
@@ -1949,7 +2054,11 @@ class StateOrder extends State<OrderDetail>
         if (count == model.itemList!.length) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.8,
-            child: Center(child: Text(getTranslated(context, "noItem")!)),
+            child: Center(
+                child: Text(
+              getTranslated(context, "noItem")!,
+              style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+            )),
           );
         }
         return Container();
@@ -2040,7 +2149,10 @@ class StateOrder extends State<OrderDetail>
       child: Text(
         getTranslated(context, 'REVIEW_OPINION')!,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.titleMedium!,
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium!
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
       ),
     );
   }
@@ -2098,7 +2210,8 @@ class StateOrder extends State<OrderDetail>
                     getTranslated(context, 'ADD_YOUR_PHOTOS')!,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.lightBlack,
-                        fontSize: 11),
+                        fontSize: 11,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   )
                 ],
               ),
@@ -2180,7 +2293,10 @@ class StateOrder extends State<OrderDetail>
                   setSnackbar(getTranslated(context, 'REVIEW_W')!);
                 }
               },
-              child: Text(getTranslated(context, 'SEND_REVIEW')!),
+              child: Text(
+                getTranslated(context, 'SEND_REVIEW')!,
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
               color: colors.primary,
             ),
           ),
@@ -2194,10 +2310,9 @@ class StateOrder extends State<OrderDetail>
   ) {
     return Text(
       getTranslated(context, title)!,
-      style: Theme.of(context)
-          .textTheme
-          .titleLarge!
-          .copyWith(fontWeight: FontWeight.bold),
+      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+          fontWeight: FontWeight.bold,
+          fontFamily: dynamicFontFamily.fontFamily),
     );
   }
 
@@ -2259,15 +2374,16 @@ class StateOrder extends State<OrderDetail>
                 Text(
                   "${getTranslated(context, "ORDER_ID_LBL")!} - RU${model.id}",
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.lightBlack2),
+                      color: Theme.of(context).colorScheme.lightBlack2,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 Text(
                   model.dateTime != null
                       ? "${DateFormat('dd-MM-yy').format(DateTime.parse(model.dateTime!))} ${DateFormat('hh:mm a').format(DateTime.parse(model.dateTime!))}"
                       : "No Date",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.lightBlack2,
-                  ),
+                      color: Theme.of(context).colorScheme.lightBlack2,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
               ],
             ),
@@ -2275,7 +2391,8 @@ class StateOrder extends State<OrderDetail>
                 ? Text(
                     "${getTranslated(context, "OTP")!} - ${model.otp}",
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2),
+                        color: Theme.of(context).colorScheme.lightBlack2,
+                        fontFamily: dynamicFontFamily.fontFamily),
                   )
                 : Container(),
           ],
@@ -2289,7 +2406,10 @@ class StateOrder extends State<OrderDetail>
       padding: const EdgeInsets.all(5.0),
       height: 35,
       child: Center(
-        child: Text(title),
+        child: Text(
+          title,
+          style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+        ),
       ),
     );
   }

@@ -117,7 +117,11 @@ class _CompareListState extends State<CompareList> {
                       });
                     },
                     icon: Icon(Icons.close),
-                    label: Text("Remove")),
+                    label: Text(
+                      "Remove",
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    )),
                 Stack(
                   alignment: Alignment.center,
                   children: [
@@ -150,7 +154,9 @@ class _CompareListState extends State<CompareList> {
                                     .titleMedium!
                                     .copyWith(
                                         color: Colors.red,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
                               ),
                             )
                           : Container(),
@@ -177,6 +183,7 @@ class _CompareListState extends State<CompareList> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
                   ),
                 ),
                 Padding(
@@ -195,10 +202,13 @@ class _CompareListState extends State<CompareList> {
                             : "",
                         style: Theme.of(context).textTheme.labelSmall!.copyWith(
                             decoration: TextDecoration.lineThrough,
-                            letterSpacing: 1),
+                            letterSpacing: 1,
+                            fontFamily: dynamicFontFamily.fontFamily),
                       ),
                       Text(" " + CUR_CURRENCY! + " " + price.toString(),
-                          style: TextStyle(color: colors.primary)),
+                          style: TextStyle(
+                              color: colors.primary,
+                              fontFamily: dynamicFontFamily.fontFamily)),
                     ],
                   ),
                 ),
@@ -227,6 +237,9 @@ class _CompareListState extends State<CompareList> {
                                             att[index].trim() + ":",
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
                                           ),
                                         ),
                                         Padding(
@@ -237,7 +250,9 @@ class _CompareListState extends State<CompareList> {
                                             maxLines: 1,
                                             overflow: TextOverflow.visible,
                                             style: TextStyle(
-                                                fontWeight: FontWeight.bold),
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
                                           ),
                                         )
                                       ]);
@@ -283,7 +298,10 @@ class _CompareListState extends State<CompareList> {
       dense: true,
       title: Text(
         getTranslated(context, 'GAURANTEE')!,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
       ),
     );
   }
@@ -294,11 +312,17 @@ class _CompareListState extends State<CompareList> {
     else
       returnable = "No";
     return ListTile(
-      trailing: Text(returnable),
+      trailing: Text(
+        returnable,
+        style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+      ),
       dense: true,
       title: Text(
         getTranslated(context, 'RETURNABLE')!,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
       ),
     );
   }
@@ -309,7 +333,10 @@ class _CompareListState extends State<CompareList> {
       dense: true,
       title: Text(
         getTranslated(context, 'CANCELLABLE')!,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
         overflow: TextOverflow.ellipsis,
       ),
     );
@@ -321,7 +348,10 @@ class _CompareListState extends State<CompareList> {
       dense: true,
       title: Text(
         getTranslated(context, 'WARRENTY')!,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
       ),
     );
   }
@@ -332,7 +362,10 @@ class _CompareListState extends State<CompareList> {
       dense: true,
       title: Text(
         getTranslated(context, 'MADE_IN')!,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(context)
+            .textTheme
+            .titleSmall
+            ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
       ),
     );
   }

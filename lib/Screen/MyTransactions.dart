@@ -166,7 +166,9 @@ class _TransactionHistoryState extends State<TransactionHistory>
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.black),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.black,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -219,10 +221,15 @@ class _TransactionHistoryState extends State<TransactionHistory>
                                 tranList[index].amt!,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.fontColor,
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: dynamicFontFamily.fontFamily),
                           ),
                         ),
-                        Text(tranList[index].date!),
+                        Text(
+                          tranList[index].date!,
+                          style: TextStyle(
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        ),
                       ],
                     ),
                     Divider(),
@@ -233,9 +240,12 @@ class _TransactionHistoryState extends State<TransactionHistory>
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                                getTranslated(context, 'ORDER_ID_LBL')! +
-                                    " : " +
-                                    tranList[index].orderId!),
+                              getTranslated(context, 'ORDER_ID_LBL')! +
+                                  " : " +
+                                  tranList[index].orderId!,
+                              style: TextStyle(
+                                  fontFamily: dynamicFontFamily.fontFamily),
+                            ),
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 8),
@@ -248,7 +258,8 @@ class _TransactionHistoryState extends State<TransactionHistory>
                             child: Text(
                               tranList[index].status!,
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.white),
+                                  color: Theme.of(context).colorScheme.white,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                             ),
                           )
                         ],
@@ -256,24 +267,36 @@ class _TransactionHistoryState extends State<TransactionHistory>
                     ),
                     tranList[index].type != null &&
                             tranList[index].type!.isNotEmpty
-                        ? Text(getTranslated(context, 'PAYMENT_METHOD_LBL')! +
-                            " : " +
-                            tranList[index].type!)
+                        ? Text(
+                            getTranslated(context, 'PAYMENT_METHOD_LBL')! +
+                                " : " +
+                                tranList[index].type!,
+                            style: TextStyle(
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          )
                         : Container(),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4.0),
                       child: tranList[index].msg != null &&
                               tranList[index].msg!.isNotEmpty
-                          ? Text(getTranslated(context, 'MSG')! +
-                              " : " +
-                              tranList[index].msg!)
+                          ? Text(
+                              getTranslated(context, 'MSG')! +
+                                  " : " +
+                                  tranList[index].msg!,
+                              style: TextStyle(
+                                  fontFamily: dynamicFontFamily.fontFamily),
+                            )
                           : Container(),
                     ),
                     tranList[index].txnID != null &&
                             tranList[index].txnID!.isNotEmpty
-                        ? Text(getTranslated(context, 'Txn_id')! +
-                            " : " +
-                            tranList[index].txnID!)
+                        ? Text(
+                            getTranslated(context, 'Txn_id')! +
+                                " : " +
+                                tranList[index].txnID!,
+                            style: TextStyle(
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          )
                         : Container(),
                   ]))),
     );

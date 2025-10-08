@@ -289,11 +289,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                 .titleMedium!
                 .copyWith(color: Theme.of(context).colorScheme.fontColor),
             decoration: InputDecoration(
-                label: Text(getTranslated(context, "NAME_LBL")!),
+                label: Text(
+                  getTranslated(context, "NAME_LBL")!,
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
                 fillColor: Theme.of(context).colorScheme.white,
                 isDense: true,
                 hintText: getTranslated(context, 'NAME_LBL'),
-                border: InputBorder.none),
+                border: OutlineInputBorder()),
           ),
         ),
       ),
@@ -335,11 +338,15 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
               _fieldFocusChange(context, monoFocus!, almonoFocus);
             },
             decoration: InputDecoration(
-                label: Text(getTranslated(context, "MOBILEHINT_LBL")!),
+                label: Text(
+                  getTranslated(context, "MOBILEHINT_LBL")!,
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
+                counterText: "",
                 fillColor: Theme.of(context).colorScheme.white,
                 isDense: true,
                 hintText: getTranslated(context, 'MOBILEHINT_LBL'),
-                border: InputBorder.none),
+                border: OutlineInputBorder()),
           ),
         ),
       ),
@@ -380,11 +387,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
               _fieldFocusChange(context, almonoFocus!, almonoFocus);
             },
             decoration: InputDecoration(
-                label: Text(getTranslated(context, "ALTMOBILEHINT_LBL")!),
+                label: Text(
+                  getTranslated(context, "ALTMOBILEHINT_LBL")!,
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
                 fillColor: Theme.of(context).colorScheme.white,
                 isDense: true,
                 hintText: getTranslated(context, 'ALTMOBILEHINT_LBL'),
-                border: InputBorder.none),
+                border: OutlineInputBorder()),
           ),
         ),
       ),
@@ -413,13 +423,16 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(20.0, 20.0, 0, 0),
-                    child: Text(
-                      getTranslated(context, 'AREASELECT_LBL')!,
-                      style: Theme.of(this.context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(
-                              color: Theme.of(context).colorScheme.fontColor),
+                    child: Center(
+                      child: Text(
+                        getTranslated(context, 'AREASELECT_LBL')!,
+                        style: Theme.of(this.context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                color: Theme.of(context).colorScheme.fontColor,
+                                fontFamily: dynamicFontFamily.fontFamily),
+                      ),
                     ),
                   ),
                   TextField(
@@ -498,13 +511,16 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(20.0, 20.0, 0, 0),
-                    child: Text(
-                      getTranslated(context, 'CITYSELECT_LBL')!,
-                      style: Theme.of(this.context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(
-                              color: Theme.of(context).colorScheme.fontColor),
+                    child: Center(
+                      child: Text(
+                        getTranslated(context, 'CITYSELECT_LBL')!,
+                        style: Theme.of(this.context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(
+                                color: Theme.of(context).colorScheme.fontColor,
+                                fontFamily: dynamicFontFamily.fontFamily),
+                      ),
                     ),
                   ),
                   TextField(
@@ -590,7 +606,10 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     areaSearchList[index].name!,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
                   ),
                 ),
               ),
@@ -631,7 +650,10 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     citySearchLIst[index].name!,
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(fontFamily: dynamicFontFamily.fontFamily),
                   ),
                 ),
               ),
@@ -659,7 +681,7 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                   decoration: InputDecoration(
                     fillColor: Theme.of(context).colorScheme.white,
                     isDense: true,
-                    border: InputBorder.none,
+                    border: OutlineInputBorder(),
                   ),
                   child: Row(
                     children: [
@@ -670,7 +692,11 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                           children: [
                             Text(
                               getTranslated(context, 'CITYSELECT_LBL')!,
-                              style: Theme.of(context).textTheme.titleMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      fontFamily: dynamicFontFamily.fontFamily),
                             ),
                             Text(
                                 selCityPos != null && selCityPos != -1
@@ -681,7 +707,8 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                                         ? Theme.of(context)
                                             .colorScheme
                                             .fontColor
-                                        : Colors.grey)),
+                                        : Colors.grey,
+                                    fontFamily: dynamicFontFamily.fontFamily)),
                           ],
                         ),
                       ),
@@ -713,7 +740,7 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                   decoration: InputDecoration(
                       fillColor: Theme.of(context).colorScheme.white,
                       isDense: true,
-                      border: InputBorder.none),
+                      border: OutlineInputBorder()),
                   child: Row(
                     children: [
                       Expanded(
@@ -723,7 +750,11 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                           children: [
                             Text(
                               getTranslated(context, 'AREASELECT_LBL')!,
-                              style: Theme.of(context).textTheme.titleMedium,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      fontFamily: dynamicFontFamily.fontFamily),
                             ),
                             Text(
                                 selAreaPos != null && selAreaPos != -1
@@ -734,7 +765,8 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                                         ? Theme.of(context)
                                             .colorScheme
                                             .fontColor
-                                        : Colors.grey)),
+                                        : Colors.grey,
+                                    fontFamily: dynamicFontFamily.fontFamily)),
                           ],
                         ),
                       ),
@@ -783,11 +815,15 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                     _fieldFocusChange(context, addFocus!, locationFocus);
                   },
                   decoration: InputDecoration(
-                    label: Text(getTranslated(context, "ADDRESS_LBL")!),
+                    label: Text(
+                      getTranslated(context, "ADDRESS_LBL")!,
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ),
                     fillColor: Theme.of(context).colorScheme.white,
                     isDense: true,
                     hintText: getTranslated(context, 'ADDRESS_LBL'),
-                    border: InputBorder.none,
+                    border: OutlineInputBorder(),
                     // suffixIcon: IconlabelLarge(
                     //   icon: Icon(
                     //     Icons.my_location,
@@ -876,11 +912,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
               },
               // validator: (val) => validatePincode(val, getTranslated(context, 'PIN_REQUIRED')),
               decoration: InputDecoration(
-                  label: Text(getTranslated(context, "PINCODEHINT_LBL")!),
+                  label: Text(
+                    getTranslated(context, "PINCODEHINT_LBL")!,
+                    style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                  ),
                   fillColor: Theme.of(context).colorScheme.white,
                   isDense: true,
                   hintText: getTranslated(context, 'PINCODEHINT_LBL'),
-                  border: InputBorder.none),
+                  border: OutlineInputBorder()),
             )),
       ),
     );
@@ -994,7 +1033,8 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
       content: new Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: colors.primary),
+        style: TextStyle(
+            color: colors.primary, fontFamily: dynamicFontFamily.fontFamily),
       ),
       backgroundColor: Theme.of(context).colorScheme.white,
       elevation: 1.0,
@@ -1028,11 +1068,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
               landmark = value;
             },
             decoration: InputDecoration(
-                label: Text("Landmark"),
+                label: Text(
+                  "Landmark",
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
                 fillColor: Theme.of(context).colorScheme.white,
                 isDense: true,
                 hintText: "Landmark",
-                border: InputBorder.none),
+                border: OutlineInputBorder()),
           ),
         ),
       ),
@@ -1068,11 +1111,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
               state = value;
             },
             decoration: InputDecoration(
-                label: Text(getTranslated(context, "STATE_LBL")!),
+                label: Text(
+                  getTranslated(context, "STATE_LBL")!,
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
                 fillColor: Theme.of(context).colorScheme.white,
                 isDense: true,
                 hintText: getTranslated(context, 'STATE_LBL'),
-                border: InputBorder.none),
+                border: OutlineInputBorder()),
           ),
         ),
       ),
@@ -1106,11 +1152,14 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
             validator: (val) =>
                 validateField(val!, getTranslated(context, 'FIELD_REQUIRED')),
             decoration: InputDecoration(
-                label: Text(getTranslated(context, "COUNTRY_LBL")!),
+                label: Text(
+                  getTranslated(context, "COUNTRY_LBL")!,
+                  style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                ),
                 fillColor: Theme.of(context).colorScheme.white,
                 isDense: true,
                 hintText: getTranslated(context, 'COUNTRY_LBL'),
-                border: InputBorder.none),
+                border: OutlineInputBorder()),
           ),
         ),
       ),
@@ -1309,7 +1358,12 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                         }
                       },
                     ),
-                    Expanded(child: Text(getTranslated(context, 'HOME_LBL')!))
+                    Expanded(
+                        child: Text(
+                      getTranslated(context, 'HOME_LBL')!,
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ))
                   ],
                 ),
                 onTap: () {
@@ -1341,7 +1395,12 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                         }
                       },
                     ),
-                    Expanded(child: Text(getTranslated(context, 'OFFICE_LBL')!))
+                    Expanded(
+                        child: Text(
+                      getTranslated(context, 'OFFICE_LBL')!,
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ))
                   ],
                 ),
                 onTap: () {
@@ -1373,7 +1432,12 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
                         }
                       },
                     ),
-                    Expanded(child: Text(getTranslated(context, 'OTHER_LBL')!))
+                    Expanded(
+                        child: Text(
+                      getTranslated(context, 'OTHER_LBL')!,
+                      style:
+                          TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+                    ))
                   ],
                 ),
                 onTap: () {
@@ -1412,7 +1476,8 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
             getTranslated(context, 'DEFAULT_ADD')!,
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: Theme.of(context).colorScheme.lightBlack,
-                fontWeight: FontWeight.bold),
+                fontWeight: FontWeight.bold,
+                fontFamily: dynamicFontFamily.fontFamily),
           ),
         ));
   }
@@ -1565,7 +1630,12 @@ class StateAddress extends State<AddAddress> with TickerProviderStateMixin {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
               onPressed: onBtnSelected,
-              child: Text(title),
+              child: Text(
+                title,
+                style: TextStyle(
+                    color: dynamicColor.buttonTxtColor,
+                    fontFamily: dynamicFontFamily.fontFamily),
+              ),
               color: dynamicColor.buttonColor,
             ),
           ),

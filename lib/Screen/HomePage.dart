@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin<HomePage>, TickerProviderStateMixin {
   bool _isNetworkAvail = true;
 
-  late var _controller = PageController();
+  late var _controller = PageController(viewportFraction: 1);
   late Animation labelLargeSqueezeanimation;
   late AnimationController labelLargeController;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage>
     });
     // getOfferData();
     _controller = PageController(
-      viewportFraction: 0.9,
+      viewportFraction: 1,
     );
     _animateSlider();
     getCities();
@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage>
         backgroundColor: Colors.transparent,
         builder: (context) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+            // margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius:
@@ -273,7 +273,7 @@ class _HomePageState extends State<HomePage>
             child: Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  // borderRadius: BorderRadius.circular(12),
                   child: Image.network(
                     imageLink,
                     fit: BoxFit.contain,
@@ -289,8 +289,8 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: 40,
+                  right: 20,
                   child: GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
@@ -330,14 +330,11 @@ class _HomePageState extends State<HomePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        height: 20,
+                        height: 2,
                       ),
                       // _deliverCity(),
                       // _buildHeader(),
                       _slider(),
-                      SizedBox(
-                        height: 10,
-                      ),
                       _catList(),
                       SizedBox(
                         height: 10,
@@ -374,15 +371,12 @@ class _HomePageState extends State<HomePage>
             : Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(12),
                       child: Container(
                         height: height,
                         width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
                         child: PageView.builder(
                           itemCount: homeSliderList.length,
                           scrollDirection: Axis.horizontal,
@@ -392,11 +386,7 @@ class _HomePageState extends State<HomePage>
                             context.read<HomeProvider>().setCurSlider(index);
                           },
                           itemBuilder: (BuildContext context, int index) {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 2),
-                              child: pages[index],
-                            );
+                            return pages[index];
                           },
                         ),
                       ),
@@ -445,7 +435,7 @@ class _HomePageState extends State<HomePage>
       _controller
           .animateToPage(
             nextPage,
-            duration: const Duration(milliseconds: 350),
+            duration: const Duration(milliseconds: 600),
             curve: Curves.easeInOut,
           )
           .then((_) => _animateSlider());
@@ -468,9 +458,9 @@ class _HomePageState extends State<HomePage>
         }
 
         return SizedBox(
-          height: 120,
+          height: 100,
           child: ListView.builder(
-            padding: const EdgeInsets.only(top: 10, left: 10),
+            padding: const EdgeInsets.only(left: 10),
             itemCount: catList.length,
             scrollDirection: Axis.horizontal,
             physics: const AlwaysScrollableScrollPhysics(),
@@ -538,10 +528,11 @@ class _HomePageState extends State<HomePage>
                               .textTheme
                               .bodySmall!
                               .copyWith(
-                                color: Theme.of(context).colorScheme.fontColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 10,
-                              ),
+                                  color:
+                                      Theme.of(context).colorScheme.fontColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 10,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                           maxLines: 2,
@@ -584,6 +575,10 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  // Add this as a class-level variable
+  final int _catListInsertIndex =
+      2; // Show after 2nd section (between 2nd and 3rd)
+
   _singleSection(int index) {
     Color back;
     int pos = index % 5;
@@ -612,19 +607,17 @@ class _HomePageState extends State<HomePage>
                   ],
                 ),
               ),
-              // offerImages.length > index ? _getOfferImage(index) : Container(),
             ],
           )
         : Container();
-    if (sectionList[index].style == STYLE1 &&
-        index > 0 &&
-        sectionList[index - 1].style == DEFAULT) {
+
+    if (index == _catListInsertIndex) {
       return Column(
         children: [
-          // Text("See All Categories"),
+          _sectionBody(),
+          const SizedBox(height: 10),
           _catList1(),
           const SizedBox(height: 10),
-          _sectionBody(),
         ],
       );
     } else {
@@ -702,8 +695,8 @@ class _HomePageState extends State<HomePage>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Container(
-                                width: 60,
-                                height: 60,
+                                width: 80,
+                                height: 80,
                                 decoration: BoxDecoration(
                                   color: Colors.grey[50],
                                   borderRadius: BorderRadius.circular(8),
@@ -776,65 +769,6 @@ class _HomePageState extends State<HomePage>
               );
       },
       selector: (_, homeProvider) => homeProvider.catLoading,
-    );
-  }
-
-  _getOfferImage(index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: InkWell(
-        child: FadeInImage(
-          fit: BoxFit.contain,
-          fadeInDuration: Duration(milliseconds: 150),
-          image: CachedNetworkImageProvider(offerImages[index].image!),
-          width: double.maxFinite,
-          imageErrorBuilder: (context, error, stackTrace) => erroWidget(50),
-          placeholder: AssetImage(
-            "assets/images/sliderph.png",
-          ),
-        ),
-        onTap: () {
-          if (offerImages[index].type == "products") {
-            Product? item = offerImages[index].list;
-
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                //transitionDuration: Duration(seconds: 1),
-                pageBuilder: (_, __, ___) =>
-                    ProductDetail(model: item, secPos: 0, index: 0, list: true
-                        //  title: sectionList[secPos].title,
-                        ),
-              ),
-            );
-          } else if (offerImages[index].type == "categories") {
-            Product item = offerImages[index].list;
-            if (item.subList == null || item.subList!.length == 0) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProductList(
-                    name: item.name,
-                    id: item.id,
-                    tag: false,
-                    fromSeller: false,
-                  ),
-                ),
-              );
-            } else {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SubCategory(
-                    title: item.name!,
-                    subList: item.subList,
-                  ),
-                ),
-              );
-            }
-          }
-        },
-      ),
     );
   }
 
@@ -1056,34 +990,6 @@ class _HomePageState extends State<HomePage>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // Expanded(
-              //   child: Stack(
-              //     alignment: Alignment.topRight,
-              //     children: [
-              //       ClipRRect(
-              //         borderRadius: BorderRadius.only(
-              //             topLeft: Radius.circular(5),
-              //             topRight: Radius.circular(5)),
-              //         child: Hero(
-              //           transitionOnUserGestures: true,
-              //           tag:
-              //               "${sectionList[secPos].productList![index].id}$secPos$index",
-              //           child: FadeInImage(
-              //             fadeInDuration: Duration(milliseconds: 150),
-              //             image: CachedNetworkImageProvider(
-              //                 sectionList[secPos].productList![index].image!),
-              //             height: double.maxFinite,
-              //             width: double.maxFinite,
-              //             imageErrorBuilder: (context, error, stackTrace) =>
-              //                 erroWidget(double.maxFinite),
-              //             fit: BoxFit.contain,
-              //             placeholder: placeHolder(width),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               Expanded(
                 child: Hero(
                   tag:
@@ -1097,7 +1003,7 @@ class _HomePageState extends State<HomePage>
                         image: NetworkImage(
                           sectionList[secPos].productList![index].image!,
                         ),
-                        fit: BoxFit.contain,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -1113,6 +1019,7 @@ class _HomePageState extends State<HomePage>
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Theme.of(context).colorScheme.lightBlack,
                       fontSize: 14,
+                      fontFamily: dynamicFontFamily.fontFamily,
                       fontWeight: FontWeight.bold),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1123,6 +1030,7 @@ class _HomePageState extends State<HomePage>
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.fontColor,
                     fontWeight: FontWeight.bold,
+                    fontFamily: dynamicFontFamily.fontFamily,
                     fontSize: 15),
               ),
               Padding(
@@ -1143,10 +1051,11 @@ class _HomePageState extends State<HomePage>
                                     0
                                 ? CUR_CURRENCY! +
                                     "" +
-                                    sectionList[secPos]
-                                        .productList![index]
-                                        .prVarientList![0]
-                                        .price!
+                                    double.parse(sectionList[secPos]
+                                            .productList![index]
+                                            .prVarientList![0]
+                                            .price!)
+                                        .toStringAsFixed(2)
                                 : "",
                             style: Theme.of(context)
                                 .textTheme
@@ -1156,6 +1065,7 @@ class _HomePageState extends State<HomePage>
                                     letterSpacing: 0,
                                     fontSize: 15,
                                     color: Colors.grey,
+                                    fontFamily: dynamicFontFamily.fontFamily,
                                     fontWeight: FontWeight.bold),
                           ),
                           Flexible(
@@ -1170,6 +1080,7 @@ class _HomePageState extends State<HomePage>
                                       color: colors.primary,
                                       letterSpacing: 0,
                                       fontSize: 15,
+                                      fontFamily: dynamicFontFamily.fontFamily,
                                       fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -1225,6 +1136,7 @@ class _HomePageState extends State<HomePage>
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: colors.blackTemp,
                       fontSize: 18,
+                      fontFamily: dynamicFontFamily.fontFamily,
                       fontWeight: FontWeight.bold),
                   maxLines: 1,
                   // overflow: TextOverflow.ellipsis,
@@ -1244,10 +1156,10 @@ class _HomePageState extends State<HomePage>
             children: [
               Expanded(
                 child: Text(sectionList[index].shortDesc ?? "",
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium!
-                        .copyWith(color: Colors.grey, fontSize: 14)),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Colors.grey,
+                        fontSize: 14,
+                        fontFamily: dynamicFontFamily.fontFamily)),
               ),
             ],
           ),
@@ -1548,13 +1460,13 @@ class _HomePageState extends State<HomePage>
       return AlertDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        title: Text(getTranslated(context, 'UPDATE_APP')!),
+        title: Text(getTranslated(context, 'UPDATE_APP')!,
+            style: TextStyle(fontFamily: dynamicFontFamily.fontFamily)),
         content: Text(
           getTranslated(context, 'UPDATE_AVAIL')!,
-          style: Theme.of(this.context)
-              .textTheme
-              .titleMedium!
-              .copyWith(color: Theme.of(context).colorScheme.fontColor),
+          style: Theme.of(this.context).textTheme.titleMedium!.copyWith(
+              color: Theme.of(context).colorScheme.fontColor,
+              fontFamily: dynamicFontFamily.fontFamily),
         ),
         actions: <Widget>[
           new TextButton(
@@ -1562,6 +1474,7 @@ class _HomePageState extends State<HomePage>
                 getTranslated(context, 'NO')!,
                 style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                     color: Theme.of(context).colorScheme.lightBlack,
+                    fontFamily: dynamicFontFamily.fontFamily,
                     fontWeight: FontWeight.bold),
               ),
               onPressed: () {
@@ -1572,6 +1485,7 @@ class _HomePageState extends State<HomePage>
                 getTranslated(context, 'YES')!,
                 style: Theme.of(this.context).textTheme.titleSmall!.copyWith(
                     color: Theme.of(context).colorScheme.fontColor,
+                    fontFamily: dynamicFontFamily.fontFamily,
                     fontWeight: FontWeight.bold),
               ),
               onPressed: () async {
@@ -1801,7 +1715,8 @@ class _HomePageState extends State<HomePage>
                     child: Text(
                       getTranslated(context, 'CITYSELECT_LBL') ?? 'Select City',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface),
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ),
                   // 🔍 Search box
@@ -1832,7 +1747,8 @@ class _HomePageState extends State<HomePage>
                               'No city found',
                               style: TextStyle(
                                   color:
-                                      Theme.of(context).colorScheme.onSurface),
+                                      Theme.of(context).colorScheme.onSurface,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                             ),
                           )
                         : ListView.builder(
@@ -1858,6 +1774,8 @@ class _HomePageState extends State<HomePage>
                                     city.name ?? '',
                                     style: TextStyle(
                                         fontSize: 16,
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily,
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
@@ -1876,7 +1794,8 @@ class _HomePageState extends State<HomePage>
 
   void setSnackbar(String message, BuildContext context) {
     final snackBar = SnackBar(
-      content: Text(message),
+      content: Text(message,
+          style: TextStyle(fontFamily: dynamicFontFamily.fontFamily)),
       duration: Duration(seconds: 2),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -2053,134 +1972,6 @@ class _HomePageState extends State<HomePage>
       // setSnackbar(error.toString(), context);
       context.read<HomeProvider>().setSellerLoading(false);
     });
-  }
-
-  _seller() {
-    return Selector<HomeProvider, bool>(
-      builder: (context, data, child) {
-        return data
-            ? Container(
-                width: double.infinity,
-                child: Shimmer.fromColors(
-                    baseColor: Theme.of(context).colorScheme.simmerBase,
-                    highlightColor: Theme.of(context).colorScheme.simmerHigh,
-                    child: catLoading()))
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  sellerList.isNotEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(getTranslated(context, 'SHOP_BY_SELLER')!,
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .fontColor,
-                                      fontWeight: FontWeight.bold)),
-                              GestureDetector(
-                                child:
-                                    Text(getTranslated(context, 'VIEW_ALL')!),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => SellerList()));
-                                },
-                              )
-                            ],
-                          ),
-                        )
-                      : Container(),
-                  Container(
-                    height: 120,
-                    padding: const EdgeInsets.only(top: 10, left: 10),
-                    child: ListView.builder(
-                      itemCount: sellerList.length,
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        print(
-                            'PrintData:_____${sellerList[index].proPic}______');
-                        return Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 10),
-                          child: GestureDetector(
-                            onTap: () {
-                              print(sellerList[index].open_close_status);
-                              if (sellerList[index].open_close_status == '1') {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SellerProfile(
-                                              sellerStoreName: sellerList[index]
-                                                      .store_name ??
-                                                  "",
-                                              sellerRating: sellerList[index]
-                                                      .seller_rating ??
-                                                  "",
-                                              sellerImage: sellerList[index]
-                                                      .seller_profile ??
-                                                  "",
-                                              sellerName: sellerList[index]
-                                                      .seller_name ??
-                                                  "",
-                                              sellerID:
-                                                  sellerList[index].seller_id,
-                                              storeDesc: sellerList[index]
-                                                  .store_description,
-                                            )));
-                              } else {
-                                showToast("Currently Store is Off");
-                              }
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      bottom: 5.0),
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: NetworkImage(
-                                        "${sellerList[index].proPic}"),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    sellerList[index].store_name ?? '',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .fontColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12),
-                                    // overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  width: 50,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              );
-      },
-      selector: (_, homeProvider) => homeProvider.sellerLoading,
-    );
   }
 
 // String? PRIMARY = '';

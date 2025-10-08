@@ -119,19 +119,19 @@ class _GettingStartedScreenState extends State<IntroSlider>
                   slide.title ?? '',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 22,
-                        color: Theme.of(context).colorScheme.fontColor,
-                      ),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   slide.description ?? '',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Colors.grey,
-                        fontSize: 15,
-                      ),
+                      color: Colors.grey,
+                      fontSize: 15,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 ),
                 const SizedBox(height: 40),
                 GestureDetector(

@@ -17,7 +17,7 @@ class SubCategory extends StatelessWidget {
       appBar: getAppBar(title, context),
       body: GridView.count(
           padding: EdgeInsets.all(20),
-          crossAxisCount: 3,
+          crossAxisCount: 2,
           shrinkWrap: true,
           childAspectRatio: .75,
           children: List.generate(
@@ -52,10 +52,9 @@ class SubCategory extends StatelessWidget {
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: Theme.of(context).colorScheme.fontColor),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.fontColor,
+                fontFamily: dynamicFontFamily.fontFamily),
           )
         ],
       ),

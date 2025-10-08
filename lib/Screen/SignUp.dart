@@ -152,7 +152,9 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
       content: Text(
         msg,
         textAlign: TextAlign.center,
-        style: TextStyle(color: Theme.of(context).colorScheme.fontColor),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.fontColor,
+            fontFamily: dynamicFontFamily.fontFamily),
       ),
       elevation: 1.0,
       backgroundColor: Theme.of(context).colorScheme.lightWhite,
@@ -349,7 +351,8 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
                 color: colors.primary,
                 fontWeight: FontWeight.bold,
-                fontSize: 25)),
+                fontSize: 25,
+                fontFamily: dynamicFontFamily.fontFamily)),
       ),
     );
   }
@@ -676,10 +679,10 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                               ? cityList[selCityPos!].name ?? ""
                               : "Select a city",
                           style: TextStyle(
-                            color: selCityPos != null
-                                ? Theme.of(context).colorScheme.onSurface
-                                : Colors.grey,
-                          ),
+                              color: selCityPos != null
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : Colors.grey,
+                              fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ],
                     ),
@@ -736,7 +739,8 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                               .titleMedium!
                               .copyWith(
                                   color:
-                                      Theme.of(context).colorScheme.onSurface),
+                                      Theme.of(context).colorScheme.onSurface,
+                                  fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ),
                     ),
@@ -765,11 +769,12 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                                   getTranslated(context, 'NO_CITY_FOUND') ??
                                       'No city found',
                                   style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: dynamicFontFamily.fontFamily),
                                 ),
                               ),
                             )
@@ -792,7 +797,9 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                                       city.name ?? '',
                                       style: TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w500),
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                     ),
                                   ),
                                 );
@@ -832,7 +839,8 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
             Text(getTranslated(context, 'SHOW_PASSWORD')!,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.fontColor,
-                    fontWeight: FontWeight.normal))
+                    fontWeight: FontWeight.normal,
+                    fontFamily: dynamicFontFamily.fontFamily))
           ],
         ));
   }
@@ -860,7 +868,8 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
           Text(getTranslated(context, 'ALREADY_A_CUSTOMER')!,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   color: Theme.of(context).colorScheme.fontColor,
-                  fontWeight: FontWeight.normal)),
+                  fontWeight: FontWeight.normal,
+                  fontFamily: dynamicFontFamily.fontFamily)),
           InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
@@ -872,7 +881,8 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: Theme.of(context).colorScheme.fontColor,
                     decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.normal),
+                    fontWeight: FontWeight.normal,
+                    fontFamily: dynamicFontFamily.fontFamily),
               ))
         ],
       ),
@@ -1083,7 +1093,10 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
             Padding(
               padding: EdgeInsetsDirectional.only(start: 15.0, end: 15.0),
             ),
-            Text("Male"),
+            Text(
+              "Male",
+              style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+            ),
             Radio(
                 value: "male",
                 groupValue: genderSelect,
@@ -1093,7 +1106,10 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                     genderSelect = val;
                   });
                 }),
-            Text("Female"),
+            Text(
+              "Female",
+              style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+            ),
             Radio(
                 value: "female",
                 groupValue: genderSelect,
@@ -1103,7 +1119,10 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
                     genderSelect = val;
                   });
                 }),
-            Text("Others"),
+            Text(
+              "Others",
+              style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+            ),
             Radio(
                 value: "Others",
                 groupValue: genderSelect,
@@ -1134,8 +1153,14 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
               onTap: () {
                 _selectDate(context);
               },
-              title: Text("Select Date Of Birth"),
-              subtitle: Text("${date.day}-${date.month}-${date.year}"),
+              title: Text(
+                "Select Date Of Birth",
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
+              subtitle: Text(
+                "${date.day}-${date.month}-${date.year}",
+                style: TextStyle(fontFamily: dynamicFontFamily.fontFamily),
+              ),
             ),
           ),
         ],

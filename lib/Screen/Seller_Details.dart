@@ -138,7 +138,9 @@ class _SellerProfileState extends State<SellerProfile>
           Text(
             widget.sellerName!,
             style: TextStyle(
-                color: Theme.of(context).colorScheme.lightBlack2, fontSize: 16),
+                color: Theme.of(context).colorScheme.lightBlack2,
+                fontSize: 16,
+                fontFamily: dynamicFontFamily.fontFamily),
           ),
           SizedBox(
             height: 20,
@@ -170,7 +172,8 @@ class _SellerProfileState extends State<SellerProfile>
                       style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).colorScheme.lightBlack2,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -203,7 +206,8 @@ class _SellerProfileState extends State<SellerProfile>
                       style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).colorScheme.lightBlack2,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -232,7 +236,8 @@ class _SellerProfileState extends State<SellerProfile>
                       style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).colorScheme.lightBlack2,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                          fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
@@ -255,7 +260,8 @@ class _SellerProfileState extends State<SellerProfile>
                       ? "${widget.storeDesc}"
                       : getTranslated(context, "NO_DESC")!,
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.lightBlack2),
+                      color: Theme.of(context).colorScheme.lightBlack2,
+                      fontFamily: dynamicFontFamily.fontFamily),
                 )),
               ))
         ],
@@ -296,9 +302,9 @@ class _SellerProfileState extends State<SellerProfile>
     return Text(
       title,
       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.fontColor,
-          ),
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.fontColor,
+          fontFamily: dynamicFontFamily.fontFamily),
     );
   }
 

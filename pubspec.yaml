@@ -76,6 +76,7 @@ dependencies:
   flutter_statusbarcolor_ns: ^0.6.0
   visibility_detector: ^0.3.3
   carousel_slider: ^5.1.0
+  youtube_player_flutter: ^9.0.4
 
 
 dev_dependencies:
