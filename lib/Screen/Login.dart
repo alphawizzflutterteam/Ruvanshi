@@ -6,6 +6,7 @@ import 'package:TGSawadesiMartUser/Provider/SettingProvider.dart';
 import 'package:TGSawadesiMartUser/Provider/UserProvider.dart';
 import 'package:TGSawadesiMartUser/Screen/SendOtp.dart';
 import 'package:TGSawadesiMartUser/Screen/SignUp.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,9 @@ import 'package:provider/provider.dart';
 import '../Helper/AppBtn.dart';
 import '../Helper/Color.dart';
 import '../Helper/Constant.dart';
+import '../Helper/Public Api/api.dart';
 import '../Helper/Session.dart';
+import 'HomePage.dart';
 import 'Verify_Otp.dart';
 
 class Login extends StatefulWidget {
@@ -82,6 +85,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
     ));
     super.initState();
     getToken();
+    getSetting();
     labelLargeController = new AnimationController(
         duration: new Duration(milliseconds: 2000), vsync: this);
     labelLargeSqueezeanimation = new Tween(
@@ -94,6 +98,33 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
         0.150,
       ),
     ));
+  }
+
+  void getSetting() {
+    CUR_USERID = context.read<SettingProvider>().userId;
+    Map<String, dynamic> parameter = {};
+    if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+
+    apiBaseHelper.postAPICall(getThemeApi, parameter).then((getdata) async {
+      bool error = getdata["error"];
+      if (!error) {
+        var data = getdata["data"];
+        print("jhgjkfb $data");
+
+        String? logoPath = data[APP_LOGO]?.toString();
+        if (logoPath != null && logoPath.isNotEmpty) {
+          appLogo = BASE_URL + logoPath;
+        }
+
+        dynamicAppLogo.appLogo = appLogo!;
+
+        print("App Logo: $appLogo");
+
+        if (mounted) setState(() {});
+      }
+    }, onError: (error) {
+      print("API Error: $error");
+    });
   }
 
   @override
@@ -314,14 +345,39 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
       padding: EdgeInsets.symmetric(vertical: 40),
       child: Column(
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            child: Image.asset(
-              'assets/images/splashlogo.png',
-              fit: BoxFit.contain,
-            ),
-          ),
+          dynamicAppLogo.appLogo.isNotEmpty
+              ? Container(
+                  width: 200,
+                  height: 120,
+                  child: CachedNetworkImage(
+                    imageUrl: dynamicAppLogo.appLogo,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.green,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey[400],
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 120,
+                  height: 120,
+                  child: Image.asset(
+                    'assets/images/splashlogo.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
         ],
       ),
     );
@@ -615,7 +671,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
           validateAndSubmit();
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF2C2C2C),
+          backgroundColor: dynamicColor.buttonColor,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -625,9 +681,9 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
         child: Text(
           'Sign In',
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: dynamicColor.buttonTxtColor),
         ),
       ),
     );

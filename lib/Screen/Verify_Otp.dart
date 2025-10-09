@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -666,14 +667,39 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       padding: EdgeInsets.symmetric(vertical: 40),
       child: Column(
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            child: Image.asset(
-              'assets/images/splashlogo.png',
-              fit: BoxFit.contain,
-            ),
-          ),
+          dynamicAppLogo.appLogo.isNotEmpty
+              ? Container(
+                  width: 200,
+                  height: 120,
+                  child: CachedNetworkImage(
+                    imageUrl: dynamicAppLogo.appLogo,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.green,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey[400],
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 120,
+                  height: 120,
+                  child: Image.asset(
+                    'assets/images/splashlogo.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
         ],
       ),
     );

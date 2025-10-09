@@ -129,3 +129,7 @@ class dynamicColor {
 class dynamicFontFamily {
   static String fontFamily = "Poppins";
 }
+
+class dynamicAppLogo {
+  static String appLogo = "";
+}

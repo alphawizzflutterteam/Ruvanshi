@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:TGSawadesiMartUser/Model/city_model.dart';
 import 'package:TGSawadesiMartUser/Screen/MyOrder.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1072,14 +1073,39 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
       padding: EdgeInsets.symmetric(vertical: 40),
       child: Column(
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            child: Image.asset(
-              'assets/images/splashlogo.png',
-              fit: BoxFit.contain,
-            ),
-          ),
+          dynamicAppLogo.appLogo.isNotEmpty
+              ? Container(
+                  width: 200,
+                  height: 120,
+                  child: CachedNetworkImage(
+                    imageUrl: dynamicAppLogo.appLogo,
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.green,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[200],
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey[400],
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  width: 120,
+                  height: 120,
+                  child: Image.asset(
+                    'assets/images/splashlogo.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
         ],
       ),
     );

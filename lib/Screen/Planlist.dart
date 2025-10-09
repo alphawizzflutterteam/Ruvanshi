@@ -58,73 +58,89 @@ class _PlanListScreenState extends State<PlanListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("User Name: ${plan.username ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
-                  SizedBox(
-                    height: 2,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      buildDetailsCard(
+                          "User Name", plan.username ?? '', "start"),
+                      buildDetailsCard("User Mobile", plan.mobile ?? '', "end"),
+                    ],
                   ),
-                  Text("User Mobile: ${plan.mobile ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
                   SizedBox(
-                    height: 2,
+                    height: 16,
                   ),
-                  Text("Plan Name: ${plan.planName ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      buildDetailsCard(
+                          "Plan Name", plan.planName ?? '', "start"),
+                      buildDetailsCard("Amount", plan.price ?? '', "end"),
+                    ],
+                  ),
                   SizedBox(
-                    height: 2,
+                    height: 16,
                   ),
-                  Text("Amount: ${plan.price ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      buildDetailsCard(
+                          "Start Date", plan.startDate ?? '', "start"),
+                      buildDetailsCard("End Date", plan.endDate ?? '', "end"),
+                    ],
+                  ),
                   SizedBox(
-                    height: 2,
+                    height: 16,
                   ),
-                  Text("Start Date: ${plan.startDate ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
+                  buildDetailsCard("Duration", plan.billingInfo ?? '', "start"),
                   SizedBox(
-                    height: 2,
+                    height: 16,
                   ),
-                  Text("End Date: ${plan.endDate ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
+                  buildDetailsCard(
+                      "Description", plan.description ?? '', "start"),
                   SizedBox(
-                    height: 2,
+                    height: 16,
                   ),
-                  Text("Duration: ${plan.billingInfo ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
-                  SizedBox(
-                    height: 2,
-                  ),
-                  Text("Description: ${plan.description ?? ''}",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: dynamicFontFamily.fontFamily)),
+                  if (plan.freeDelivery == "1")
+                    buildDetailsCard("Free Delivery?", "Yes", "start"),
+                  if (plan.freeDelivery == "1")
+                    SizedBox(
+                      height: 16,
+                    ),
+                  if (plan.userOffer == "1")
+                    buildDetailsCard("Exclusive Deal for You?", "Yes", "start"),
                 ],
               ),
             );
           },
         ),
       ),
+    );
+  }
+
+  Widget buildDetailsCard(String label, String val, type) {
+    return Column(
+      spacing: 6,
+      crossAxisAlignment:
+          type == "start" ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w500,
+              fontFamily: dynamicFontFamily.fontFamily),
+        ),
+        Text(
+          val,
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.fontColor,
+              fontWeight: FontWeight.w600,
+              fontFamily: dynamicFontFamily.fontFamily),
+        )
+      ],
     );
   }
 

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../Helper/AppBtn.dart';
 import '../Helper/Color.dart';
+import '../Helper/Public Api/api.dart';
 import '../Helper/Session.dart';
 import '../Helper/String.dart';
+import '../Provider/SettingProvider.dart';
+import 'HomePage.dart';
 import 'Login.dart';
 
 class IntroSlider extends StatefulWidget {
@@ -27,7 +31,9 @@ class _GettingStartedScreenState extends State<IntroSlider>
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
     ));
+
     super.initState();
+    getSetting();
 
     new Future.delayed(Duration.zero, () {
       setState(() {
@@ -64,6 +70,72 @@ class _GettingStartedScreenState extends State<IntroSlider>
         0.150,
       ),
     ));
+  }
+
+  Color primaryColor = Colors.black;
+  Color secondaryColor = Colors.white;
+  Color backgroundColor = Colors.white;
+  Color textColor = Colors.black;
+
+  String? appLogo;
+
+  String PRIMARY_COLOR = 'primary';
+  String SECONDARY_COLOR = 'secondary';
+  String BACKGROUND_COLOR = 'background';
+  String TEXT_COLOR = 'text';
+  String APP_LOGO = 'app_logo';
+  String BASE_URL = "https://developmentalphawizz.com/ruvanshi/";
+
+  void getSetting() {
+    CUR_USERID = context.read<SettingProvider>().userId;
+    Map<String, dynamic> parameter = {};
+    if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+
+    apiBaseHelper.postAPICall(getThemeApi, parameter).then((getdata) async {
+      bool error = getdata["error"];
+      if (!error) {
+        var data = getdata["data"];
+        print("jhgjkfb $data");
+        var colorValue = data["colors"];
+        String? primaryHex = colorValue[PRIMARY_COLOR]?.toString();
+        String? secondaryHex = colorValue[SECONDARY_COLOR]?.toString();
+        String? backgroundHex = colorValue[BACKGROUND_COLOR]?.toString();
+        String? textHex = colorValue[TEXT_COLOR]?.toString();
+
+        if (primaryHex != null && primaryHex.isNotEmpty) {
+          primaryColor = hexToColor(primaryHex);
+        }
+        if (secondaryHex != null && secondaryHex.isNotEmpty) {
+          secondaryColor = hexToColor(secondaryHex);
+        }
+        if (backgroundHex != null && backgroundHex.isNotEmpty) {
+          backgroundColor = hexToColor(backgroundHex);
+        }
+        if (textHex != null && textHex.isNotEmpty) {
+          textColor = hexToColor(textHex);
+        }
+        String? logoPath = data[APP_LOGO]?.toString();
+        if (logoPath != null && logoPath.isNotEmpty) {
+          appLogo = BASE_URL + logoPath;
+        }
+
+        dynamicColor.buttonColor = secondaryColor;
+        dynamicColor.buttonTxtColor = textColor;
+        dynamicColor.appBarBgColor = primaryColor;
+        dynamicFontFamily.fontFamily = "Poppins";
+        dynamicAppLogo.appLogo = appLogo!;
+
+        print("Primary: $primaryColor");
+        print("Secondary: $secondaryColor");
+        print("Background: $backgroundColor");
+        print("Text: $textColor");
+        print("App Logo: $appLogo");
+
+        if (mounted) setState(() {});
+      }
+    }, onError: (error) {
+      print("API Error: $error");
+    });
   }
 
   @override
@@ -109,7 +181,7 @@ class _GettingStartedScreenState extends State<IntroSlider>
                   flex: 6,
                   child: Image.asset(
                     slide.imageUrl,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.fill,
                     cacheWidth: 800,
                     cacheHeight: 600,
                   ),
@@ -153,7 +225,7 @@ class _GettingStartedScreenState extends State<IntroSlider>
                     height: 55,
                     width: 55,
                     decoration: BoxDecoration(
-                      color: colors.primary,
+                      color: dynamicColor.buttonColor,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -163,7 +235,8 @@ class _GettingStartedScreenState extends State<IntroSlider>
                         )
                       ],
                     ),
-                    child: Icon(Icons.arrow_forward, color: Colors.white),
+                    child: Icon(Icons.arrow_forward,
+                        color: dynamicColor.buttonTxtColor),
                   ),
                 ),
                 const SizedBox(height: 20),

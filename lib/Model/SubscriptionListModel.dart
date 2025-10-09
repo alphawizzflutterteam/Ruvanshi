@@ -35,6 +35,9 @@ class SubscriptionData {
   String? endDate;
   String? createdAt;
   String? username;
+  dynamic freeDelivery;
+  dynamic userOffer;
+
   String? mobile;
   String? email;
 
@@ -47,6 +50,8 @@ class SubscriptionData {
       this.status,
       this.startDate,
       this.endDate,
+      this.freeDelivery,
+      this.userOffer,
       this.createdAt,
       this.username,
       this.mobile,
@@ -62,6 +67,8 @@ class SubscriptionData {
     startDate = json['start_date'];
     endDate = json['end_date'];
     createdAt = json['created_at'];
+    freeDelivery = json['free_delivery'];
+    userOffer = json['user_offer'];
     username = json['username'];
     mobile = json['mobile'];
     email = json['email'];

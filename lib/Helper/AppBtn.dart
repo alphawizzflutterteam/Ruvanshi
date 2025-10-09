@@ -30,7 +30,7 @@ class AppBtn extends StatelessWidget {
           height: 55,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: colors.primary,
+            color: dynamicColor.buttonColor,
             borderRadius: const BorderRadius.all(Radius.circular(12.0)),
           ),
           child: btnAnim!.value > 75.0
@@ -38,7 +38,7 @@ class AppBtn extends StatelessWidget {
                   title!,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: colors.whiteTemp,
+                      color: dynamicColor.buttonTxtColor,
                       fontWeight: FontWeight.normal,
                       fontFamily: dynamicFontFamily.fontFamily),
                 )

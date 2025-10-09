@@ -2090,6 +2090,8 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
   }
 
   void filterDialog() {
+    int selectedFilterIndex = 0; // Track selected filter tab
+
     showModalBottomSheet(
       context: context,
       enableDrag: false,
@@ -2131,236 +2133,78 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
             Expanded(
                 child: Container(
               color: Theme.of(context).colorScheme.lightWhite,
-              padding:
-                  EdgeInsetsDirectional.only(start: 7.0, end: 7.0, top: 7.0),
-              child: filterList != null
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      padding: EdgeInsetsDirectional.only(top: 10.0),
-                      itemCount: filterList.length + 1,
+              child: Row(
+                children: [
+                  // Left side - Filter tabs
+                  Container(
+                    width: deviceWidth! * 0.35,
+                    color: Theme.of(context).colorScheme.white,
+                    child: ListView.builder(
+                      itemCount: (filterList?.length ?? 0) + 1,
                       itemBuilder: (context, index) {
+                        String title;
                         if (index == 0) {
-                          return Column(
-                            children: [
-                              Container(
-                                  width: deviceWidth,
-                                  child: Card(
-                                      elevation: 0,
-                                      child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'Price Range',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .copyWith(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .lightBlack,
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontFamily:
-                                                        dynamicFontFamily
-                                                            .fontFamily),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                          )))),
-                              RangeSlider(
-                                values: _currentRangeValues!,
-                                min: double.parse(minPrice),
-                                max: double.parse(maxPrice),
-                                divisions: 10,
-                                labels: RangeLabels(
-                                  _currentRangeValues!.start.round().toString(),
-                                  _currentRangeValues!.end.round().toString(),
-                                ),
-                                onChanged: (RangeValues values) {
-                                  setState(() {
-                                    _currentRangeValues = values;
-                                  });
-                                },
-                              ),
-                            ],
-                          );
+                          title = 'Price Range';
                         } else {
-                          index = index - 1;
-                          attsubList =
-                              filterList[index]['attribute_values'].split(',');
+                          title = filterList[index - 1]['name'];
+                        }
 
-                          attListId = filterList[index]['attribute_values_id']
-                              .split(',');
+                        bool isSelected = selectedFilterIndex == index;
 
-                          List<Widget?> chips = [];
-                          List<String> att =
-                              filterList[index]['attribute_values']!.split(',');
-
-                          List<String> attSType =
-                              filterList[index]['swatche_type'].split(',');
-
-                          List<String> attSValue =
-                              filterList[index]['swatche_value'].split(',');
-
-                          for (int i = 0; i < att.length; i++) {
-                            Widget itemLabel;
-                            if (attSType[i] == "1") {
-                              String clr = (attSValue[i].substring(1));
-
-                              String color = "0xff" + clr;
-
-                              itemLabel = Container(
-                                width: 25,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Color(int.parse(color))),
-                              );
-                            } else if (attSType[i] == "2") {
-                              itemLabel = ClipRRect(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.network(attSValue[i],
-                                      width: 80,
-                                      height: 80,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              erroWidget(80)));
-                            } else {
-                              itemLabel = Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(att[i],
-                                    style: TextStyle(
-                                        color:
-                                            selectedId.contains(attListId![i])
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .white
-                                                : Theme.of(context)
-                                                    .colorScheme
-                                                    .fontColor,
-                                        fontFamily:
-                                            dynamicFontFamily.fontFamily)),
-                              );
-                            }
-
-                            choiceChip = ChoiceChip(
-                              selected: selectedId.contains(attListId![i]),
-                              label: itemLabel,
-                              labelPadding: EdgeInsets.all(0),
-                              selectedColor: colors.primary,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    attSType[i] == "1" ? 100 : 10),
-                                side: BorderSide(
-                                    color: selectedId.contains(attListId![i])
-                                        ? colors.primary
-                                        : colors.black12,
-                                    width: 1.5),
-                              ),
-                              onSelected: (bool selected) {
-                                attListId = filterList[index]
-                                        ['attribute_values_id']
-                                    .split(',');
-
-                                if (mounted)
-                                  setState(() {
-                                    if (selected == true) {
-                                      selectedId.add(attListId![i]);
-                                    } else {
-                                      selectedId.remove(attListId![i]);
-                                    }
-                                  });
-                              },
-                            );
-
-                            chips.add(choiceChip);
-                          }
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: deviceWidth,
-                                child: Card(
-                                  elevation: 0,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: new Text(
-                                      filterList[index]['name'],
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .fontColor,
-                                              fontFamily:
-                                                  dynamicFontFamily.fontFamily,
-                                              fontWeight: FontWeight.normal),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                  ),
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedFilterIndex = index;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 16),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.lightWhite
+                                  : Theme.of(context).colorScheme.white,
+                              border: Border(
+                                left: BorderSide(
+                                  color: isSelected
+                                      ? dynamicColor.appBarBgColor
+                                      : Colors.transparent,
+                                  width: 3,
                                 ),
                               ),
-                              chips.length > 0
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: new Wrap(
-                                        children:
-                                            chips.map<Widget>((Widget? chip) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: chip,
-                                          );
-                                        }).toList(),
-                                      ),
-                                    )
-                                  : Container()
-
-                              /*    (filter == filterList[index]["name"])
-                              ? ListView.builder(
-                                  shrinkWrap: true,
-                                  physics:
-                                      NeverScrollableScrollPhysics(),
-                                  itemCount: attListId!.length,
-                                  itemBuilder: (context, i) {
-
-                                    */ /*       return CheckboxListTile(
-                                  dense: true,
-                                  title: Text(attsubList![i],
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .subtitle1!
-                                          .copyWith(
-                                              color: Theme.of(context).colorScheme.lightBlack,
-                                              fontWeight:
-                                                  FontWeight.normal)),
-                                  value: selectedId
-                                      .contains(attListId![i]),
-                                  activeColor: colors.primary,
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
-                                  onChanged: (bool? val) {
-                                    if (mounted)
-                                      setState(() {
-                                        if (val == true) {
-                                          selectedId.add(attListId![i]);
-                                        } else {
-                                          selectedId
-                                              .remove(attListId![i]);
-                                        }
-                                      });
-                                  },
-                                );*/ /*
-                                  })
-                              : Container()*/
-                            ],
-                          );
-                        }
-                      })
-                  : Container(),
+                            ),
+                            child: Text(
+                              title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(
+                                    color: isSelected
+                                        ? colors.primary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .fontColor,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    fontFamily: dynamicFontFamily.fontFamily,
+                                  ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // Right side - Filter content
+                  Expanded(
+                    child: Container(
+                      color: Theme.of(context).colorScheme.lightWhite,
+                      padding: EdgeInsets.all(16),
+                      child: _buildFilterContent(selectedFilterIndex, setState),
+                    ),
+                  ),
+                ],
+              ),
             )),
             Container(
               color: Theme.of(context).colorScheme.white,
@@ -2382,27 +2226,167 @@ class StateProduct extends State<ProductList> with TickerProviderStateMixin {
                     getProduct("0");
                     Navigator.pop(context, 'Product Filter');
                   }),
-              // Row(children: <Widget>[
-              //   Container(
-              //     margin: EdgeInsetsDirectional.only(start: 20),
-              //     width: deviceWidth! * 0.4,
-              //     child: OutlinedButton(
-              //       onPressed: () {
-              //         if (mounted)
-              //           setState(() {
-              //             selectedId.clear();
-              //           });
-              //       },
-              //       child: Text(getTranslated(context, 'DISCARD')!),
-              //     ),
-              //   ),
-              //   Spacer(),
-              //
-              // ]),
             )
           ]);
         });
       },
     );
+  }
+
+  Widget _buildFilterContent(int index, StateSetter setState) {
+    if (index == 0) {
+      // Price Range Filter
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Select Price Range',
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.fontColor,
+                fontWeight: FontWeight.bold,
+                fontFamily: dynamicFontFamily.fontFamily),
+          ),
+          SizedBox(height: 20),
+          RangeSlider(
+            values: _currentRangeValues!,
+            min: double.parse(minPrice),
+            max: double.parse(maxPrice),
+            divisions: 10,
+            labels: RangeLabels(
+              _currentRangeValues!.start.round().toString(),
+              _currentRangeValues!.end.round().toString(),
+            ),
+            onChanged: (RangeValues values) {
+              setState(() {
+                _currentRangeValues = values;
+              });
+            },
+          ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '₹${_currentRangeValues!.start.round()}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily,
+                ),
+              ),
+              Text(
+                '₹${_currentRangeValues!.end.round()}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    } else {
+      // Attribute Filters
+      int filterIndex = index - 1;
+      if (filterList == null || filterIndex >= filterList.length) {
+        return Container();
+      }
+
+      attsubList = filterList[filterIndex]['attribute_values'].split(',');
+      attListId = filterList[filterIndex]['attribute_values_id'].split(',');
+
+      List<Widget?> chips = [];
+      List<String> att =
+          filterList[filterIndex]['attribute_values']!.split(',');
+      List<String> attSType =
+          filterList[filterIndex]['swatche_type'].split(',');
+      List<String> attSValue =
+          filterList[filterIndex]['swatche_value'].split(',');
+
+      for (int i = 0; i < att.length; i++) {
+        Widget itemLabel;
+        if (attSType[i] == "1") {
+          String clr = (attSValue[i].substring(1));
+          String color = "0xff" + clr;
+
+          itemLabel = Container(
+            width: 25,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle, color: Color(int.parse(color))),
+          );
+        } else if (attSType[i] == "2") {
+          itemLabel = ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(attSValue[i],
+                  width: 80,
+                  height: 80,
+                  errorBuilder: (context, error, stackTrace) =>
+                      erroWidget(80)));
+        } else {
+          itemLabel = Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(att[i],
+                style: TextStyle(
+                    color: selectedId.contains(attListId![i])
+                        ? Theme.of(context).colorScheme.white
+                        : Theme.of(context).colorScheme.fontColor,
+                    fontFamily: dynamicFontFamily.fontFamily)),
+          );
+        }
+
+        choiceChip = ChoiceChip(
+          selected: selectedId.contains(attListId![i]),
+          label: itemLabel,
+          labelPadding: EdgeInsets.all(0),
+          selectedColor: colors.primary,
+          backgroundColor: Theme.of(context).colorScheme.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(attSType[i] == "1" ? 100 : 10),
+            side: BorderSide(
+                color: selectedId.contains(attListId![i])
+                    ? colors.primary
+                    : colors.black12,
+                width: 1.5),
+          ),
+          onSelected: (bool selected) {
+            attListId =
+                filterList[filterIndex]['attribute_values_id'].split(',');
+
+            if (mounted)
+              setState(() {
+                if (selected == true) {
+                  selectedId.add(attListId![i]);
+                } else {
+                  selectedId.remove(attListId![i]);
+                }
+              });
+          },
+        );
+
+        chips.add(choiceChip);
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Select ${filterList[filterIndex]['name']}',
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.fontColor,
+                fontWeight: FontWeight.bold,
+                fontFamily: dynamicFontFamily.fontFamily),
+          ),
+          SizedBox(height: 16),
+          chips.length > 0
+              ? Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: chips.map<Widget>((Widget? chip) {
+                    return chip ?? Container();
+                  }).toList(),
+                )
+              : Container()
+        ],
+      );
+    }
   }
 }

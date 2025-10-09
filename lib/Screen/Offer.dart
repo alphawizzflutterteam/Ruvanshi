@@ -139,17 +139,12 @@ class _OfferState extends State<Offer> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     // userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
-        // appBar: widget.fromSeller! ? null : getAppBar(widget.name!, context),
+        appBar: widget.fromSeller! ? null : getAppBar(widget.name!, context),
         key: _scaffoldKey,
         body: _isNetworkAvail
             ? _isLoading
                 ? shimmer(context)
-                : Stack(
-                    children: <Widget>[
-                      _showForm(context),
-                      showCircularProgress(_isProgress, colors.primary),
-                    ],
-                  )
+                : _showForm(context)
             : noInternet(context));
   }
 
@@ -1875,64 +1870,41 @@ class _OfferState extends State<Offer> with SingleTickerProviderStateMixin {
         key: _refreshIndicatorKey,
         //onRefresh: _refresh,
         child: */
-        Column(
-      children: [
-        Container(
-          color: Theme.of(context).colorScheme.white,
-          child: Column(
-            children: [
-              if (widget.fromSeller!) Container() else _tags(),
-              slider()
-            ],
+        SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            color: Theme.of(context).colorScheme.white,
+            child: Column(
+              children: [
+                if (widget.fromSeller!) Container() else _tags(),
+                slider()
+              ],
+            ),
           ),
-        ),
-        SizedBox(
-          height: 16,
-        ),
-        Expanded(
-          child: productList.length == 0
+          SizedBox(
+            height: 16,
+          ),
+          productList.length == 0
               ? getNoItem(context)
-              : listType
-                  ? ListView.builder(
-                      controller: controller,
-                      itemCount: (offset < total)
-                          ? productList.length + 1
-                          : productList.length,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return (index == productList.length && isLoadingmore)
-                            ? singleItemSimmer(context)
-                            : listItem(index);
-                      },
-                    )
-                  : GridView.count(
-                      padding: EdgeInsetsDirectional.only(top: 5),
-                      crossAxisCount: 2,
-                      controller: controller,
-                      childAspectRatio: 0.78,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      children: List.generate(
-                        (offset < total)
-                            ? productList.length + 1
-                            : productList.length,
-                        (index) {
-                          return (index == productList.length && isLoadingmore)
-                              ? simmerSingleProduct(context)
-                              : productItem(
-                                  index, index % 2 == 0 ? true : false);
-                        },
-                      )),
-        ),
-        // Container(
-        //   color: Theme.of(context).colorScheme.white,
-        //   child: Column(
-        //     children: [
-        //       if (widget.fromSeller!) Container() else _tags(),
-        //       filterOptions(),
-        //     ],
-        //   ),
-        // ),
-      ],
+              : ListView.builder(
+                  controller: controller,
+                  itemCount: (offset < total)
+                      ? productList.length + 1
+                      : productList.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return (index == productList.length && isLoadingmore)
+                        ? singleItemSimmer(context)
+                        : listItem(index);
+                  },
+                ),
+          SizedBox(
+            height: 50,
+          ),
+        ],
+      ),
     );
   }
 

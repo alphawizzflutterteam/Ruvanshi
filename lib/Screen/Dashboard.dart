@@ -39,7 +39,9 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
   int _selBottom = 0;
   late TabController _tabController;
   bool _isNetworkAvail = true;
-  String offerImg = "";
+  List<String> offerImgs = [];
+  int currentIndex = 0;
+  Timer? timer;
 
   @override
   void initState() {
@@ -51,7 +53,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     getSetting();
     initDynamicLinks();
     _tabController = TabController(
-      length: 4,
+      length: 3,
       vsync: this,
     );
     LocalNotificationService.initialize();
@@ -202,11 +204,11 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
               ),
               AllCategory(),
               Cart(fromBottom: true),
-              Offer(
-                fromSeller: false,
-                tag: false,
-                name: "Offer Section",
-              ),
+              // Offer(
+              //   fromSeller: false,
+              //   tag: false,
+              //   name: "Offer Section",
+              // ),
             ],
           ),
           bottomNavigationBar: _getBottomBar(),
@@ -444,38 +446,53 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
               ),
               text: getTranslated(context, 'CART'),
             ),
-            Tab(
-              icon: SizedBox(
-                width: 130,
-                height: 130,
-                child: offerImg.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: offerImg,
-                        fit: BoxFit.contain,
-                        placeholder: (context, url) => Container(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(colors.primary),
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[200],
-                          child: Icon(
-                            Icons.image_not_supported,
-                            color: Colors.grey[400],
-                            size: 30,
-                          ),
-                        ),
-                      )
-                    : Image.asset(
-                        "assets/images/offer.gif",
-                        fit: BoxFit.cover,
-                      ),
-              ),
-            ),
+            // Tab(
+            //   icon: SizedBox(
+            //     width: 100,
+            //     height: 100,
+            //     child: offerImgs.isNotEmpty
+            //         ? ClipRRect(
+            //             borderRadius: BorderRadius.circular(100),
+            //             child: Container(
+            //               width: 120,
+            //               height: 120,
+            //               child: AnimatedSwitcher(
+            //                 duration: const Duration(milliseconds: 800),
+            //                 transitionBuilder: (child, animation) =>
+            //                     FadeTransition(
+            //                   opacity: animation,
+            //                   child: child,
+            //                 ),
+            //                 child: CachedNetworkImage(
+            //                   key: ValueKey<String>(offerImgs[currentIndex]),
+            //                   imageUrl: offerImgs[currentIndex],
+            //                   fit: BoxFit.cover,
+            //                   placeholder: (context, url) => Center(
+            //                     child: CircularProgressIndicator(
+            //                       strokeWidth: 2,
+            //                       valueColor: AlwaysStoppedAnimation<Color>(
+            //                         Colors.green,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   errorWidget: (context, url, error) => Container(
+            //                     color: Colors.grey[200],
+            //                     child: Icon(
+            //                       Icons.image_not_supported,
+            //                       color: Colors.grey[400],
+            //                       size: 30,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //           )
+            //         : Image.asset(
+            //             "assets/images/offer.gif",
+            //             fit: BoxFit.cover,
+            //           ),
+            //   ),
+            // ),
           ],
           indicator: UnderlineTabIndicator(
             insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
@@ -576,6 +593,17 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     });
   }
 
+  void startImageLoop() {
+    timer?.cancel();
+    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+      if (offerImgs.isNotEmpty) {
+        setState(() {
+          currentIndex = (currentIndex + 1) % offerImgs.length;
+        });
+      }
+    });
+  }
+
   void getOfferGif() {
     CUR_USERID = context.read<SettingProvider>().userId;
     Map<String, dynamic> parameter = {};
@@ -590,8 +618,10 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
         if (data != null) {
           if (data.length > 0) {
             setState(() {
-              offerImg = data[0];
+              offerImgs = List<String>.from(data);
+              currentIndex = 0;
             });
+            startImageLoop();
           }
         }
         // if (mounted) setState(() {});
@@ -638,6 +668,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
   @override
   void dispose() {
     _tabController.dispose();
+    timer?.cancel();
     super.dispose();
   }
 }

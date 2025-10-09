@@ -33,6 +33,7 @@ import 'package:version/version.dart';
 import '../Model/Welcome_Offer_Model.dart';
 import '../Model/city_model.dart';
 import 'Login.dart';
+import 'Offer.dart';
 import 'ProductList.dart';
 import 'Product_Detail.dart';
 import 'package:http/http.dart' as http;
@@ -85,6 +86,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _setStatusBarColor();
+    getOfferGif();
     dynamicGradient();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getOfferData();
@@ -276,7 +278,7 @@ class _HomePageState extends State<HomePage>
                   // borderRadius: BorderRadius.circular(12),
                   child: Image.network(
                     imageLink,
-                    fit: BoxFit.contain,
+                    fit: BoxFit.cover,
                     width: MediaQuery.of(context).size.width,
                     loadingBuilder: (context, child, progress) {
                       if (progress == null) return child;
@@ -312,6 +314,48 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  List<String> offerImgs = [];
+  int currentIndex = 0;
+  Timer? timer;
+
+  void getOfferGif() {
+    CUR_USERID = context.read<SettingProvider>().userId;
+    Map<String, dynamic> parameter = {};
+    if (CUR_USERID != null) parameter = {USER_ID: CUR_USERID};
+
+    apiBaseHelper.postAPICall(getOfferApi, parameter).then((getdata) async {
+      bool error = getdata["error"];
+      if (!error) {
+        var data = getdata["gif_urls"];
+        print("jhgjkfbss $data");
+
+        if (data != null) {
+          if (data.length > 0) {
+            setState(() {
+              offerImgs = List<String>.from(data);
+              currentIndex = 0;
+            });
+            startImageLoop();
+          }
+        }
+        // if (mounted) setState(() {});
+      }
+    }, onError: (error) {
+      print("API Error: $error");
+    });
+  }
+
+  void startImageLoop() {
+    timer?.cancel();
+    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+      if (offerImgs.isNotEmpty) {
+        setState(() {
+          currentIndex = (currentIndex + 1) % offerImgs.length;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -342,15 +386,82 @@ class _HomePageState extends State<HomePage>
                       _section(),
                       // _seller(),
                       SizedBox(
-                        height: 10,
+                        height: 100,
                       ),
                     ],
                   ),
                 ),
               )
             : noInternet(context),
+        floatingActionButton: offerImages.isNotEmpty
+            ? GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Offer(
+                        fromSeller: false,
+                        tag: false,
+                        name: "Offer Section",
+                      ),
+                    ),
+                  );
+                },
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: offerImgs.isNotEmpty
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 800),
+                              transitionBuilder: (child, animation) =>
+                                  FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                              child: CachedNetworkImage(
+                                key: ValueKey<String>(offerImgs[currentIndex]),
+                                imageUrl: offerImgs[currentIndex],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.green,
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.grey[200],
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.grey[400],
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Image.asset(
+                          "assets/images/offer.gif",
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              )
+            : SizedBox.shrink(),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   Future<Null> _refresh() {
@@ -358,6 +469,7 @@ class _HomePageState extends State<HomePage>
     context.read<HomeProvider>().setSecLoading(true);
     context.read<HomeProvider>().setSliderLoading(true);
     widget.callback!();
+    getOfferGif();
     return callApi();
   }
 

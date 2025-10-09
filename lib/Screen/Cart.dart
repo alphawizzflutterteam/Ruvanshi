@@ -796,7 +796,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                     false,
                                                     cartList[index]
                                                         .productList?[0]
-                                                        .id!);
+                                                        .id!,
+                                                    price);
                                                 // Navigator.of(context).pop();
                                               },
                                             ),
@@ -1817,7 +1818,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                         getTranslated(context, 'ADD_PROMO')!,
                                         _checkscaffoldKey);
                                   else if (!isPromoValid!) {
-                                    validatePromo(false, 0);
+                                    validatePromo(false, 0, 0);
                                     Navigator.pop(context);
                                   }
                                 },
@@ -1898,7 +1899,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                   title: getTranslated(context, "APPLY"),
                                   onBtnSelected: () {
                                     promoC.text = promoList[index].promoCode!;
-                                    if (!isPromoValid!) validatePromo(false, 0);
+                                    if (!isPromoValid!)
+                                      validatePromo(false, 0, 0);
                                     Navigator.of(context).pop();
                                   },
                                 ),
@@ -2032,7 +2034,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           totalPrice = delCharge + oriPrice;
 
           if (isPromoValid!) {
-            validatePromo(false, 0);
+            validatePromo(false, 0, 0);
           } else if (isUseWallet!) {
             context.read<CartProvider>().setProgress(false);
             if (mounted)
@@ -2128,7 +2130,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
             totalPrice = delCharge + oriPrice;
 
             if (isPromoValid!) {
-              validatePromo(true, 0);
+              validatePromo(true, 0, 0);
             } else if (isUseWallet!) {
               if (mounted)
                 checkoutState!(() {
@@ -2232,7 +2234,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           totalPrice = delCharge + oriPrice;
 
           if (isPromoValid!) {
-            validatePromo(false, 0);
+            validatePromo(false, 0, 0);
           } else if (isUseWallet!) {
             context.read<CartProvider>().setProgress(false);
             if (mounted)
@@ -2350,7 +2352,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
               totalPrice = delCharge + oriPrice;
 
               if (isPromoValid!) {
-                validatePromo(true, 0);
+                validatePromo(true, 0, 0);
               } else if (isUseWallet!) {
                 if (mounted)
                   checkoutState!(() {
@@ -2480,7 +2482,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
               totalPrice = delCharge + oriPrice;
               if (isPromoValid!) {
-                validatePromo(false, 0);
+                validatePromo(false, 0, 0);
               } else if (isUseWallet!) {
                 context.read<CartProvider>().setProgress(false);
                 if (mounted)
@@ -3132,7 +3134,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
             height: 45,
             alignment: FractionalOffset.center,
             decoration: new BoxDecoration(
-              color: colors.primary,
+              color: dynamicColor.buttonColor,
               // gradient: LinearGradient(
               //     begin: Alignment.topLeft,
               //     end: Alignment.bottomRight,
@@ -3143,7 +3145,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
             child: Text(getTranslated(context, 'SHOP_NOW')!,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Colors.white70,
+                    color: dynamicColor.buttonTxtColor,
                     fontFamily: dynamicFontFamily.fontFamily))),
         onPressed: () {
           Navigator.of(context).pushNamedAndRemoveUntil(
@@ -5452,7 +5454,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
         ));
   }
 
-  Future<void> validatePromo(bool check, productId) async {
+  Future<void> validatePromo(bool check, productId, productAmount) async {
     _isNetworkAvail = await isNetworkAvailable();
     if (_isNetworkAvail) {
       try {
@@ -5470,6 +5472,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
         };
         if (productId != 0) {
           parameter["product_id"] = productId.toString();
+          parameter["final_total"] = productAmount.toString();
         }
         print('promocode:_____${parameter}______');
         Response response =
@@ -5483,6 +5486,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           String? msg = getdata["message"];
           if (!error) {
             var data = getdata["data"];
+
+            print('prprprp data $data');
 
             // totalPrice = double.parse(data["final_total"]) + delCharge;
 
