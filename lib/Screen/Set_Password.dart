@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:TGSawadesiMartUser/Helper/String.dart';
 import 'package:TGSawadesiMartUser/Helper/cropped_container.dart';
 import 'package:TGSawadesiMartUser/Screen/Login.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -512,6 +513,39 @@ class _LoginPageState extends State<SetPass> with TickerProviderStateMixin {
         // child: Image.asset(
         //   'assets/images/loginlogo.png',
         // ),
+        child: dynamicAppLogo.appLogo.isNotEmpty
+            ? Container(
+                width: 200,
+                height: 120,
+                child: CachedNetworkImage(
+                  imageUrl: dynamicAppLogo.appLogo,
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Colors.green,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey[200],
+                    child: Icon(
+                      Icons.image_not_supported,
+                      color: Colors.grey[400],
+                      size: 30,
+                    ),
+                  ),
+                ),
+              )
+            : Container(
+                width: 120,
+                height: 120,
+                child: Image.asset(
+                  'assets/images/splashlogo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
       ),
     );
   }

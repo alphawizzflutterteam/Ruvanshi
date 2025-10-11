@@ -319,6 +319,13 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
     return result.isNotEmpty ? result.first : null;
   }
 
+  Map<String, dynamic>? getPromoCodeForProductVarientsBuyNow(
+      String productId, variantId) {
+    final result = promoCodes.where((promo) =>
+        promo["product_id"] == productId && promo["variant_id"] == variantId);
+    return result.isNotEmpty ? result.first : null;
+  }
+
   void removePromoCodeByCode(String promoCodeToRemove) {
     promoCodes.removeWhere((item) => item["promo_code"] == promoCodeToRemove);
   }
@@ -384,10 +391,22 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
     }
 
     int promoLength = cartList[index].productList?[0].promos?.length ?? 0;
+    String isPromoThisProductVarient = "0";
 
     var promoData = getPromoCodeForProduct(cartList[index].id);
 
-    print("promoData $promoData");
+    if (promoData != null) {
+      if (cartList[index]
+              .productList![0]
+              .prVarientList![selectedPos]
+              .id
+              .toString() ==
+          promoData["variant_id"].toString()) {
+        isPromoThisProductVarient = "1";
+      } else {
+        isPromoThisProductVarient = "2";
+      }
+    }
 
     return InkWell(
         onTap: () {
@@ -653,7 +672,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                 const Divider(
                   thickness: 1,
                 ),
-                promoData != null
+                promoData != null && isPromoThisProductVarient == "1"
                     ? Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Column(
@@ -720,94 +739,106 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                           ],
                         ),
                       )
-                    : promoLength > 0 && oriPrice > 0
-                        ? Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Column(
-                              children: cartList[index]
-                                  .productList![0]
-                                  .promos!
-                                  .map((promoItem) => Card(
-                                        elevation: 0,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              height: 60,
-                                              width: 60,
-                                              child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          7.0),
-                                                  child: Image.network(
-                                                    promoItem.image ?? "",
-                                                    height: 60,
-                                                    width: 60,
-                                                    fit: BoxFit.fill,
-                                                    errorBuilder: (context,
-                                                            error,
-                                                            stackTrace) =>
-                                                        erroWidget(
-                                                      60,
-                                                    ),
-                                                  )),
-                                            ),
-
-                                            //errorWidget: (context, url, e) => placeHolder(width),
-
-                                            Expanded(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      promoItem.message ?? "",
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              dynamicFontFamily
-                                                                  .fontFamily),
-                                                    ),
-                                                    Text(
-                                                      promoItem.promoCode ?? '',
-                                                      style: TextStyle(
-                                                          fontFamily:
-                                                              dynamicFontFamily
-                                                                  .fontFamily),
-                                                    ),
-                                                  ],
+                    : promoData != null && isPromoThisProductVarient == "2"
+                        ? SizedBox.shrink()
+                        : promoLength > 0 && oriPrice > 0
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Column(
+                                  children: cartList[index]
+                                      .productList![0]
+                                      .promos!
+                                      .map((promoItem) => Card(
+                                            elevation: 0,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  height: 60,
+                                                  width: 60,
+                                                  child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              7.0),
+                                                      child: Image.network(
+                                                        promoItem.image ?? "",
+                                                        height: 60,
+                                                        width: 60,
+                                                        fit: BoxFit.fill,
+                                                        errorBuilder: (context,
+                                                                error,
+                                                                stackTrace) =>
+                                                            erroWidget(
+                                                          60,
+                                                        ),
+                                                      )),
                                                 ),
-                                              ),
+
+                                                //errorWidget: (context, url, e) => placeHolder(width),
+
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          promoItem.message ??
+                                                              "",
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  dynamicFontFamily
+                                                                      .fontFamily),
+                                                        ),
+                                                        Text(
+                                                          promoItem.promoCode ??
+                                                              '',
+                                                          style: TextStyle(
+                                                              fontFamily:
+                                                                  dynamicFontFamily
+                                                                      .fontFamily),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(promoList[0].day ?? '',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            dynamicFontFamily
+                                                                .fontFamily)),
+                                                SimBtn(
+                                                  size: 0.3,
+                                                  title: getTranslated(
+                                                      context, "APPLY"),
+                                                  onBtnSelected: () {
+                                                    promoC.text =
+                                                        promoItem.promoCode! ??
+                                                            "";
+                                                    validatePromo(
+                                                        false,
+                                                        cartList[index]
+                                                            .productList?[0]
+                                                            .id!,
+                                                        price,
+                                                        cartList[index]
+                                                            .productList![0]
+                                                            .prVarientList![
+                                                                selectedPos]
+                                                            .id);
+                                                    // Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
                                             ),
-                                            Text(promoList[0].day ?? '',
-                                                style: TextStyle(
-                                                    fontFamily:
-                                                        dynamicFontFamily
-                                                            .fontFamily)),
-                                            SimBtn(
-                                              size: 0.3,
-                                              title: getTranslated(
-                                                  context, "APPLY"),
-                                              onBtnSelected: () {
-                                                promoC.text =
-                                                    promoItem.promoCode! ?? "";
-                                                validatePromo(
-                                                    false,
-                                                    cartList[index]
-                                                        .productList?[0]
-                                                        .id!,
-                                                    price);
-                                                // Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ))
-                                  .toList(),
-                            ),
-                          )
-                        : Container(),
+                                          ))
+                                      .toList(),
+                                ),
+                              )
+                            : Container(),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4),
@@ -967,8 +998,18 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     var itemTotal = double.parse(cartList[index].perItemTotal!);
 
+    String isPromoThisProductVarient = "0";
+
     if (promoData != null) {
-      itemTotal = itemTotal - promoData?["amount"];
+      if (cartList[index]
+              .productList![0]
+              .prVarientList![selectedPos]
+              .id
+              .toString() ==
+          promoData["variant_id"].toString()) {
+        itemTotal = itemTotal - promoData?["amount"];
+        isPromoThisProductVarient = "1";
+      }
     }
 
     return InkWell(
@@ -1220,7 +1261,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-              if (promoData != null)
+              if (promoData != null && isPromoThisProductVarient == "1")
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -1818,7 +1859,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                         getTranslated(context, 'ADD_PROMO')!,
                                         _checkscaffoldKey);
                                   else if (!isPromoValid!) {
-                                    validatePromo(false, 0, 0);
+                                    validatePromo(false, 0, 0, 0);
                                     Navigator.pop(context);
                                   }
                                 },
@@ -1900,7 +1941,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                   onBtnSelected: () {
                                     promoC.text = promoList[index].promoCode!;
                                     if (!isPromoValid!)
-                                      validatePromo(false, 0, 0);
+                                      validatePromo(false, 0, 0, 0);
                                     Navigator.of(context).pop();
                                   },
                                 ),
@@ -2034,7 +2075,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           totalPrice = delCharge + oriPrice;
 
           if (isPromoValid!) {
-            validatePromo(false, 0, 0);
+            validatePromo(false, 0, 0, 0);
           } else if (isUseWallet!) {
             context.read<CartProvider>().setProgress(false);
             if (mounted)
@@ -2130,7 +2171,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
             totalPrice = delCharge + oriPrice;
 
             if (isPromoValid!) {
-              validatePromo(true, 0, 0);
+              validatePromo(true, 0, 0, 0);
             } else if (isUseWallet!) {
               if (mounted)
                 checkoutState!(() {
@@ -2234,7 +2275,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
           totalPrice = delCharge + oriPrice;
 
           if (isPromoValid!) {
-            validatePromo(false, 0, 0);
+            validatePromo(false, 0, 0, 0);
           } else if (isUseWallet!) {
             context.read<CartProvider>().setProgress(false);
             if (mounted)
@@ -2352,7 +2393,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
               totalPrice = delCharge + oriPrice;
 
               if (isPromoValid!) {
-                validatePromo(true, 0, 0);
+                validatePromo(true, 0, 0, 0);
               } else if (isUseWallet!) {
                 if (mounted)
                   checkoutState!(() {
@@ -2482,7 +2523,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
               totalPrice = delCharge + oriPrice;
               if (isPromoValid!) {
-                validatePromo(false, 0, 0);
+                validatePromo(false, 0, 0, 0);
               } else if (isUseWallet!) {
                 context.read<CartProvider>().setProgress(false);
                 if (mounted)
@@ -3173,7 +3214,10 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
     deviceWidth = MediaQuery.of(context).size.width;
     SectionModel selectedProduct = buyNowCartList[0];
     var promoAmount = 0.0;
-    var promoData = getPromoCodeForProduct(selectedProduct.id);
+    var promoData = getPromoCodeForProductVarientsBuyNow(selectedProduct.id,
+        selectedProduct.productList![0].prVarientList![0].id);
+
+    print('fjopej ${selectedProduct.productList![0].prVarientList![0].id}');
 
     if (promoData != null) {
       promoAmount = promoData?["amount"];
@@ -4582,11 +4626,14 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
       SectionModel selectedProduct = cartList[0]; // Single product in buy now
       int selectedPos = 0;
 
-      var promoData = getPromoCodeForProduct(selectedProduct.id);
+      var promoData = getPromoCodeForProductVarientsBuyNow(selectedProduct.id,
+          selectedProduct.productList![0].prVarientList![selectedPos].id);
 
       if (promoData != null) {
         promoAmount = promoData?["amount"];
       }
+
+      for (int i = 0; i < promoCodes.length; i++) {}
 
       // Find correct variant position
       for (int i = 0;
@@ -4929,8 +4976,18 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     var itemTotal = double.parse(cartList[index].perItemTotal!);
 
+    String isPromoThisProductVarient = "0";
+
     if (promoData != null) {
-      itemTotal = itemTotal - promoData?["amount"];
+      if (cartList[index]
+              .productList![0]
+              .prVarientList![selectedPos]
+              .id
+              .toString() ==
+          promoData["variant_id"].toString()) {
+        itemTotal = itemTotal - promoData?["amount"];
+        isPromoThisProductVarient = "1";
+      }
     }
 
     return InkWell(
@@ -5166,7 +5223,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                       ),
                     ],
                   ),
-                  if (promoData != null)
+                  if (promoData != null && isPromoThisProductVarient == "1")
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -5454,7 +5511,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
         ));
   }
 
-  Future<void> validatePromo(bool check, productId, productAmount) async {
+  Future<void> validatePromo(
+      bool check, productId, productAmount, variantId) async {
     _isNetworkAvail = await isNetworkAvailable();
     if (_isNetworkAvail) {
       try {
@@ -5495,7 +5553,8 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
               promoCodes.add({
                 "product_id": productId,
                 "promo_code": data["promo_code"],
-                "amount": double.parse(data["final_discount"])
+                "amount": double.parse(data["final_discount"]),
+                "variant_id": variantId
               });
               print("added product promp");
             } else {

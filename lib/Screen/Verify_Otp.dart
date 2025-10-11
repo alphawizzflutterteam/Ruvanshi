@@ -55,6 +55,28 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
   Animation? labelLargeSqueezeanimation;
   AnimationController? labelLargeController;
 
+  late Timer _timer;
+  int _start = 60;
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            _isClickable = true;
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     print("==logintitle============${widget.title}===========");
@@ -62,10 +84,12 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
     super.initState();
     getUserDetails();
     getSingature();
+    startTimer();
     // _onVerifyCode();
-    Future.delayed(Duration(seconds: 60)).then((_) {
-      _isClickable = true;
-    });
+    // Future.delayed(Duration(seconds: 60)).then((_) {
+    //   _isClickable = true;
+    // });
+    print("start $_start");
     labelLargeController = AnimationController(
         duration: Duration(milliseconds: 2000), vsync: this);
 
@@ -176,7 +200,9 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       if (_isClickable) {
         // _onVerifyCode();
 
-        if (widget.title == "isloging") {
+        print("isloging ${widget.title}");
+
+        if (widget.title == "login") {
           resendinLogin();
         } else {
           getVerifyUser();
@@ -225,7 +251,7 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
         final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
         return Positioned(
-          bottom: bottomInset + 700,
+          top: 100,
           left: 24,
           right: 24,
           child: Material(
@@ -445,6 +471,7 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
   @override
   void dispose() {
     labelLargeController!.dispose();
+    _timer.cancel();
     super.dispose();
   }
 
@@ -529,30 +556,37 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
     return Padding(
       padding: EdgeInsetsDirectional.only(
           bottom: 30.0, start: 25.0, end: 25.0, top: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            getTranslated(context, 'DIDNT_GET_THE_CODE')!,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.fontColor,
-                fontWeight: FontWeight.normal),
-          ),
-          InkWell(
-            onTap: () async {
-              await labelLargeController!.reverse();
-              checkNetworkOtp();
-            },
-            child: Text(
-              getTranslated(context, 'RESEND_OTP')!,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: Theme.of(context).colorScheme.gray,
-                  decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.normal),
-            ),
-          ),
-        ],
-      ),
+      child: _start == 0
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  getTranslated(context, 'DIDNT_GET_THE_CODE')!,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.normal),
+                ),
+                InkWell(
+                  onTap: () async {
+                    await labelLargeController!.reverse();
+                    checkNetworkOtp();
+                  },
+                  child: Text(
+                    getTranslated(context, 'RESEND_OTP')!,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: Theme.of(context).colorScheme.gray,
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+              ],
+            )
+          : Center(
+              child: Text('$_start',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(fontWeight: FontWeight.normal))),
     );
   }
 
@@ -567,7 +601,11 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
               height: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/otp.png'),
+                  image: dynamicAuthImages.registerBg.isNotEmpty
+                      ? CachedNetworkImageProvider(dynamicAuthImages.registerBg)
+                          as ImageProvider
+                      : const AssetImage('assets/images/otp.png')
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -721,10 +759,14 @@ class _MobileOTPState extends State<VerifyOtp> with TickerProviderStateMixin {
       print(result);
       var finalresult = jsonDecode(result);
       String msg = finalresult['message'];
+      print("fffresult $finalresult");
       if (finalresult['error'] == false) {
         setSnackbar(msg);
 
         otppp = finalresult['otp'].toString();
+
+        _start = 60;
+        startTimer();
 
         setState(() {});
       } else {}

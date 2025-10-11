@@ -71,6 +71,7 @@ class _OfferState extends State<Offer> with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> offerBanners = [];
   List<Widget> bannerWidgets = [];
   bool isBannerLoading = false;
+  String title = "";
 
   @override
   void initState() {
@@ -139,7 +140,7 @@ class _OfferState extends State<Offer> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     // userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
-        appBar: widget.fromSeller! ? null : getAppBar(widget.name!, context),
+        appBar: widget.fromSeller! ? null : getAppBar(title, context),
         key: _scaffoldKey,
         body: _isNetworkAvail
             ? _isLoading
@@ -959,6 +960,7 @@ class _OfferState extends State<Offer> with SingleTickerProviderStateMixin {
 
         bool error = getdata["error"];
         if (!error) {
+          title = getdata["heading"] ?? "";
           var offersWithProducts = getdata["offers_with_products"];
 
           if (offersWithProducts != null && offersWithProducts is List) {

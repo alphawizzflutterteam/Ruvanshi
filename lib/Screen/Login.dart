@@ -111,10 +111,44 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
         var data = getdata["data"];
         print("jhgjkfb $data");
 
+        var colorValue = data["colors"];
+        String? primaryHex = colorValue[PRIMARY_COLOR]?.toString();
+        String? secondaryHex = colorValue[SECONDARY_COLOR]?.toString();
+        String? backgroundHex = colorValue[BACKGROUND_COLOR]?.toString();
+        String? textHex = colorValue[TEXT_COLOR]?.toString();
+
+        if (primaryHex != null && primaryHex.isNotEmpty) {
+          primaryColor = hexToColor(primaryHex);
+        }
+        if (secondaryHex != null && secondaryHex.isNotEmpty) {
+          secondaryColor = hexToColor(secondaryHex);
+        }
+        if (backgroundHex != null && backgroundHex.isNotEmpty) {
+          backgroundColor = hexToColor(backgroundHex);
+        }
+        if (textHex != null && textHex.isNotEmpty) {
+          textColor = hexToColor(textHex);
+        }
+
         String? logoPath = data[APP_LOGO]?.toString();
         if (logoPath != null && logoPath.isNotEmpty) {
           appLogo = BASE_URL + logoPath;
         }
+
+        String? authLoginPath = data["login_page_image"]?.toString();
+        if (authLoginPath != null && authLoginPath.isNotEmpty) {
+          dynamicAuthImages.loginBg = BASE_URL + authLoginPath;
+        }
+
+        String? authRegisterPath = data["signup_page_image"]?.toString();
+        if (authRegisterPath != null && authRegisterPath.isNotEmpty) {
+          dynamicAuthImages.registerBg = BASE_URL + authRegisterPath;
+        }
+
+        dynamicColor.buttonColor = secondaryColor;
+        dynamicColor.buttonTxtColor = textColor;
+        dynamicColor.appBarBgColor = primaryColor;
+        dynamicFontFamily.fontFamily = "Poppins";
 
         dynamicAppLogo.appLogo = appLogo!;
 
@@ -183,7 +217,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
         final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
         return Positioned(
-          bottom: bottomInset + 700,
+          top: 100,
           left: 24,
           right: 24,
           child: Material(
@@ -406,7 +440,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
                       isnumberLogin = value!;
                     });
                   },
-                  activeColor: Color(0xFFD4AF37),
+                  activeColor: dynamicColor.appBarBgColor,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 Text(
@@ -438,7 +472,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
                       isnumberLogin = value!;
                     });
                   },
-                  activeColor: Color(0xFFD4AF37),
+                  activeColor: dynamicColor.appBarBgColor,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 Text(
@@ -714,7 +748,7 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
             child: Text(
               'Sign Up',
               style: TextStyle(
-                color: Color(0xFFD4AF37),
+                color: dynamicColor.appBarBgColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 decoration: TextDecoration.underline,
@@ -737,7 +771,11 @@ class _LoginPageState extends State<Login> with TickerProviderStateMixin {
               height: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/backgroundimage.png'),
+                  image: dynamicAuthImages.loginBg.isNotEmpty
+                      ? CachedNetworkImageProvider(dynamicAuthImages.loginBg)
+                          as ImageProvider
+                      : const AssetImage('assets/images/backgroundimage.png')
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),

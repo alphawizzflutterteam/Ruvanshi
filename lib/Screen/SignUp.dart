@@ -981,7 +981,11 @@ class _SignUpPageState extends State<SignUp> with TickerProviderStateMixin {
               height: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/otp.png'),
+                  image: dynamicAuthImages.registerBg.isNotEmpty
+                      ? CachedNetworkImageProvider(dynamicAuthImages.registerBg)
+                          as ImageProvider
+                      : const AssetImage('assets/images/otp.png')
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),

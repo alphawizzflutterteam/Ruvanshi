@@ -2459,7 +2459,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     if (price == 0)
       price = double.parse(widget.model!.prVarientList![pos].price!);
 
-    print("svarient ${widget.model!.prVarientList![pos].id}");
+    print("svarient ${widget.model?.selVarient!}");
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -2483,21 +2483,31 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                       : Selector<CartProvider,
                           Tuple2<List<dynamic>, List<dynamic>>>(
                           builder: (context, data, child) {
-                            // Check current quantity
+                            // Get the current variant ID from the selected position
+                            String currentVariantId =
+                                widget.model!.prVarientList![pos].id ?? '';
+
+                            List<SectionModel> cartList =
+                                context.read<CartProvider>().cartList;
+                            ;
+
+                            // Check current quantity for the specific variant
                             String currentQty = "0";
                             if (setVariant == false) {
-                              currentQty = data.item1.contains(widget.model!.id)
-                                  ? data.item2[data.item1.indexWhere(
-                                          (element) =>
-                                              element == widget.model!.id)]
-                                      .toString()
-                                  : "0";
+                              if (data.item1.contains(widget.model!.id)) {
+                                for (int i = 0; i < cartList.length; i++) {
+                                  var varientIdMain = cartList[i].varientId;
+
+                                  if (currentVariantId == varientIdMain) {
+                                    currentQty = cartList[i].qty;
+                                  }
+                                }
+                              }
                             }
+
                             qtyController.text = currentQty;
 
                             print("currentQty $currentQty");
-                            print(
-                                "currentQty data.item1 ${data.item1}, ${widget.model!.id}, ${widget.model!.attrIds}");
 
                             if (currentQty == "0") {
                               return GestureDetector(
@@ -2615,6 +2625,186 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
       ),
     );
   }
+
+  // _price(pos, from) {
+  //   double price = double.parse(widget.model!.prVarientList![pos].disPrice!);
+  //   if (price == 0)
+  //     price = double.parse(widget.model!.prVarientList![pos].price!);
+  //
+  //   print("svarient ${widget.model?.selVarient!}");
+  //
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text(
+  //           CUR_CURRENCY! + " " + price.toString(),
+  //           style: TextStyle(
+  //               color: Theme.of(context).colorScheme.fontColor,
+  //               fontWeight: FontWeight.bold,
+  //               fontSize: 20,
+  //               fontFamily: dynamicFontFamily.fontFamily),
+  //         ),
+  //         from
+  //             ? Padding(
+  //                 padding: const EdgeInsetsDirectional.only(
+  //                     start: 3.0, bottom: 5, top: 3),
+  //                 child: widget.model!.availability == "0"
+  //                     ? Container()
+  //                     : Selector<CartProvider,
+  //                         Tuple2<List<dynamic>, List<dynamic>>>(
+  //                         builder: (context, data, child) {
+  //                           // Create a unique identifier combining product ID and variant ID
+  //                           String variantKey =
+  //                               "${widget.model!.id}_${widget.model!.prVarientList![pos].id ?? ''}";
+  //
+  //                           // Check current quantity for the specific variant
+  //                           String currentQty = "0";
+  //                           if (setVariant == false) {
+  //                             // Look for the variant-specific key in the cart
+  //                             int variantIndex = -1;
+  //                             for (int i = 0; i < data.item1.length; i++) {
+  //                               String cartKey =
+  //                                   "${widget.model!.id}_${widget.model!.prVarientList![i].id ?? ''}";
+  //                               print(
+  //                                   "atfeyhbie $cartKey, $variantKey, item1: ${data.item1}");
+  //                               if (cartKey == variantKey) {
+  //                                 variantIndex = i;
+  //                                 break;
+  //                               }
+  //                             }
+  //
+  //                             if (variantIndex != -1) {
+  //                               currentQty =
+  //                                   data.item2[variantIndex].toString();
+  //                             }
+  //                             print("data item2: ${data.item2}, $variantIndex");
+  //                           }
+  //
+  //                           qtyController.text = currentQty;
+  //
+  //                           print("currentQty $currentQty");
+  //                           print("variantKey $variantKey");
+  //                           print(
+  //                               "currentQty data.item1 ${data.item1}, ${widget.model!.id}, ${widget.model!.attrIds}");
+  //
+  //                           if (currentQty == "0") {
+  //                             return GestureDetector(
+  //                               child: Container(
+  //                                 padding: const EdgeInsets.symmetric(
+  //                                     horizontal: 24.0, vertical: 12.0),
+  //                                 decoration: BoxDecoration(
+  //                                   color: dynamicColor.buttonColor,
+  //                                   borderRadius: BorderRadius.circular(10.0),
+  //                                   boxShadow: [
+  //                                     BoxShadow(
+  //                                       color: Colors.grey.withOpacity(0.3),
+  //                                       spreadRadius: 1,
+  //                                       blurRadius: 2,
+  //                                       offset: Offset(0, 1),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                                 child: Row(
+  //                                   mainAxisSize: MainAxisSize.min,
+  //                                   children: [
+  //                                     Text(
+  //                                       "ADD",
+  //                                       style: TextStyle(
+  //                                           color: dynamicColor.buttonTxtColor,
+  //                                           fontWeight: FontWeight.bold,
+  //                                           fontSize: 14,
+  //                                           fontFamily:
+  //                                               dynamicFontFamily.fontFamily),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ),
+  //                               onTap: () {
+  //                                 if (_isProgress == false) {
+  //                                   addToCart(
+  //                                       widget.model!.qtyStepSize!, false);
+  //                                 }
+  //                               },
+  //                             );
+  //                           } else {
+  //                             return Row(
+  //                               children: <Widget>[
+  //                                 GestureDetector(
+  //                                   child: Card(
+  //                                     shape: RoundedRectangleBorder(
+  //                                       borderRadius: BorderRadius.circular(50),
+  //                                     ),
+  //                                     child: Padding(
+  //                                       padding: const EdgeInsets.all(8.0),
+  //                                       child: Icon(
+  //                                         Icons.remove,
+  //                                         size: 15,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   onTap: () {
+  //                                     if (_isProgress == false &&
+  //                                         (int.parse(qtyController.text)) > 0)
+  //                                       removeFromCart();
+  //                                   },
+  //                                 ),
+  //                                 Container(
+  //                                   width: 37,
+  //                                   height: 20,
+  //                                   color: Colors.transparent,
+  //                                   child: TextField(
+  //                                     textAlign: TextAlign.center,
+  //                                     readOnly: true,
+  //                                     style: TextStyle(
+  //                                         fontSize: 12,
+  //                                         color: Theme.of(context)
+  //                                             .colorScheme
+  //                                             .fontColor,
+  //                                         fontWeight: FontWeight.bold),
+  //                                     controller: qtyController,
+  //                                     decoration: InputDecoration(
+  //                                       border: InputBorder.none,
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                                 GestureDetector(
+  //                                   child: Card(
+  //                                     shape: RoundedRectangleBorder(
+  //                                       borderRadius: BorderRadius.circular(50),
+  //                                     ),
+  //                                     child: Padding(
+  //                                       padding: const EdgeInsets.all(8.0),
+  //                                       child: Icon(
+  //                                         Icons.add,
+  //                                         size: 15,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   onTap: () {
+  //                                     if (_isProgress == false)
+  //                                       addToCart(
+  //                                           (int.parse(qtyController.text) +
+  //                                                   int.parse(widget
+  //                                                       .model!.qtyStepSize!))
+  //                                               .toString(),
+  //                                           false);
+  //                                   },
+  //                                 )
+  //                               ],
+  //                             );
+  //                           }
+  //                         },
+  //                         selector: (_, provider) =>
+  //                             Tuple2(provider.cartIdList, provider.qtyList),
+  //                       ),
+  //               )
+  //             : Container(),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Future removeFromCart({Product? productModel}) async {
     _isNetworkAvail = await isNetworkAvailable();
@@ -2843,42 +3033,6 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                 color: Theme.of(context).colorScheme.lightBlack,
                 fontFamily: dynamicFontFamily.fontFamily),
           ),
-          // if (widget.model!.video!.isNotEmpty ||
-          //     widget.model!.videType!.isNotEmpty)
-          //   GestureDetector(
-          //     child: Container(
-          //       padding:
-          //           const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-          //       decoration: BoxDecoration(
-          //         color: dynamicColor.buttonColor,
-          //         borderRadius: BorderRadius.circular(10.0),
-          //         boxShadow: [
-          //           BoxShadow(
-          //             color: Colors.grey.withOpacity(0.3),
-          //             spreadRadius: 1,
-          //             blurRadius: 2,
-          //             offset: Offset(0, 1),
-          //           ),
-          //         ],
-          //       ),
-          //       child: Row(
-          //         mainAxisSize: MainAxisSize.min,
-          //         children: [
-          //           Text(
-          //             "View Videos",
-          //             style: TextStyle(
-          //                 color: dynamicColor.buttonTxtColor,
-          //                 fontWeight: FontWeight.bold,
-          //                 fontSize: 12,
-          //                 fontFamily: dynamicFontFamily.fontFamily),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //     onTap: () {
-          //       showVideos();
-          //     },
-          //   )
         ],
       ),
     );
@@ -3014,13 +3168,16 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         errorBuilder: (context, error, stackTrace) =>
                             erroWidget(80)));
               } else {
-                itemLabel = Text(att[i],
-                    style: TextStyle(
-                        color: _selectedIndex.length > index &&
-                                _selectedIndex[index] == (i)
-                            ? Theme.of(context).colorScheme.white
-                            : Theme.of(context).colorScheme.fontColor,
-                        fontFamily: dynamicFontFamily.fontFamily));
+                itemLabel = Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Text(att[i],
+                      style: TextStyle(
+                          color: _selectedIndex.length > index &&
+                                  _selectedIndex[index] == (i)
+                              ? Theme.of(context).colorScheme.white
+                              : Theme.of(context).colorScheme.fontColor,
+                          fontFamily: dynamicFontFamily.fontFamily)),
+                );
               }
 
               if (_selectedIndex.length > index &&

@@ -347,7 +347,7 @@ class _HomePageState extends State<HomePage>
 
   void startImageLoop() {
     timer?.cancel();
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+    timer = Timer.periodic(const Duration(seconds: 4), (Timer t) {
       if (offerImgs.isNotEmpty) {
         setState(() {
           currentIndex = (currentIndex + 1) % offerImgs.length;
@@ -407,51 +407,47 @@ class _HomePageState extends State<HomePage>
                     ),
                   );
                 },
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: offerImgs.isNotEmpty
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
+                child: offerImgs.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(seconds: 4),
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          ),
                           child: Container(
                             width: 50,
                             height: 50,
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 800),
-                              transitionBuilder: (child, animation) =>
-                                  FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              ),
-                              child: CachedNetworkImage(
-                                key: ValueKey<String>(offerImgs[currentIndex]),
-                                imageUrl: offerImgs[currentIndex],
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.green,
-                                    ),
+                            child: CachedNetworkImage(
+                              key: ValueKey<String>(offerImgs[currentIndex]),
+                              imageUrl: offerImgs[currentIndex],
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.green,
                                   ),
                                 ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: Colors.grey[200],
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey[400],
-                                    size: 30,
-                                  ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: Colors.grey[200],
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey[400],
+                                  size: 30,
                                 ),
                               ),
                             ),
                           ),
-                        )
-                      : Image.asset(
-                          "assets/images/offer.gif",
-                          fit: BoxFit.cover,
                         ),
-                ),
+                      )
+                    : Image.asset(
+                        "assets/images/offer.gif",
+                        fit: BoxFit.cover,
+                      ),
               )
             : SizedBox.shrink(),
       ),

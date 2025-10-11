@@ -154,6 +154,9 @@ class StateOrder extends State<OrderDetail>
     var model = widget.model!;
     String? pDate, prDate, sDate, dDate, cDate, rDate;
 
+    print("canaceled contains1: ${model.listStatus.contains(CANCLED)}");
+    print("canaceled contains2: ${model.listStatus.contains("cancel")}");
+
     if (model.listStatus.contains(PLACED)) {
       pDate = model.listDate![model.listStatus.indexOf(PLACED)];
 

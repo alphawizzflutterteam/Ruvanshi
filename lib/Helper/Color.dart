@@ -133,3 +133,8 @@ class dynamicFontFamily {
 class dynamicAppLogo {
   static String appLogo = "";
 }
+
+class dynamicAuthImages {
+  static String loginBg = "";
+  static String registerBg = "";
+}

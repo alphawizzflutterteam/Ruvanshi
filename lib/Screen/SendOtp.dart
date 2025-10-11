@@ -94,7 +94,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
         final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
         return Positioned(
-          bottom: bottomInset + 600,
+          top: 200,
           left: 24,
           right: 24,
           child: Material(
@@ -208,7 +208,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
             // Fluttertoast.showToast(msg: otp.toString(),
             //     backgroundColor: colors.primary
             // );
-            // setSnackbar(otp.toString());
+            setSnackbar(msg.toString());
             settingsProvider.setPrefrence(MOBILE, mobileController.text);
             settingsProvider.setPrefrence(COUNTRY_CODE, countrycode ?? '+91');
             Future.delayed(Duration(seconds: 1)).then((_) {
@@ -509,7 +509,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
                       child: Text(
                         getTranslated(context, 'TERMS_SERVICE_LBL')!,
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: colors.secondary,
+                            color: dynamicColor.appBarBgColor,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.normal),
                       )),
@@ -535,7 +535,7 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
                       child: Text(
                         getTranslated(context, 'PRIVACY')!,
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: colors.secondary,
+                            color: dynamicColor.appBarBgColor,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.normal),
                       )),
@@ -599,7 +599,11 @@ class _SendOtpState extends State<SendOtp> with TickerProviderStateMixin {
               height: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/otp.png'),
+                  image: dynamicAuthImages.registerBg.isNotEmpty
+                      ? CachedNetworkImageProvider(dynamicAuthImages.registerBg)
+                          as ImageProvider
+                      : const AssetImage('assets/images/otp.png')
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),
