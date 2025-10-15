@@ -336,9 +336,13 @@ class _HomePageState extends State<HomePage>
               currentIndex = 0;
             });
             startImageLoop();
+          } else {
+            setState(() {
+              offerImgs = [];
+            });
           }
         }
-        // if (mounted) setState(() {});
+        if (mounted) setState(() {});
       }
     }, onError: (error) {
       print("API Error: $error");
@@ -393,7 +397,7 @@ class _HomePageState extends State<HomePage>
                 ),
               )
             : noInternet(context),
-        floatingActionButton: offerImages.isNotEmpty
+        floatingActionButton: offerImgs.isNotEmpty
             ? GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -408,46 +412,57 @@ class _HomePageState extends State<HomePage>
                   );
                 },
                 child: offerImgs.isNotEmpty
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(seconds: 4),
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          ),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            child: CachedNetworkImage(
-                              key: ValueKey<String>(offerImgs[currentIndex]),
-                              imageUrl: offerImgs[currentIndex],
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.green,
+                    ? Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular((100)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 3,
+                                blurRadius: 6,
+                                offset: Offset(0, -2),
+                              ),
+                            ],
+                            border: Border.all(color: Colors.grey, width: 1)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(seconds: 4),
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              child: CachedNetworkImage(
+                                key: ValueKey<String>(offerImgs[currentIndex]),
+                                imageUrl: offerImgs[currentIndex],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.green,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                color: Colors.grey[200],
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  color: Colors.grey[400],
-                                  size: 30,
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.grey[200],
+                                  child: Icon(
+                                    Icons.image_not_supported,
+                                    color: Colors.grey[400],
+                                    size: 30,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       )
-                    : Image.asset(
-                        "assets/images/offer.gif",
-                        fit: BoxFit.cover,
-                      ),
+                    : SizedBox.shrink(),
               )
             : SizedBox.shrink(),
       ),
