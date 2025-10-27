@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class HomeProvider extends ChangeNotifier {
   int _curSlider = 0;
+  int _curSlider2 = 0;
   bool _catLoading = true;
   bool _secLoading = true;
   bool _sliderLoading = true;
@@ -10,13 +11,13 @@ class HomeProvider extends ChangeNotifier {
   bool _searchLoading = true;
 
   get sellerLoading => _sellerLoading;
-  
-  
+
   get searchLoading => _searchLoading;
 
   get catLoading => _catLoading;
 
   get curSlider => _curSlider;
+  get curSlider2 => _curSlider2;
 
   get secLoading => _secLoading;
 
@@ -26,6 +27,11 @@ class HomeProvider extends ChangeNotifier {
 
   setCurSlider(int pos) {
     _curSlider = pos;
+    notifyListeners();
+  }
+
+  setCurSlider2(int pos) {
+    _curSlider2 = pos;
     notifyListeners();
   }
 

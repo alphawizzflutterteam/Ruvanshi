@@ -127,9 +127,51 @@ class ImagePopUpState extends State<ImagePopUp>
                     builder: (context, snapshot) {
                       return previewHeader();
                     });
-              })
+              }),
+          _buildBottomPagination(),
         ]),
       ),
+    );
+  }
+
+  Widget _buildBottomPagination() {
+    return ValueListenableBuilder(
+      valueListenable: currentPage,
+      builder: (context, value, child) {
+        return Positioned(
+          bottom: 20.0,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  widget.attachmentUrls.length,
+                  (index) => AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    height: 8,
+                    width: currentPage.value == index ? 24 : 8,
+                    decoration: BoxDecoration(
+                      color: currentPage.value == index
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -156,18 +198,6 @@ class ImagePopUpState extends State<ImagePopUp>
           SizedBox(
             height: 5,
           ),
-          Row(
-            children: [
-              Text(
-                "${currentPage.value + 1}/",
-                style: TextStyle(),
-              ),
-              Text(
-                "${widget.attachmentUrls.length}",
-                style: TextStyle(color: Colors.grey),
-              ),
-            ],
-          )
         ],
       ),
     );

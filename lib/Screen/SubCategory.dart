@@ -19,7 +19,8 @@ class SubCategory extends StatelessWidget {
           padding: EdgeInsets.all(20),
           crossAxisCount: 2,
           shrinkWrap: true,
-          childAspectRatio: .75,
+          crossAxisSpacing: 16,
+          childAspectRatio: .8,
           children: List.generate(
             subList!.length,
             (index) {
@@ -31,32 +32,47 @@ class SubCategory extends StatelessWidget {
 
   subCatItem(int index, BuildContext context) {
     return GestureDetector(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: FadeInImage(
-                    image: CachedNetworkImageProvider(subList![index].image!),
-                    fadeInDuration: Duration(milliseconds: 150),
-                    imageErrorBuilder: (context, error, stackTrace) =>
-                        erroWidget(50),
-                    placeholder: placeHolder(50),
-                  )),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: Offset(0, 1),
             ),
-          ),
-          Text(
-            subList![index].name! + "\n",
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: Theme.of(context).colorScheme.fontColor,
-                fontFamily: dynamicFontFamily.fontFamily),
-          )
-        ],
+          ],
+        ),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: FadeInImage(
+                      image: CachedNetworkImageProvider(subList![index].image!),
+                      fadeInDuration: Duration(milliseconds: 150),
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) =>
+                          erroWidget(50),
+                      placeholder: placeHolder(50),
+                    )),
+              ),
+            ),
+            Text(
+              subList![index].name! + "\n",
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: Theme.of(context).colorScheme.fontColor,
+                  fontFamily: dynamicFontFamily.fontFamily),
+            )
+          ],
+        ),
       ),
       onTap: () {
         if (subList![index].subList == null ||

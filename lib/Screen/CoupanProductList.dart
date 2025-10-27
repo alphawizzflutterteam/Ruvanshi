@@ -261,9 +261,8 @@ class StateProduct extends State<CoupanProductList>
                       Hero(
                           tag: "ProList$index${model.id}",
                           child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
                               child: Stack(
                                 children: [
                                   FadeInImage(

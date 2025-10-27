@@ -425,29 +425,39 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
-          child: Card(
-            elevation: 0.3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 2,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 0),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(8)),
             child: Column(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        width: 100,
-                        height: 150,
-                        child: FadeInImage(
-                          image: CachedNetworkImageProvider(
-                            cartList[index].productList![0].image!,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          width: 100,
+                          height: 150,
+                          child: FadeInImage(
+                            image: CachedNetworkImageProvider(
+                              cartList[index].productList![0].image!,
+                            ),
+                            placeholder: placeHolder(125),
+                            fit: BoxFit.cover,
+                            imageErrorBuilder: (context, error, stackTrace) =>
+                                erroWidget(125),
                           ),
-                          placeholder: placeHolder(125),
-                          fit: BoxFit.cover,
-                          imageErrorBuilder: (context, error, stackTrace) =>
-                              erroWidget(125),
                         ),
                       ),
                     ),
@@ -1012,304 +1022,324 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
       }
     }
 
-    return InkWell(
-      onTap: () {},
-      child: Card(
-        elevation: 0.1,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                children: <Widget>[
-                  Hero(
-                      tag: "$index${cartList[index].productList![0].id}",
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(7.0),
-                          child: FadeInImage(
-                            image: CachedNetworkImageProvider(
-                                cartList[index].productList![0].image!),
-                            height: 80.0,
-                            width: 80.0,
-                            fit: BoxFit.cover,
-                            imageErrorBuilder: (context, error, stackTrace) =>
-                                erroWidget(80),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        onTap: () {},
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 2,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(4)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  children: <Widget>[
+                    Hero(
+                        tag: "$index${cartList[index].productList![0].id}",
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(7.0),
+                            child: FadeInImage(
+                              image: CachedNetworkImageProvider(
+                                  cartList[index].productList![0].image!),
+                              height: 80.0,
+                              width: 80.0,
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, error, stackTrace) =>
+                                  erroWidget(80),
 
-                            // errorWidget: (context, url, e) => placeHolder(60),
-                            placeholder: placeHolder(80),
-                          ))),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      top: 5.0),
-                                  child: Text(
-                                    cartList[index].productList![0].name!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .lightBlack,
-                                            fontFamily:
-                                                dynamicFontFamily.fontFamily),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                              // errorWidget: (context, url, e) => placeHolder(60),
+                              placeholder: placeHolder(80),
+                            ))),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsetsDirectional.only(
+                                        top: 5.0),
+                                    child: Text(
+                                      cartList[index].productList![0].name!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .lightBlack,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          cartList[index]
-                                          .productList![0]
-                                          .prVarientList![selectedPos]
-                                          .attr_name !=
-                                      null &&
-                                  cartList[index]
-                                      .productList![0]
-                                      .prVarientList![selectedPos]
-                                      .attr_name!
-                                      .isNotEmpty
-                              ? ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: att.length,
-                                  itemBuilder: (context, index) {
-                                    return Row(children: [
+                              ],
+                            ),
+                            cartList[index]
+                                            .productList![0]
+                                            .prVarientList![selectedPos]
+                                            .attr_name !=
+                                        null &&
+                                    cartList[index]
+                                        .productList![0]
+                                        .prVarientList![selectedPos]
+                                        .attr_name!
+                                        .isNotEmpty
+                                ? ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: att.length,
+                                    itemBuilder: (context, index) {
+                                      return Row(children: [
+                                        Flexible(
+                                          child: Text(
+                                            att[index].trim() + ":",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium!
+                                                .copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .lightBlack,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsetsDirectional.only(
+                                              start: 5.0),
+                                          child: Text(
+                                            val[index],
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium!
+                                                .copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .lightBlack,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily),
+                                          ),
+                                        )
+                                      ]);
+                                    })
+                                : Container(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
                                       Flexible(
                                         child: Text(
-                                          att[index].trim() + ":",
+                                          double.parse(cartList[index]
+                                                      .productList![0]
+                                                      .prVarientList![
+                                                          selectedPos]
+                                                      .disPrice!) !=
+                                                  0
+                                              ? CUR_CURRENCY! +
+                                                  "" +
+                                                  double.parse(cartList[index]
+                                                              .productList![0]
+                                                              .prVarientList![
+                                                                  selectedPos]
+                                                              .price! ??
+                                                          "0.0")
+                                                      .toStringAsFixed(2)
+                                              : "",
+                                          maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .titleMedium!
+                                              .labelSmall!
                                               .copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .lightBlack,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  letterSpacing: 0.7,
                                                   fontFamily: dynamicFontFamily
                                                       .fontFamily),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsetsDirectional.only(
-                                            start: 5.0),
-                                        child: Text(
-                                          val[index],
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium!
-                                              .copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .lightBlack,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: dynamicFontFamily
-                                                      .fontFamily),
-                                        ),
-                                      )
-                                    ]);
-                                  })
-                              : Container(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Flexible(
-                                      child: Text(
-                                        double.parse(cartList[index]
-                                                    .productList![0]
-                                                    .prVarientList![selectedPos]
-                                                    .disPrice!) !=
-                                                0
-                                            ? CUR_CURRENCY! +
-                                                "" +
-                                                double.parse(cartList[index]
-                                                            .productList![0]
-                                                            .prVarientList![
-                                                                selectedPos]
-                                                            .price! ??
-                                                        "0.0")
-                                                    .toStringAsFixed(2)
-                                            : "",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall!
-                                            .copyWith(
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                                letterSpacing: 0.7,
-                                                fontFamily: dynamicFontFamily
-                                                    .fontFamily),
+                                      Text(
+                                        " " +
+                                            CUR_CURRENCY! +
+                                            " " +
+                                            price.toStringAsFixed(2),
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .fontColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily:
+                                                dynamicFontFamily.fontFamily),
                                       ),
-                                    ),
-                                    Text(
-                                      " " +
-                                          CUR_CURRENCY! +
-                                          " " +
-                                          price.toStringAsFixed(2),
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .fontColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily:
-                                              dynamicFontFamily.fontFamily),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              cartList[index].productList![0].availability ==
-                                          "1" ||
-                                      cartList[index]
-                                              .productList![0]
-                                              .stockType ==
-                                          "null"
-                                  ? Row(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              width: 26,
-                                              height: 20,
-                                              child: Stack(
-                                                children: [
-                                                  TextField(
-                                                    textAlign: TextAlign.center,
-                                                    readOnly: true,
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .fontColor),
-                                                    controller:
-                                                        _controller[index],
-                                                    decoration: InputDecoration(
-                                                      border: InputBorder.none,
+                                cartList[index].productList![0].availability ==
+                                            "1" ||
+                                        cartList[index]
+                                                .productList![0]
+                                                .stockType ==
+                                            "null"
+                                    ? Row(
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                width: 26,
+                                                height: 20,
+                                                child: Stack(
+                                                  children: [
+                                                    TextField(
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      readOnly: true,
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .fontColor),
+                                                      controller:
+                                                          _controller[index],
+                                                      decoration:
+                                                          InputDecoration(
+                                                        border:
+                                                            InputBorder.none,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                        ],
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    : Container(),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-              Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    getTranslated(context, 'SUBTOTAL')!,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  ),
-                  // Text(
-                  //   CUR_CURRENCY! + " " + price.toStringAsFixed(2),
-                  //   style: TextStyle(
-                  //       color: Theme.of(context).colorScheme.lightBlack2,
-                  //       fontFamily: dynamicFontFamily.fontFamily),
-                  // ),
-                  Text(
-                    CUR_CURRENCY! +
-                        " " +
-                        double.parse(cartList[index].perItemTotal! ?? "0.0")
-                            .toStringAsFixed(2),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    getTranslated(context, 'TAXPER')!,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  ),
-                  Text(
-                    cartList[index].productList![0].tax! + "%",
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  ),
-                ],
-              ),
-              if (promoData != null && isPromoThisProductVarient == "1")
+                    )
+                  ],
+                ),
+                Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Discount",
+                      getTranslated(context, 'SUBTOTAL')!,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
+                    ),
+                    // Text(
+                    //   CUR_CURRENCY! + " " + price.toStringAsFixed(2),
+                    //   style: TextStyle(
+                    //       color: Theme.of(context).colorScheme.lightBlack2,
+                    //       fontFamily: dynamicFontFamily.fontFamily),
+                    // ),
+                    Text(
+                      CUR_CURRENCY! +
+                          " " +
+                          double.parse(cartList[index].perItemTotal! ?? "0.0")
+                              .toStringAsFixed(2),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.lightBlack2,
+                          fontFamily: dynamicFontFamily.fontFamily),
+                    )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      getTranslated(context, 'TAXPER')!,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.lightBlack2,
                           fontFamily: dynamicFontFamily.fontFamily),
                     ),
                     Text(
-                      CUR_CURRENCY! +
-                          " ${promoData?["amount"].toStringAsFixed(2)}",
+                      cartList[index].productList![0].tax! + "%",
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.lightBlack2,
                           fontFamily: dynamicFontFamily.fontFamily),
                     ),
                   ],
                 ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    getTranslated(context, 'TOTAL_LBL')!,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.lightBlack2),
+                if (promoData != null && isPromoThisProductVarient == "1")
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Discount",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily),
+                      ),
+                      Text(
+                        CUR_CURRENCY! +
+                            " ${promoData?["amount"].toStringAsFixed(2)}",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily),
+                      ),
+                    ],
                   ),
-                  !avail! && deliverableList.length > 0
-                      ? Text(
-                          getTranslated(context, 'NOT_DEL')!,
-                          style: TextStyle(
-                              color: colors.red,
-                              fontFamily: dynamicFontFamily.fontFamily),
-                        )
-                      : Container(),
-                  Text(
-                    CUR_CURRENCY! +
-                        " " +
-                        itemTotal.toStringAsFixed(2).toString(),
-                    //+ " "+cartList[index].productList[0].taxrs,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.fontColor,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  )
-                ],
-              ),
-            ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      getTranslated(context, 'TOTAL_LBL')!,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.lightBlack2),
+                    ),
+                    !avail! && deliverableList.length > 0
+                        ? Text(
+                            getTranslated(context, 'NOT_DEL')!,
+                            style: TextStyle(
+                                color: colors.red,
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          )
+                        : Container(),
+                    Text(
+                      CUR_CURRENCY! +
+                          " " +
+                          itemTotal.toStringAsFixed(2).toString(),
+                      //+ " "+cartList[index].productList[0].taxrs,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.fontColor,
+                          fontFamily: dynamicFontFamily.fontFamily),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -3274,6 +3304,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                     ),
                                                     SizedBox(height: 10),
                                                     address(),
+                                                    SizedBox(height: 10),
                                                     buycartItems(
                                                         buyNowCartList),
                                                     buyorderSummary(
@@ -3638,6 +3669,7 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                                                     ),
                                                     SizedBox(height: 10),
                                                     address(),
+                                                    SizedBox(height: 10),
                                                     // payment(),
                                                     cartItems(cartList),
                                                     orderSummary(cartList),
@@ -4383,8 +4415,18 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
   }
 
   address() {
-    return Card(
-      elevation: 0.1,
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(4)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -4673,8 +4715,18 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     totalPrice = finalTotal + delCharge;
 
-    return Card(
-      elevation: 0,
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(4)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -4990,282 +5042,299 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
       }
     }
 
-    return InkWell(
-      onTap: () {},
-      child: Card(
-        elevation: 0.1,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                children: <Widget>[
-                  Hero(
-                    tag:
-                        "buynow_${index}_${cartList[index].productList![0].id}",
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(7.0),
-                      child: CachedNetworkImage(
-                        imageUrl: cartList[index].productList![0].image!,
-                        height: 80.0,
-                        width: 80.0,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        onTap: () {},
+        child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 2,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(4)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                Row(
+                  children: <Widget>[
+                    Hero(
+                      tag:
+                          "buynow_${index}_${cartList[index].productList![0].id}",
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(7.0),
+                        child: CachedNetworkImage(
+                          imageUrl: cartList[index].productList![0].image!,
                           height: 80.0,
                           width: 80.0,
-                          color: Colors.grey[300],
-                          child: Icon(Icons.image, color: Colors.grey[600]),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          height: 80.0,
-                          width: 80.0,
-                          color: Colors.grey[300],
-                          child: Icon(Icons.error, color: Colors.grey[600]),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            height: 80.0,
+                            width: 80.0,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.image, color: Colors.grey[600]),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            height: 80.0,
+                            width: 80.0,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.error, color: Colors.grey[600]),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      top: 5.0),
-                                  child: Text(
-                                    cartList[index].productList![0].name!,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .copyWith(
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsetsDirectional.only(
+                                        top: 5.0),
+                                    child: Text(
+                                      cartList[index].productList![0].name!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .lightBlack,
+                                              fontFamily:
+                                                  dynamicFontFamily.fontFamily),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (cartList[index]
+                                        .productList![0]
+                                        .prVarientList![selectedPos]
+                                        .attr_name !=
+                                    null &&
+                                cartList[index]
+                                    .productList![0]
+                                    .prVarientList![selectedPos]
+                                    .attr_name!
+                                    .isNotEmpty)
+                              ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: att.length,
+                                itemBuilder: (context, attrIndex) {
+                                  return Row(children: [
+                                    Flexible(
+                                      child: Text(
+                                        att[attrIndex].trim() + ":",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .lightBlack,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.only(
+                                          start: 5.0),
+                                      child: Text(
+                                        val[attrIndex],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .lightBlack,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: dynamicFontFamily
+                                                    .fontFamily),
+                                      ),
+                                    )
+                                  ]);
+                                },
+                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      if (double.parse(cartList[index]
+                                              .productList![0]
+                                              .prVarientList![selectedPos]
+                                              .disPrice!) !=
+                                          0)
+                                        Flexible(
+                                          child: Text(
+                                            CUR_CURRENCY! +
+                                                " " +
+                                                double.parse(cartList[index]
+                                                            .productList![0]
+                                                            .prVarientList![
+                                                                selectedPos]
+                                                            .price! ??
+                                                        "0.0")
+                                                    .toStringAsFixed(2),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelSmall!
+                                                .copyWith(
+                                                    decoration: TextDecoration
+                                                        .lineThrough,
+                                                    fontFamily:
+                                                        dynamicFontFamily
+                                                            .fontFamily,
+                                                    letterSpacing: 0.7),
+                                          ),
+                                        ),
+                                      Text(
+                                        " " +
+                                            CUR_CURRENCY! +
+                                            " " +
+                                            price.toStringAsFixed(2),
+                                        style: TextStyle(
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .lightBlack,
+                                                .fontColor,
+                                            fontWeight: FontWeight.bold,
                                             fontFamily:
                                                 dynamicFontFamily.fontFamily),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (cartList[index]
-                                      .productList![0]
-                                      .prVarientList![selectedPos]
-                                      .attr_name !=
-                                  null &&
-                              cartList[index]
-                                  .productList![0]
-                                  .prVarientList![selectedPos]
-                                  .attr_name!
-                                  .isNotEmpty)
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: att.length,
-                              itemBuilder: (context, attrIndex) {
-                                return Row(children: [
-                                  Flexible(
-                                    child: Text(
-                                      att[attrIndex].trim() + ":",
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .lightBlack,
-                                              fontFamily:
-                                                  dynamicFontFamily.fontFamily),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsetsDirectional.only(start: 5.0),
-                                    child: Text(
-                                      val[attrIndex],
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .lightBlack,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily:
-                                                  dynamicFontFamily.fontFamily),
-                                    ),
-                                  )
-                                ]);
-                              },
-                            ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    if (double.parse(cartList[index]
-                                            .productList![0]
-                                            .prVarientList![selectedPos]
-                                            .disPrice!) !=
-                                        0)
-                                      Flexible(
-                                        child: Text(
-                                          CUR_CURRENCY! +
-                                              " " +
-                                              double.parse(cartList[index]
-                                                          .productList![0]
-                                                          .prVarientList![
-                                                              selectedPos]
-                                                          .price! ??
-                                                      "0.0")
-                                                  .toStringAsFixed(2),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelSmall!
-                                              .copyWith(
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                  fontFamily: dynamicFontFamily
-                                                      .fontFamily,
-                                                  letterSpacing: 0.7),
-                                        ),
                                       ),
-                                    Text(
-                                      " " +
-                                          CUR_CURRENCY! +
-                                          " " +
-                                          price.toStringAsFixed(2),
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .fontColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily:
-                                              dynamicFontFamily.fontFamily),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              // Container(
-                              //   padding: EdgeInsets.symmetric(
-                              //       horizontal: 8, vertical: 4),
-                              //   decoration: BoxDecoration(
-                              //     border:
-                              //         Border.all(color: Colors.grey.shade300),
-                              //     borderRadius: BorderRadius.circular(4),
-                              //   ),
-                              //   child: Text(
-                              //     "Qty: ${cartList[index].qty}",
-                              //     style: TextStyle(
-                              //         fontSize: 12,
-                              //         color: Theme.of(context)
-                              //             .colorScheme
-                              //             .fontColor),
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                        ],
+                                // Container(
+                                //   padding: EdgeInsets.symmetric(
+                                //       horizontal: 8, vertical: 4),
+                                //   decoration: BoxDecoration(
+                                //     border:
+                                //         Border.all(color: Colors.grey.shade300),
+                                //     borderRadius: BorderRadius.circular(4),
+                                //   ),
+                                //   child: Text(
+                                //     "Qty: ${cartList[index].qty}",
+                                //     style: TextStyle(
+                                //         fontSize: 12,
+                                //         color: Theme.of(context)
+                                //             .colorScheme
+                                //             .fontColor),
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-              Divider(),
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        getTranslated(context, 'SUBTOTAL')!,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.lightBlack2,
-                            fontFamily: dynamicFontFamily.fontFamily),
-                      ),
-                      Text(
-                        CUR_CURRENCY! +
-                            " " +
-                            double.parse(cartList[index].perItemTotal! ?? "0.0")
-                                .toStringAsFixed(2),
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.lightBlack2,
-                            fontFamily: dynamicFontFamily.fontFamily),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        getTranslated(context, 'TAXPER')!,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.lightBlack2,
-                            fontFamily: dynamicFontFamily.fontFamily),
-                      ),
-                      Text(
-                        cartList[index].productList![0].tax! + "%",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.lightBlack2,
-                            fontFamily: dynamicFontFamily.fontFamily),
-                      ),
-                    ],
-                  ),
-                  if (promoData != null && isPromoThisProductVarient == "1")
+                    )
+                  ],
+                ),
+                Divider(),
+                Column(
+                  children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Discount",
+                          getTranslated(context, 'SUBTOTAL')!,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.lightBlack2,
                               fontFamily: dynamicFontFamily.fontFamily),
                         ),
                         Text(
                           CUR_CURRENCY! +
-                              " ${promoData?["amount"].toStringAsFixed(2)}",
+                              " " +
+                              double.parse(
+                                      cartList[index].perItemTotal! ?? "0.0")
+                                  .toStringAsFixed(2),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.lightBlack2,
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          getTranslated(context, 'TAXPER')!,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.lightBlack2,
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        ),
+                        Text(
+                          cartList[index].productList![0].tax! + "%",
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.lightBlack2,
                               fontFamily: dynamicFontFamily.fontFamily),
                         ),
                       ],
                     ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        getTranslated(context, 'TOTAL_PRICE') ?? 'Total',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.lightBlack2,
-                            fontFamily: dynamicFontFamily.fontFamily),
+                    if (promoData != null && isPromoThisProductVarient == "1")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Discount",
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.lightBlack2,
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          ),
+                          Text(
+                            CUR_CURRENCY! +
+                                " ${promoData?["amount"].toStringAsFixed(2)}",
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.lightBlack2,
+                                fontFamily: dynamicFontFamily.fontFamily),
+                          ),
+                        ],
                       ),
-                      Text(
-                        CUR_CURRENCY! +
-                            " " +
-                            itemTotal.toStringAsFixed(2).toString(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.fontColor,
-                            fontFamily: dynamicFontFamily.fontFamily),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          getTranslated(context, 'TOTAL_PRICE') ?? 'Total',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.lightBlack2,
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        ),
+                        Text(
+                          CUR_CURRENCY! +
+                              " " +
+                              itemTotal.toStringAsFixed(2).toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.fontColor,
+                              fontFamily: dynamicFontFamily.fontFamily),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -5289,38 +5358,66 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
 
     print("grg $totalPrice, $finalTotalTemp, $delCharge");
 
-    return Card(
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                getTranslated(context, 'ORDER_SUMMARY')! +
-                    " (" +
-                    cartList.length.toString() +
-                    " items)",
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.fontColor,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: dynamicFontFamily.fontFamily),
-              ),
-              Divider(),
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(4)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              getTranslated(context, 'ORDER_SUMMARY')! +
+                  " (" +
+                  cartList.length.toString() +
+                  " items)",
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.fontColor,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily),
+            ),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  getTranslated(context, 'SUBTOTAL')!,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.lightBlack2,
+                      fontFamily: dynamicFontFamily.fontFamily),
+                ),
+                Text(
+                  CUR_CURRENCY! +
+                      " " +
+                      (oriPrice - totalProductPromosAmount).toStringAsFixed(2),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
+                )
+              ],
+            ),
+            if (cgstAmount > 0)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    getTranslated(context, 'SUBTOTAL')!,
+                    'CGST',
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.lightBlack2,
                         fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   Text(
-                    CUR_CURRENCY! +
-                        " " +
-                        (oriPrice - totalProductPromosAmount)
-                            .toStringAsFixed(2),
+                    CUR_CURRENCY! + " " + cgstAmount.toStringAsFixed(2),
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.fontColor,
                         fontWeight: FontWeight.bold,
@@ -5328,95 +5425,18 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              if (cgstAmount > 0)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'CGST',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.lightBlack2,
-                          fontFamily: dynamicFontFamily.fontFamily),
-                    ),
-                    Text(
-                      CUR_CURRENCY! + " " + cgstAmount.toStringAsFixed(2),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: dynamicFontFamily.fontFamily),
-                    )
-                  ],
-                ),
-              if (sgstAmount > 0)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'SGST',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.lightBlack2,
-                          fontFamily: dynamicFontFamily.fontFamily),
-                    ),
-                    Text(
-                      CUR_CURRENCY! + " " + sgstAmount.toStringAsFixed(2),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.fontColor,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: dynamicFontFamily.fontFamily),
-                    )
-                  ],
-                ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text(
-              //       'Total Amount',
-              //       style: TextStyle(
-              //           color: Theme.of(context).colorScheme.lightBlack2),
-              //     ),
-              //     Text(
-              //       CUR_CURRENCY! + "${totalamount.toString()}" != " "
-              //           ? isPromoValid == true
-              //               ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
-              //                           totalamount ?? '0.0') -
-              //                       promoAmt)
-              //                   .toString()
-              //               : (CUR_CURRENCY! + "${totalamount.toString()}")
-              //           : "",
-              //       style: TextStyle(
-              //           color: Theme.of(context).colorScheme.fontColor,
-              //           fontWeight: FontWeight.bold),
-              //     ),
-              //   ],
-              // ),
-
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text(
-              //       'Tax Amount',
-              //       style: TextStyle(
-              //           color: Theme.of(context).colorScheme.lightBlack2),
-              //     ),
-              //     Text(
-              //       CUR_CURRENCY! + " " + taxAmount.toStringAsFixed(2),
-              //       style: TextStyle(
-              //           color: Theme.of(context).colorScheme.fontColor,
-              //           fontWeight: FontWeight.bold),
-              //     )
-              //   ],
-              // ),
+            if (sgstAmount > 0)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    getTranslated(context, 'DELIVERY_CHARGE')!,
+                    'SGST',
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.lightBlack2,
                         fontFamily: dynamicFontFamily.fontFamily),
                   ),
                   Text(
-                    CUR_CURRENCY! + " " + dCharge.toStringAsFixed(2),
+                    CUR_CURRENCY! + " " + sgstAmount.toStringAsFixed(2),
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.fontColor,
                         fontWeight: FontWeight.bold,
@@ -5424,91 +5444,150 @@ class StateCart extends State<Cart> with TickerProviderStateMixin {
                   )
                 ],
               ),
-              isPromoValid == true
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          getTranslated(context, 'PROMO_CODE_DIS_LBL')!,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.lightBlack2,
-                              fontFamily: dynamicFontFamily.fontFamily),
-                        ),
-                        Text(
-                          CUR_CURRENCY! + " " + promoAmt.toStringAsFixed(2),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.fontColor,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: dynamicFontFamily.fontFamily),
-                        )
-                      ],
-                    )
-                  : Container(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Total Amount',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.lightBlack2,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  ),
-                  Text(
-                    CUR_CURRENCY! + finalTotalTemp.toStringAsFixed(2),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.fontColor,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: dynamicFontFamily.fontFamily),
-                  ),
-                ],
-              ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Total Amount',
+            //       style: TextStyle(
+            //           color: Theme.of(context).colorScheme.lightBlack2),
+            //     ),
+            //     Text(
+            //       CUR_CURRENCY! + "${totalamount.toString()}" != " "
+            //           ? isPromoValid == true
+            //               ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
+            //                           totalamount ?? '0.0') -
+            //                       promoAmt)
+            //                   .toString()
+            //               : (CUR_CURRENCY! + "${totalamount.toString()}")
+            //           : "",
+            //       style: TextStyle(
+            //           color: Theme.of(context).colorScheme.fontColor,
+            //           fontWeight: FontWeight.bold),
+            //     ),
+            //   ],
+            // ),
 
-              isUseWallet!
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          getTranslated(context, 'WALLET_BAL')!,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.lightBlack2,
-                              fontFamily: dynamicFontFamily.fontFamily),
-                        ),
-                        Text(
-                          CUR_CURRENCY! + " " + usedBal.toStringAsFixed(2),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.fontColor,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: dynamicFontFamily.fontFamily),
-                        )
-                      ],
-                    )
-                  : Container(),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     Text(
-              //       'Total Amount',
-              //       style: TextStyle(
-              //           color: Theme.of(context).colorScheme.lightBlack2),
-              //     ),
-              //     Text(
-              //       CUR_CURRENCY! + "${totalamount.toString()}" != " "
-              //           ? isPromoValid == true
-              //               ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
-              //                           totalamount ?? '0.0') -
-              //                       promoAmt)
-              //                   .toString()
-              //               : (CUR_CURRENCY! + "${totalamount.toString()}")
-              //           : "",
-              //       style: TextStyle(
-              //           color: Theme.of(context).colorScheme.fontColor,
-              //           fontWeight: FontWeight.bold),
-              //     ),
-              //   ],
-              // ),
-            ],
-          ),
-        ));
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Tax Amount',
+            //       style: TextStyle(
+            //           color: Theme.of(context).colorScheme.lightBlack2),
+            //     ),
+            //     Text(
+            //       CUR_CURRENCY! + " " + taxAmount.toStringAsFixed(2),
+            //       style: TextStyle(
+            //           color: Theme.of(context).colorScheme.fontColor,
+            //           fontWeight: FontWeight.bold),
+            //     )
+            //   ],
+            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  getTranslated(context, 'DELIVERY_CHARGE')!,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.lightBlack2,
+                      fontFamily: dynamicFontFamily.fontFamily),
+                ),
+                Text(
+                  CUR_CURRENCY! + " " + dCharge.toStringAsFixed(2),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
+                )
+              ],
+            ),
+            isPromoValid == true
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        getTranslated(context, 'PROMO_CODE_DIS_LBL')!,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily),
+                      ),
+                      Text(
+                        CUR_CURRENCY! + " " + promoAmt.toStringAsFixed(2),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.fontColor,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: dynamicFontFamily.fontFamily),
+                      )
+                    ],
+                  )
+                : Container(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Total Amount',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.lightBlack2,
+                      fontFamily: dynamicFontFamily.fontFamily),
+                ),
+                Text(
+                  CUR_CURRENCY! + finalTotalTemp.toStringAsFixed(2),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: dynamicFontFamily.fontFamily),
+                ),
+              ],
+            ),
+
+            isUseWallet!
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        getTranslated(context, 'WALLET_BAL')!,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.lightBlack2,
+                            fontFamily: dynamicFontFamily.fontFamily),
+                      ),
+                      Text(
+                        CUR_CURRENCY! + " " + usedBal.toStringAsFixed(2),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.fontColor,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: dynamicFontFamily.fontFamily),
+                      )
+                    ],
+                  )
+                : Container(),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Total Amount',
+            //       style: TextStyle(
+            //           color: Theme.of(context).colorScheme.lightBlack2),
+            //     ),
+            //     Text(
+            //       CUR_CURRENCY! + "${totalamount.toString()}" != " "
+            //           ? isPromoValid == true
+            //               ? (/*oriPrice - promoAmt+dCharge*/ double.parse(
+            //                           totalamount ?? '0.0') -
+            //                       promoAmt)
+            //                   .toString()
+            //               : (CUR_CURRENCY! + "${totalamount.toString()}")
+            //           : "",
+            //       style: TextStyle(
+            //           color: Theme.of(context).colorScheme.fontColor,
+            //           fontWeight: FontWeight.bold),
+            //     ),
+            //   ],
+            // ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> validatePromo(

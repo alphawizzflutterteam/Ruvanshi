@@ -129,10 +129,40 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   late double growStepWidth, beginWidth, endWidth = 0.0;
   TextEditingController qtyController = new TextEditingController();
   ApiBaseHelper apiBaseHelper = ApiBaseHelper();
+
+  String videoId = "";
+  YoutubePlayerController controller =
+      YoutubePlayerController(initialVideoId: '');
+
+  YoutubePlayerController ytcontroller =
+      YoutubePlayerController(initialVideoId: '');
+
   @override
   void initState() {
     super.initState();
     sliderList.clear();
+
+    if (widget.model!.videType == "youtube") {
+      setState(() {
+        videoId = YoutubePlayer.convertUrlToId(widget.model!.video!)!;
+
+        controller = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: YoutubePlayerFlags(
+            autoPlay: true,
+            mute: false,
+          ),
+        );
+
+        ytcontroller = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: YoutubePlayerFlags(
+            autoPlay: true,
+            mute: false,
+          ),
+        );
+      });
+    }
 
     sliderList.add(widget.model!.image);
     if (widget.model!.videType != null &&
@@ -597,8 +627,14 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                                                                       height:
                                                                           10),
                                                                   address(),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          10),
                                                                   buycartItems(
                                                                       buyNowCartList),
+                                                                  SizedBox(
+                                                                      height:
+                                                                          10),
                                                                   buyorderSummary(
                                                                       buyNowCartList),
                                                                   SizedBox(
@@ -1412,8 +1448,18 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
     double finalTotal =
         singleProductTotal + deliveryCharge - promoDiscount - walletDeduction;
 
-    return Card(
-      elevation: 0,
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(4)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -1722,8 +1768,18 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
 
     return InkWell(
       onTap: () {},
-      child: Card(
-        elevation: 0.1,
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 2,
+                spreadRadius: 1,
+                offset: const Offset(0, 0),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(4)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -1980,8 +2036,18 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   }
 
   address() {
-    return Card(
-      elevation: 0,
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 2,
+              spreadRadius: 1,
+              offset: const Offset(0, 0),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(4)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -2201,21 +2267,8 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                         ),
                       );
                     } else if (widget.model!.videType == "youtube") {
-                      String videoId;
-                      videoId =
-                          YoutubePlayer.convertUrlToId(widget.model!.video!)!;
-
-                      YoutubePlayerController _controller =
-                          YoutubePlayerController(
-                        initialVideoId: videoId,
-                        flags: YoutubePlayerFlags(
-                          autoPlay: true,
-                          mute: true,
-                        ),
-                      );
-
                       return YoutubePlayer(
-                        controller: _controller,
+                        controller: ytcontroller,
                         showVideoProgressIndicator: true,
                         progressIndicatorColor: Colors.amber,
                         progressColors: const ProgressBarColors(
@@ -3045,6 +3098,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
       ),
       child: ListView(
         shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
         children: [
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -3057,7 +3111,8 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
               _madeIn(),
               _warrenty(),
               _gaurantee(),
-              _otherDetail(widget.model!.selVarient),
+              if (widget.model!.maxDaysToReturnItem != null)
+                _otherDetail(widget.model!.selVarient),
               _cancleable(),
             ],
           ),
@@ -3695,26 +3750,21 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   _showVideo() {
     String videoUrl = widget.model!.video!;
     List<String> id = videoUrl.split("https://vimeo.com/");
-    String videoId;
-    YoutubePlayerController controller =
-        YoutubePlayerController(initialVideoId: '');
-
-    if (widget.model!.videType == "youtube") {
-      videoId = YoutubePlayer.convertUrlToId(widget.model!.video!)!;
-
-      controller = YoutubePlayerController(
-        initialVideoId: videoId,
-        flags: YoutubePlayerFlags(
-          autoPlay: false,
-          mute: false,
-        ),
-      );
-    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Product Video",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontFamily: dynamicFontFamily.fontFamily),
+            ),
+          ),
           widget.model!.videType == "vimeo"
               ? SafeArea(
                   child: Container(
@@ -3990,7 +4040,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                       )
                     : Container(),
                 Container(
-                    height: 230,
+                    height: 160,
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: NotificationListener<ScrollNotification>(
                         onNotification: (ScrollNotification scrollInfo) {
@@ -4219,13 +4269,13 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
             .toStringAsFixed(2);
       }
 
-      double width = deviceWidth! * 0.45;
+      double width = deviceWidth! * 0.31;
 
       return Container(
           height: 250,
           width: width,
           child: Card(
-            elevation: 0.2,
+            elevation: 3,
             margin: EdgeInsetsDirectional.only(bottom: 5, end: 8),
             child: InkWell(
               borderRadius: BorderRadius.circular(4),
@@ -4248,7 +4298,7 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
                               image: NetworkImage(productList[index].image!),
                               height: double.maxFinite,
                               width: double.maxFinite,
-                              fit: BoxFit.contain,
+                              fit: BoxFit.cover,
                               imageErrorBuilder: (context, error, stackTrace) =>
                                   erroWidget(
                                 double.maxFinite,
@@ -4530,11 +4580,11 @@ class StateItem extends State<ProductDetail> with TickerProviderStateMixin {
   }
 
   _otherDetail(int? pos) {
-    String? returnable = widget.model!.isReturnable;
-    if (returnable == "1")
-      returnable = RETURN_DAYS! + " Days";
-    else
-      returnable = "No";
+    String? returnable = widget.model!.maxDaysToReturnItem;
+    returnable = widget.model!.maxDaysToReturnItem! + " Days";
+
+    print("kndfk ${returnable}");
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20),
       child: ListTile(

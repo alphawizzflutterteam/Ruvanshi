@@ -25,6 +25,7 @@ class _EditProfileState extends State<EditProfile> {
   DateTime selectedDate = DateTime.now();
 
   var userNameController = TextEditingController();
+  var gstController = TextEditingController();
   var emailController = TextEditingController();
   var dob;
 
@@ -152,7 +153,11 @@ class _EditProfileState extends State<EditProfile> {
                                       : dob;
                                   UpdateUserModels? model =
                                       await updateUserDetails(
-                                          userName, email, updateDOB, cityId);
+                                          userName,
+                                          email,
+                                          updateDOB,
+                                          cityId,
+                                          gstController.text);
                                   if (model!.error == false) {
                                     setState(() {
                                       showToast(model.message);
@@ -162,6 +167,7 @@ class _EditProfileState extends State<EditProfile> {
                                               listen: false);
                                       userProvider.setName(userName);
                                       userProvider.setEmail(email);
+                                      userProvider.setGst(gstController.text);
                                       // userProvider.mob(updateDOB);
                                     });
                                   } else {
@@ -305,6 +311,21 @@ class _EditProfileState extends State<EditProfile> {
                                   ),
                                 ),
                                 ListTile(
+                                  leading: Icon(Icons.money_off),
+                                  title: Text(
+                                    "GST",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                  trailing: Text(
+                                    "${user!.date![0].gst == null ? "" : user!.date![0].gst}",
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                ),
+                                ListTile(
                                   leading: Icon(Icons.date_range),
                                   title: Text(
                                     "Date Of Birth",
@@ -391,7 +412,15 @@ class _EditProfileState extends State<EditProfile> {
                                                       .fontFamily))),
                                     ),
                                     getDob(),
-                                    setCities()
+                                    setCities(),
+                                    TextField(
+                                      controller: gstController,
+                                      decoration: InputDecoration(
+                                          label: Text("GST",
+                                              style: TextStyle(
+                                                  fontFamily: dynamicFontFamily
+                                                      .fontFamily))),
+                                    ),
 
                                     ///ds
                                   ],

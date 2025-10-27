@@ -81,6 +81,9 @@ class _CouponListScreenState extends State<CouponListScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
                                 Container(
                                   height: 80,
                                   width: 80,
@@ -107,14 +110,17 @@ class _CouponListScreenState extends State<CouponListScreen> {
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 6),
-                                  child: Text(
-                                    item.promoCode ?? '',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                        fontSize: 18,
-                                        fontFamily:
-                                            dynamicFontFamily.fontFamily),
+                                  child: Center(
+                                    child: Text(
+                                      item.promoCode ?? '',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                          fontSize: 18,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 8),

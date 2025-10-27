@@ -1,19 +1,23 @@
 import 'dart:convert';
+
 /// error : false
 /// message : "get successfully!"
 /// date : [{"id":"1","ip_address":"41.176.193.214","username":"Admin","password":"$2y$12$w0YQCbpMacV2e2MW.TWe5eswsOEV7Bstp9U99A9xptauOcVVvDxly","email":"support@foodontheway.com","mobile":"9876543210","image":null,"gender":"","balance":"21610473638.449993","activation_selector":null,"activation_code":null,"forgotten_password_selector":null,"forgotten_password_code":null,"forgotten_password_time":null,"remember_selector":null,"remember_code":null,"created_on":"1268889823","last_login":"1648289623","active":"1","company":"ADMIN","address":null,"bonus":null,"cash_received":"0.00","dob":null,"country_code":"91","city":"57","area":"157","street":null,"license":"","vehicle":"","pincode":null,"serviceable_zipcodes":null,"apikey":null,"referral_code":"vXaEvNuR","friends_code":null,"fcm_id":"fiZYlfN4TrWybbHpjpybAn:APA91bG3mZEj_jTSLQoFtTvhq8BjMdPCjvZ2C_gitg5KXKWfJO47dKikjqJVE6z9sitn-EiiZIo5Gl7c1ohxsmuzWnEhZn5sgQsnSgY1J4QDTDcfrXT1Zq7QLY-h3x2TRtPrmFfPS0Ny","latitude":null,"longitude":null,"open_close_status":"0","created_at":"2020-06-30 15:50:08","gst_file":"","food_lic":"","account_name":"","pro_pic":"","account_number":"","bank_code":"","bank_name":"","bank_pass":""}]
 
-UserDetails userDetailsFromJson(String str) => UserDetails.fromJson(json.decode(str));
+UserDetails userDetailsFromJson(String str) =>
+    UserDetails.fromJson(json.decode(str));
 String userDetailsToJson(UserDetails data) => json.encode(data.toJson());
+
 class UserDetails {
   UserDetails({
-      bool? error, 
-      String? message, 
-      List<Date>? date,}){
+    bool? error,
+    String? message,
+    List<Date>? date,
+  }) {
     _error = error;
     _message = message;
     _date = date;
-}
+  }
 
   UserDetails.fromJson(dynamic json) {
     _error = json['error'];
@@ -28,13 +32,16 @@ class UserDetails {
   bool? _error;
   String? _message;
   List<Date>? _date;
-UserDetails copyWith({  bool? error,
-  String? message,
-  List<Date>? date,
-}) => UserDetails(  error: error ?? _error,
-  message: message ?? _message,
-  date: date ?? _date,
-);
+  UserDetails copyWith({
+    bool? error,
+    String? message,
+    List<Date>? date,
+  }) =>
+      UserDetails(
+        error: error ?? _error,
+        message: message ?? _message,
+        date: date ?? _date,
+      );
   bool? get error => _error;
   String? get message => _message;
   List<Date>? get date => _date;
@@ -48,7 +55,6 @@ UserDetails copyWith({  bool? error,
     }
     return map;
   }
-
 }
 
 /// id : "1"
@@ -102,56 +108,59 @@ UserDetails copyWith({  bool? error,
 
 Date dateFromJson(String str) => Date.fromJson(json.decode(str));
 String dateToJson(Date data) => json.encode(data.toJson());
+
 class Date {
   Date({
-      String? id, 
-      String? ipAddress, 
-      String? username, 
-      String? password, 
-      String? email, 
-      String? mobile, 
-      dynamic image, 
-      String? gender, 
-      String? balance, 
-      dynamic activationSelector, 
-      dynamic activationCode, 
-      dynamic forgottenPasswordSelector, 
-      dynamic forgottenPasswordCode, 
-      dynamic forgottenPasswordTime, 
-      dynamic rememberSelector, 
-      dynamic rememberCode, 
-      String? createdOn, 
-      String? lastLogin, 
-      String? active, 
-      String? company, 
-      dynamic address, 
-      dynamic bonus, 
-      String? cashReceived, 
-      dynamic dob, 
-      String? countryCode, 
-      String? city, 
-      String? area, 
-      dynamic street, 
-      String? license, 
-      String? vehicle, 
-      dynamic pincode, 
-      dynamic serviceableZipcodes, 
-      dynamic apikey, 
-      String? referralCode, 
-      dynamic friendsCode, 
-      String? fcmId, 
-      dynamic latitude, 
-      dynamic longitude, 
-      String? openCloseStatus, 
-      String? createdAt, 
-      String? gstFile, 
-      String? foodLic, 
-      String? accountName, 
-      String? proPic, 
-      String? accountNumber, 
-      String? bankCode, 
-      String? bankName, 
-      String? bankPass,}){
+    String? id,
+    String? ipAddress,
+    String? username,
+    String? password,
+    String? email,
+    String? mobile,
+    dynamic image,
+    String? gender,
+    String? balance,
+    dynamic activationSelector,
+    dynamic activationCode,
+    dynamic forgottenPasswordSelector,
+    dynamic forgottenPasswordCode,
+    dynamic forgottenPasswordTime,
+    dynamic rememberSelector,
+    dynamic rememberCode,
+    String? createdOn,
+    String? lastLogin,
+    String? active,
+    String? company,
+    dynamic address,
+    dynamic bonus,
+    String? cashReceived,
+    dynamic dob,
+    String? countryCode,
+    String? city,
+    String? area,
+    dynamic street,
+    String? license,
+    String? vehicle,
+    dynamic pincode,
+    dynamic serviceableZipcodes,
+    dynamic apikey,
+    String? referralCode,
+    dynamic friendsCode,
+    String? fcmId,
+    dynamic latitude,
+    dynamic longitude,
+    String? openCloseStatus,
+    String? createdAt,
+    String? gstFile,
+    String? gst,
+    String? foodLic,
+    String? accountName,
+    String? proPic,
+    String? accountNumber,
+    String? bankCode,
+    String? bankName,
+    String? bankPass,
+  }) {
     _id = id;
     _ipAddress = ipAddress;
     _username = username;
@@ -193,6 +202,7 @@ class Date {
     _openCloseStatus = openCloseStatus;
     _createdAt = createdAt;
     _gstFile = gstFile;
+    _gst = gst;
     _foodLic = foodLic;
     _accountName = accountName;
     _proPic = proPic;
@@ -200,7 +210,7 @@ class Date {
     _bankCode = bankCode;
     _bankName = bankName;
     _bankPass = bankPass;
-}
+  }
 
   Date.fromJson(dynamic json) {
     _id = json['id'];
@@ -244,6 +254,7 @@ class Date {
     _openCloseStatus = json['open_close_status'];
     _createdAt = json['created_at'];
     _gstFile = json['gst_file'];
+    _gst = json['gst_no'];
     _foodLic = json['food_lic'];
     _accountName = json['account_name'];
     _proPic = json['pro_pic'];
@@ -293,6 +304,7 @@ class Date {
   String? _openCloseStatus;
   String? _createdAt;
   String? _gstFile;
+  String? _gst;
   String? _foodLic;
   String? _accountName;
   String? _proPic;
@@ -300,103 +312,109 @@ class Date {
   String? _bankCode;
   String? _bankName;
   String? _bankPass;
-Date copyWith({  String? id,
-  String? ipAddress,
-  String? username,
-  String? password,
-  String? email,
-  String? mobile,
-  dynamic image,
-  String? gender,
-  String? balance,
-  dynamic activationSelector,
-  dynamic activationCode,
-  dynamic forgottenPasswordSelector,
-  dynamic forgottenPasswordCode,
-  dynamic forgottenPasswordTime,
-  dynamic rememberSelector,
-  dynamic rememberCode,
-  String? createdOn,
-  String? lastLogin,
-  String? active,
-  String? company,
-  dynamic address,
-  dynamic bonus,
-  String? cashReceived,
-  dynamic dob,
-  String? countryCode,
-  String? city,
-  String? area,
-  dynamic street,
-  String? license,
-  String? vehicle,
-  dynamic pincode,
-  dynamic serviceableZipcodes,
-  dynamic apikey,
-  String? referralCode,
-  dynamic friendsCode,
-  String? fcmId,
-  dynamic latitude,
-  dynamic longitude,
-  String? openCloseStatus,
-  String? createdAt,
-  String? gstFile,
-  String? foodLic,
-  String? accountName,
-  String? proPic,
-  String? accountNumber,
-  String? bankCode,
-  String? bankName,
-  String? bankPass,
-}) => Date(  id: id ?? _id,
-  ipAddress: ipAddress ?? _ipAddress,
-  username: username ?? _username,
-  password: password ?? _password,
-  email: email ?? _email,
-  mobile: mobile ?? _mobile,
-  image: image ?? _image,
-  gender: gender ?? _gender,
-  balance: balance ?? _balance,
-  activationSelector: activationSelector ?? _activationSelector,
-  activationCode: activationCode ?? _activationCode,
-  forgottenPasswordSelector: forgottenPasswordSelector ?? _forgottenPasswordSelector,
-  forgottenPasswordCode: forgottenPasswordCode ?? _forgottenPasswordCode,
-  forgottenPasswordTime: forgottenPasswordTime ?? _forgottenPasswordTime,
-  rememberSelector: rememberSelector ?? _rememberSelector,
-  rememberCode: rememberCode ?? _rememberCode,
-  createdOn: createdOn ?? _createdOn,
-  lastLogin: lastLogin ?? _lastLogin,
-  active: active ?? _active,
-  company: company ?? _company,
-  address: address ?? _address,
-  bonus: bonus ?? _bonus,
-  cashReceived: cashReceived ?? _cashReceived,
-  dob: dob ?? _dob,
-  countryCode: countryCode ?? _countryCode,
-  city: city ?? _city,
-  area: area ?? _area,
-  street: street ?? _street,
-  license: license ?? _license,
-  vehicle: vehicle ?? _vehicle,
-  pincode: pincode ?? _pincode,
-  serviceableZipcodes: serviceableZipcodes ?? _serviceableZipcodes,
-  apikey: apikey ?? _apikey,
-  referralCode: referralCode ?? _referralCode,
-  friendsCode: friendsCode ?? _friendsCode,
-  fcmId: fcmId ?? _fcmId,
-  latitude: latitude ?? _latitude,
-  longitude: longitude ?? _longitude,
-  openCloseStatus: openCloseStatus ?? _openCloseStatus,
-  createdAt: createdAt ?? _createdAt,
-  gstFile: gstFile ?? _gstFile,
-  foodLic: foodLic ?? _foodLic,
-  accountName: accountName ?? _accountName,
-  proPic: proPic ?? _proPic,
-  accountNumber: accountNumber ?? _accountNumber,
-  bankCode: bankCode ?? _bankCode,
-  bankName: bankName ?? _bankName,
-  bankPass: bankPass ?? _bankPass,
-);
+  Date copyWith({
+    String? id,
+    String? ipAddress,
+    String? username,
+    String? password,
+    String? email,
+    String? mobile,
+    dynamic image,
+    String? gender,
+    String? balance,
+    dynamic activationSelector,
+    dynamic activationCode,
+    dynamic forgottenPasswordSelector,
+    dynamic forgottenPasswordCode,
+    dynamic forgottenPasswordTime,
+    dynamic rememberSelector,
+    dynamic rememberCode,
+    String? createdOn,
+    String? lastLogin,
+    String? active,
+    String? company,
+    dynamic address,
+    dynamic bonus,
+    String? cashReceived,
+    dynamic dob,
+    String? countryCode,
+    String? city,
+    String? area,
+    dynamic street,
+    String? license,
+    String? vehicle,
+    dynamic pincode,
+    dynamic serviceableZipcodes,
+    dynamic apikey,
+    String? referralCode,
+    dynamic friendsCode,
+    String? fcmId,
+    dynamic latitude,
+    dynamic longitude,
+    String? openCloseStatus,
+    String? createdAt,
+    String? gstFile,
+    String? gst,
+    String? foodLic,
+    String? accountName,
+    String? proPic,
+    String? accountNumber,
+    String? bankCode,
+    String? bankName,
+    String? bankPass,
+  }) =>
+      Date(
+        id: id ?? _id,
+        ipAddress: ipAddress ?? _ipAddress,
+        username: username ?? _username,
+        password: password ?? _password,
+        email: email ?? _email,
+        mobile: mobile ?? _mobile,
+        image: image ?? _image,
+        gender: gender ?? _gender,
+        balance: balance ?? _balance,
+        activationSelector: activationSelector ?? _activationSelector,
+        activationCode: activationCode ?? _activationCode,
+        forgottenPasswordSelector:
+            forgottenPasswordSelector ?? _forgottenPasswordSelector,
+        forgottenPasswordCode: forgottenPasswordCode ?? _forgottenPasswordCode,
+        forgottenPasswordTime: forgottenPasswordTime ?? _forgottenPasswordTime,
+        rememberSelector: rememberSelector ?? _rememberSelector,
+        rememberCode: rememberCode ?? _rememberCode,
+        createdOn: createdOn ?? _createdOn,
+        lastLogin: lastLogin ?? _lastLogin,
+        active: active ?? _active,
+        company: company ?? _company,
+        address: address ?? _address,
+        bonus: bonus ?? _bonus,
+        cashReceived: cashReceived ?? _cashReceived,
+        dob: dob ?? _dob,
+        countryCode: countryCode ?? _countryCode,
+        city: city ?? _city,
+        area: area ?? _area,
+        street: street ?? _street,
+        license: license ?? _license,
+        vehicle: vehicle ?? _vehicle,
+        pincode: pincode ?? _pincode,
+        serviceableZipcodes: serviceableZipcodes ?? _serviceableZipcodes,
+        apikey: apikey ?? _apikey,
+        referralCode: referralCode ?? _referralCode,
+        friendsCode: friendsCode ?? _friendsCode,
+        fcmId: fcmId ?? _fcmId,
+        latitude: latitude ?? _latitude,
+        longitude: longitude ?? _longitude,
+        openCloseStatus: openCloseStatus ?? _openCloseStatus,
+        createdAt: createdAt ?? _createdAt,
+        gstFile: gstFile ?? _gstFile,
+        gst: gst ?? _gst,
+        foodLic: foodLic ?? _foodLic,
+        accountName: accountName ?? _accountName,
+        proPic: proPic ?? _proPic,
+        accountNumber: accountNumber ?? _accountNumber,
+        bankCode: bankCode ?? _bankCode,
+        bankName: bankName ?? _bankName,
+        bankPass: bankPass ?? _bankPass,
+      );
   String? get id => _id;
   String? get ipAddress => _ipAddress;
   String? get username => _username;
@@ -438,6 +456,7 @@ Date copyWith({  String? id,
   String? get openCloseStatus => _openCloseStatus;
   String? get createdAt => _createdAt;
   String? get gstFile => _gstFile;
+  String? get gst => _gst;
   String? get foodLic => _foodLic;
   String? get accountName => _accountName;
   String? get proPic => _proPic;
@@ -489,6 +508,7 @@ Date copyWith({  String? id,
     map['open_close_status'] = _openCloseStatus;
     map['created_at'] = _createdAt;
     map['gst_file'] = _gstFile;
+    map['gst'] = _gst;
     map['food_lic'] = _foodLic;
     map['account_name'] = _accountName;
     map['pro_pic'] = _proPic;
@@ -498,5 +518,4 @@ Date copyWith({  String? id,
     map['bank_pass'] = _bankPass;
     return map;
   }
-
 }

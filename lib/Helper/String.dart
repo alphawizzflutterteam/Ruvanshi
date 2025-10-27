@@ -2,6 +2,7 @@ import 'package:TGSawadesiMartUser/Helper/Constant.dart';
 
 final Uri getSellerApi = Uri.parse(baseUrl + 'get_sellers');
 final Uri getSliderApi = Uri.parse(baseUrl + 'get_slider_images');
+final Uri getSlider2Api = Uri.parse(baseUrl + 'get_slider_images2');
 final Uri getCatApi = Uri.parse(baseUrl + 'get_categories');
 final Uri getUserDetailsApi = Uri.parse(baseUrl + 'get_user_details');
 final Uri updateUserApi = Uri.parse(baseUrl + 'update_user');

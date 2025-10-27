@@ -148,6 +148,8 @@ class OrderItem {
       isReturn,
       isAlrCancelled,
       isAlrReturned,
+      isReturnable,
+      maxDaysToReturnItem,
       rtnReqSubmitted,
       varient_values,
       attr_name,
@@ -164,6 +166,7 @@ class OrderItem {
       tracking_url;
 
   List<String>? listStatus = [];
+  List<dynamic>? allStatus = [];
   List<String>? listDate = [];
 
   OrderItem({
@@ -176,10 +179,13 @@ class OrderItem {
     this.image,
     this.varientId,
     this.listDate,
+    this.allStatus,
     this.listStatus,
     this.isCancle,
     this.isReturn,
     this.isAlrReturned,
+    this.isReturnable,
+    this.maxDaysToReturnItem,
     this.isAlrCancelled,
     this.rtnReqSubmitted,
     this.attr_name,
@@ -215,12 +221,15 @@ class OrderItem {
       subTotal: json[SUB_TOTAL],
       varientId: json[PRODUCT_VARIENT_ID],
       listStatus: lStatus,
+      allStatus: json[STATUS],
       status: json[ACTIVE_STATUS],
       listDate: lDate,
       isCancle: json[ISCANCLEABLE],
       isReturn: json[ISRETURNABLE],
       isAlrCancelled: json[ISALRCANCLE],
       isAlrReturned: json[ISALRRETURN],
+      isReturnable: json["is_returnable"],
+      maxDaysToReturnItem: json["max_days_to_return_item"],
       rtnReqSubmitted: json[ISRTNREQSUBMITTED],
       attr_name: json[ATTR_NAME],
       productId: json[PRODUCT_ID],

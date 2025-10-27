@@ -1041,6 +1041,10 @@ class StateOrder extends State<OrderDetail>
                         child: Align(
                             alignment: Alignment.bottomRight,
                             child: OutlinedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.redAccent.shade100.withOpacity(0.2)),
+                              ),
                               onPressed: _isReturnClick
                                   ? () {
                                       showDialog(
@@ -1121,85 +1125,152 @@ class StateOrder extends State<OrderDetail>
                     //           orderItem.isAlrReturned == "0")
                     //       ?
                     if (orderItem.status == DELIVERD)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: OutlinedButton(
-                          onPressed: _isReturnClick
-                              ? () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text(
-                                          getTranslated(
-                                              context, 'ARE_YOU_SURE?')!,
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .fontColor,
-                                              fontFamily:
-                                                  dynamicFontFamily.fontFamily),
-                                        ),
-                                        content: Text(
-                                          "Would you like to return this product?",
-                                          style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .fontColor,
-                                              fontFamily:
-                                                  dynamicFontFamily.fontFamily),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text(
-                                              getTranslated(context, 'YES')!,
-                                              style: TextStyle(
-                                                  color: colors.primary,
-                                                  fontFamily: dynamicFontFamily
-                                                      .fontFamily),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              setState(() {
-                                                _isReturnClick = false;
-                                                _isProgress = true;
-                                              });
-                                              cancelOrder(
-                                                  RETURNED,
-                                                  updateOrderItemApi,
-                                                  orderItem.id);
+                      if (orderItem.listStatus!.contains(DELIVERD))
+                        if (orderItem.isReturnable == "1")
+                          if (orderItem.maxDaysToReturnItem != null)
+                            if (checkReturnEligibility(
+                                orderItem.allStatus!,
+                                int.parse(
+                                    orderItem.maxDaysToReturnItem ?? "0")))
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: OutlinedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(Colors
+                                              .redAccent.shade100
+                                              .withOpacity(0.2))),
+                                  onPressed: _isReturnClick
+                                      ? () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                  getTranslated(context,
+                                                      'ARE_YOU_SURE?')!,
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .fontColor,
+                                                      fontFamily:
+                                                          dynamicFontFamily
+                                                              .fontFamily),
+                                                ),
+                                                content: Text(
+                                                  "Would you like to return this product?",
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .fontColor,
+                                                      fontFamily:
+                                                          dynamicFontFamily
+                                                              .fontFamily),
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text(
+                                                      getTranslated(
+                                                          context, 'YES')!,
+                                                      style: TextStyle(
+                                                          color: colors.primary,
+                                                          fontFamily:
+                                                              dynamicFontFamily
+                                                                  .fontFamily),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      setState(() {
+                                                        _isReturnClick = false;
+                                                        _isProgress = true;
+                                                      });
+                                                      cancelOrder(
+                                                          RETURNED,
+                                                          updateOrderItemApi,
+                                                          orderItem.id);
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text(
+                                                      getTranslated(
+                                                          context, 'NO')!,
+                                                      style: TextStyle(
+                                                          color: colors.primary,
+                                                          fontFamily:
+                                                              dynamicFontFamily
+                                                                  .fontFamily),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  )
+                                                ],
+                                              );
                                             },
-                                          ),
-                                          TextButton(
-                                            child: Text(
-                                              getTranslated(context, 'NO')!,
-                                              style: TextStyle(
-                                                  color: colors.primary,
-                                                  fontFamily: dynamicFontFamily
-                                                      .fontFamily),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                          )
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                              : null,
-                          child: Text(
-                            getTranslated(context, 'ITEM_RETURN')!,
-                            style: TextStyle(
-                                fontFamily: dynamicFontFamily.fontFamily),
-                          ),
-                        ),
-                      )
+                                          );
+                                        }
+                                      : null,
+                                  child: Text(
+                                    getTranslated(context, 'ITEM_RETURN')!,
+                                    style: TextStyle(
+                                        fontFamily:
+                                            dynamicFontFamily.fontFamily),
+                                  ),
+                                ),
+                              )
                     // : Container(),
                   ],
                 ),
               ],
             )));
+  }
+
+  bool checkReturnEligibility(List<dynamic> status, int maxDaysToReturnItem) {
+    try {
+      // Find the "delivered" status entry
+      final deliveredEntry = status.firstWhere(
+        (s) => s[0].toLowerCase() == 'delivered',
+        orElse: () => [],
+      );
+
+      if (deliveredEntry.isEmpty) return false; // no delivered entry found
+
+      final deliveredDateStr = deliveredEntry[1];
+      final deliveredDate = _parseCustomDate(deliveredDateStr);
+      final now = DateTime.now();
+
+      // Calculate the last date when return is allowed
+      final returnDeadline =
+          deliveredDate.add(Duration(days: maxDaysToReturnItem));
+
+      return now.isBefore(returnDeadline);
+    } catch (e) {
+      print('Error: $e');
+      return false;
+    }
+  }
+
+  DateTime _parseCustomDate(String dateStr) {
+    // Example: "16-10-2025 01:21:32pm"
+    final cleaned = dateStr.toUpperCase().replaceAll(' ', '');
+    final format =
+        RegExp(r'(\d{2})-(\d{2})-(\d{4})(\d{2}):(\d{2}):(\d{2})(AM|PM)');
+    final match = format.firstMatch(cleaned);
+
+    if (match == null) throw FormatException('Invalid date: $dateStr');
+
+    int day = int.parse(match.group(1)!);
+    int month = int.parse(match.group(2)!);
+    int year = int.parse(match.group(3)!);
+    int hour = int.parse(match.group(4)!);
+    int minute = int.parse(match.group(5)!);
+    int second = int.parse(match.group(6)!);
+    String period = match.group(7)!;
+
+    if (period == 'PM' && hour != 12) hour += 12;
+    if (period == 'AM' && hour == 12) hour = 0;
+
+    return DateTime(year, month, day, hour, minute, second);
   }
 
   bankProof(OrderModel model) {
@@ -1315,7 +1386,7 @@ class StateOrder extends State<OrderDetail>
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                      height: 30,
+                      height: 15,
                       child: VerticalDivider(
                         thickness: 2,
                         color: prDate == null ? Colors.grey : colors.primary,
@@ -1358,7 +1429,7 @@ class StateOrder extends State<OrderDetail>
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        height: 30,
+                        height: 15,
                         child: VerticalDivider(
                           thickness: 2,
                           color: colors.primary,
@@ -1403,7 +1474,7 @@ class StateOrder extends State<OrderDetail>
               Column(
                 children: [
                   Container(
-                    height: 30,
+                    height: 15,
                     child: VerticalDivider(
                       thickness: 2,
                       color: sDate == null ? Colors.grey : colors.primary,
@@ -1447,7 +1518,7 @@ class StateOrder extends State<OrderDetail>
                   Column(
                     children: [
                       Container(
-                        height: 30,
+                        height: 15,
                         child: VerticalDivider(
                           thickness: 2,
                           color: colors.primary,
@@ -1493,7 +1564,7 @@ class StateOrder extends State<OrderDetail>
               Column(
                 children: [
                   Container(
-                    height: 30,
+                    height: 15,
                     child: VerticalDivider(
                       thickness: 2,
                       color: dDate == null ? Colors.grey : colors.primary,
@@ -1541,7 +1612,7 @@ class StateOrder extends State<OrderDetail>
               Column(
                 children: [
                   Container(
-                    height: 30,
+                    height: 15,
                     child: VerticalDivider(
                       thickness: 2,
                       color: colors.primary,
@@ -1588,7 +1659,7 @@ class StateOrder extends State<OrderDetail>
               Column(
                 children: [
                   Container(
-                    height: 30,
+                    height: 15,
                     child: VerticalDivider(
                       thickness: 2,
                       color: colors.primary,

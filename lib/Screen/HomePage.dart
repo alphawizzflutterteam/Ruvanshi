@@ -61,7 +61,9 @@ List<String> tagList = [];
 List<Product> sellerList = [];
 int count = 1;
 List<Model> homeSliderList = [];
+List<Model> homeSliderList2 = [];
 List<Widget> pages = [];
+List<Widget> pages2 = [];
 bool cityLoading = true;
 StateSetter? cityState;
 int? selCityPos = -1;
@@ -71,6 +73,7 @@ class _HomePageState extends State<HomePage>
   bool _isNetworkAvail = true;
 
   late var _controller = PageController(viewportFraction: 1);
+  late var _controller2 = PageController(viewportFraction: 1);
   late Animation labelLargeSqueezeanimation;
   late AnimationController labelLargeController;
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
@@ -95,7 +98,11 @@ class _HomePageState extends State<HomePage>
     _controller = PageController(
       viewportFraction: 1,
     );
+    _controller2 = PageController(
+      viewportFraction: 1,
+    );
     _animateSlider();
+    _animateSlider2();
     getCities();
     callApi();
     labelLargeController = new AnimationController(
@@ -114,6 +121,7 @@ class _HomePageState extends State<HomePage>
       ),
     );
     WidgetsBinding.instance!.addPostFrameCallback((_) => _animateSlider());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _animateSlider2());
   }
 
   Future<void> getCities() async {
@@ -397,74 +405,74 @@ class _HomePageState extends State<HomePage>
                 ),
               )
             : noInternet(context),
-        floatingActionButton: offerImgs.isNotEmpty
-            ? GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Offer(
-                        fromSeller: false,
-                        tag: false,
-                        name: "Offer Section",
-                      ),
-                    ),
-                  );
-                },
-                child: offerImgs.isNotEmpty
-                    ? Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular((100)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 3,
-                                blurRadius: 6,
-                                offset: Offset(0, -2),
-                              ),
-                            ],
-                            border: Border.all(color: Colors.grey, width: 1)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: AnimatedSwitcher(
-                            duration: const Duration(seconds: 4),
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                              opacity: animation,
-                              child: child,
-                            ),
-                            child: Container(
-                              width: 50,
-                              height: 50,
-                              child: CachedNetworkImage(
-                                key: ValueKey<String>(offerImgs[currentIndex]),
-                                imageUrl: offerImgs[currentIndex],
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Center(
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.green,
-                                    ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: Colors.grey[200],
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey[400],
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : SizedBox.shrink(),
-              )
-            : SizedBox.shrink(),
+        // floatingActionButton: offerImgs.isNotEmpty
+        //     ? GestureDetector(
+        //         onTap: () {
+        //           Navigator.push(
+        //             context,
+        //             MaterialPageRoute(
+        //               builder: (context) => Offer(
+        //                 fromSeller: false,
+        //                 tag: false,
+        //                 name: "Offer Section",
+        //               ),
+        //             ),
+        //           );
+        //         },
+        //         child: offerImgs.isNotEmpty
+        //             ? Container(
+        //                 decoration: BoxDecoration(
+        //                     color: Colors.white,
+        //                     borderRadius: BorderRadius.circular((100)),
+        //                     boxShadow: [
+        //                       BoxShadow(
+        //                         color: Colors.grey.withOpacity(0.3),
+        //                         spreadRadius: 3,
+        //                         blurRadius: 6,
+        //                         offset: Offset(0, -2),
+        //                       ),
+        //                     ],
+        //                     border: Border.all(color: Colors.grey, width: 1)),
+        //                 child: ClipRRect(
+        //                   borderRadius: BorderRadius.circular(100),
+        //                   child: AnimatedSwitcher(
+        //                     duration: const Duration(seconds: 4),
+        //                     transitionBuilder: (child, animation) =>
+        //                         FadeTransition(
+        //                       opacity: animation,
+        //                       child: child,
+        //                     ),
+        //                     child: Container(
+        //                       width: 50,
+        //                       height: 50,
+        //                       child: CachedNetworkImage(
+        //                         key: ValueKey<String>(offerImgs[currentIndex]),
+        //                         imageUrl: offerImgs[currentIndex],
+        //                         fit: BoxFit.cover,
+        //                         placeholder: (context, url) => Center(
+        //                           child: CircularProgressIndicator(
+        //                             strokeWidth: 2,
+        //                             valueColor: AlwaysStoppedAnimation<Color>(
+        //                               Colors.green,
+        //                             ),
+        //                           ),
+        //                         ),
+        //                         errorWidget: (context, url, error) => Container(
+        //                           color: Colors.grey[200],
+        //                           child: Icon(
+        //                             Icons.image_not_supported,
+        //                             color: Colors.grey[400],
+        //                             size: 30,
+        //                           ),
+        //                         ),
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //               )
+        //             : SizedBox.shrink(),
+        //       )
+        //     : SizedBox.shrink(),
       ),
     );
   }
@@ -494,7 +502,8 @@ class _HomePageState extends State<HomePage>
             : Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                    padding:
+                        const EdgeInsets.only(top: 10.0, left: 10.0, right: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
@@ -547,6 +556,70 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  Widget _sectionSlider() {
+    double height = deviceWidth! / 2.0;
+
+    return Selector<HomeProvider, bool>(
+      builder: (context, data, child) {
+        return data
+            ? sliderLoading()
+            : Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: height,
+                        width: double.infinity,
+                        child: PageView.builder(
+                          itemCount: homeSliderList2.length,
+                          scrollDirection: Axis.horizontal,
+                          controller: _controller2,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          onPageChanged: (index) {
+                            print("changessd $index");
+                            context.read<HomeProvider>().setCurSlider2(index);
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return pages2[index];
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: map<Widget>(
+                      homeSliderList2,
+                      (index, url) {
+                        return Consumer<HomeProvider>(
+                          builder: (context, val, _) {
+                            return Container(
+                              width: 8.0,
+                              height: 8.0,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 12.0, horizontal: 4.0),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: val.curSlider2 == index
+                                    ? colors.primary
+                                    : Colors.grey.shade400,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+      },
+      selector: (_, homeProvider) => homeProvider.sliderLoading,
+    );
+  }
+
   void _animateSlider() {
     Future.delayed(const Duration(seconds: 2)).then((_) {
       if (!mounted || !_controller.hasClients || homeSliderList.isEmpty) return;
@@ -555,13 +628,36 @@ class _HomePageState extends State<HomePage>
       if (nextPage >= homeSliderList.length) {
         nextPage = 0;
       }
-      _controller
-          .animateToPage(
-            nextPage,
-            duration: const Duration(milliseconds: 600),
-            curve: Curves.easeInOut,
-          )
-          .then((_) => _animateSlider());
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        _controller
+            .animateToPage(
+              nextPage,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            )
+            .then((_) => _animateSlider());
+      });
+    });
+  }
+
+  void _animateSlider2() {
+    Future.delayed(const Duration(seconds: 2)).then((_) {
+      if (!mounted || !_controller2.hasClients || homeSliderList2.isEmpty)
+        return;
+      int nextPage2 = _controller2.page?.round() ?? 0;
+      nextPage2++;
+      if (nextPage2 >= homeSliderList2.length) {
+        nextPage2 = 0;
+      }
+      Future.delayed(const Duration(seconds: 1)).then((_) {
+        _controller2
+            .animateToPage(
+              nextPage2,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            )
+            .then((_) => _animateSlider2());
+      });
     });
   }
 
@@ -724,6 +820,7 @@ class _HomePageState extends State<HomePage>
                 padding: const EdgeInsets.only(top: 10.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  spacing: 10,
                   children: <Widget>[
                     _getHeading(sectionList[index].title ?? "", index),
                     _getSection(index),
@@ -738,7 +835,9 @@ class _HomePageState extends State<HomePage>
       return Column(
         children: [
           _sectionBody(),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
+          _sectionSlider(),
+          const SizedBox(height: 6),
           _catList1(),
           const SizedBox(height: 10),
         ],
@@ -762,13 +861,13 @@ class _HomePageState extends State<HomePage>
               )
             : SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 15,
                       mainAxisSpacing: 20,
-                      childAspectRatio: 0.8,
+                      childAspectRatio: 0.9,
                     ),
                     itemCount: catList.length,
                     shrinkWrap: true,
@@ -807,9 +906,9 @@ class _HomePageState extends State<HomePage>
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 3,
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 2,
                                 offset: Offset(0, 1),
                               ),
                             ],
@@ -871,12 +970,13 @@ class _HomePageState extends State<HomePage>
                                       .textTheme
                                       .bodySmall!
                                       .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .fontColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 11,
-                                      ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .fontColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 10,
+                                          fontFamily:
+                                              dynamicFontFamily.fontFamily),
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
@@ -899,17 +999,19 @@ class _HomePageState extends State<HomePage>
     var orient = MediaQuery.of(context).orientation;
     return sectionList[i].style == DEFAULT
         ? Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15, bottom: 15),
+            padding: const EdgeInsets.only(left: 10.0, right: 10, bottom: 15),
             child: GridView.count(
               padding: EdgeInsetsDirectional.only(top: 5),
-              crossAxisCount: 2,
+              crossAxisCount: 3,
               shrinkWrap: true,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
               childAspectRatio: 0.750,
               physics: NeverScrollableScrollPhysics(),
               children: List.generate(
-                sectionList[i].productList!.length < 4
+                sectionList[i].productList!.length < 6
                     ? sectionList[i].productList!.length
-                    : 4,
+                    : 6,
                 (index) {
                   return productItem(i, index, index % 2 == 0 ? true : false);
                 },
@@ -919,16 +1021,17 @@ class _HomePageState extends State<HomePage>
         : sectionList[i].style == STYLE1
             ? sectionList[i].productList!.isNotEmpty
                 ? SizedBox(
-                    height: deviceHeight! * 0.35,
+                    height: deviceHeight! * 0.18,
                     child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 1),
                       scrollDirection: Axis.horizontal,
                       itemCount: sectionList[i].productList!.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(right: 12),
+                          padding: const EdgeInsets.only(right: 10),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.5,
+                            width: MediaQuery.of(context).size.width * 0.3,
                             child: productItem(i, index, index % 2 == 0),
                           ),
                         );
@@ -938,7 +1041,7 @@ class _HomePageState extends State<HomePage>
                 : Container()
             : sectionList[i].style == STYLE2
                 ? Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Row(
                       children: [
                         Flexible(
@@ -976,7 +1079,7 @@ class _HomePageState extends State<HomePage>
                   )
                 : sectionList[i].style == STYLE3
                     ? Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.all(10.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -1019,7 +1122,7 @@ class _HomePageState extends State<HomePage>
                       )
                     : sectionList[i].style == STYLE4
                         ? Padding(
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.all(10.0),
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -1054,7 +1157,7 @@ class _HomePageState extends State<HomePage>
                             ),
                           )
                         : Padding(
-                            padding: const EdgeInsets.all(15.0),
+                            padding: const EdgeInsets.all(10.0),
                             child: GridView.count(
                               padding: EdgeInsetsDirectional.only(top: 5),
                               crossAxisCount: 2,
@@ -1100,13 +1203,18 @@ class _HomePageState extends State<HomePage>
 
       double width = deviceWidth! * 0.5;
 
-      return Card(
-        elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        margin: const EdgeInsets.all(6),
+      return Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 2,
+                spreadRadius: 1,
+                offset: const Offset(0, 0),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(10)),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           child: Column(
@@ -1134,27 +1242,26 @@ class _HomePageState extends State<HomePage>
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(
-                  start: 5.0,
-                  top: 3,
-                ),
+                    start: 5.0, top: 3, bottom: 4),
                 child: Text(
                   sectionList[secPos].productList![index].name!,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color: Theme.of(context).colorScheme.lightBlack,
-                      fontSize: 14,
-                      fontFamily: dynamicFontFamily.fontFamily,
-                      fontWeight: FontWeight.bold),
-                  maxLines: 1,
+                      color: Theme.of(context).colorScheme.fontColor,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      fontFamily: dynamicFontFamily.fontFamily),
                   overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
+                  maxLines: 1,
                 ),
               ),
               Text(
-                " " + CUR_CURRENCY! + " " + price.toString(),
+                " " + CUR_CURRENCY! + " " + price.toStringAsFixed(2),
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.fontColor,
                     fontWeight: FontWeight.bold,
                     fontFamily: dynamicFontFamily.fontFamily,
-                    fontSize: 15),
+                    fontSize: 12),
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(
@@ -1186,7 +1293,7 @@ class _HomePageState extends State<HomePage>
                                 .copyWith(
                                     decoration: TextDecoration.lineThrough,
                                     letterSpacing: 0,
-                                    fontSize: 15,
+                                    fontSize: 12,
                                     color: Colors.grey,
                                     fontFamily: dynamicFontFamily.fontFamily,
                                     fontWeight: FontWeight.bold),
@@ -1202,7 +1309,7 @@ class _HomePageState extends State<HomePage>
                                   .copyWith(
                                       color: colors.primary,
                                       letterSpacing: 0,
-                                      fontSize: 15,
+                                      fontSize: 12,
                                       fontFamily: dynamicFontFamily.fontFamily,
                                       fontWeight: FontWeight.bold),
                             ),
@@ -1311,6 +1418,7 @@ class _HomePageState extends State<HomePage>
     if (_isNetworkAvail) {
       getSetting();
       getSlider();
+      getSlider2();
       getCat();
       // getSeller();
       getSection();
@@ -1727,6 +1835,69 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  Widget _buildImagePageItem2(Model slider) {
+    double height = deviceWidth! / 0.43;
+
+    return GestureDetector(
+      child: FadeInImage(
+          fadeInDuration: Duration(milliseconds: 150),
+          image: CachedNetworkImageProvider(slider.image!),
+          height: height,
+          width: double.maxFinite,
+          fit: BoxFit.fill,
+          imageErrorBuilder: (context, error, stackTrace) => Image.asset(
+                "assets/images/sliderph.png",
+                fit: BoxFit.fill,
+                height: height,
+                color: colors.primary,
+              ),
+          placeholderErrorBuilder: (context, error, stackTrace) => Image.asset(
+                "assets/images/sliderph.png",
+                fit: BoxFit.fill,
+                height: height,
+                color: colors.primary,
+              ),
+          placeholder: AssetImage(imagePath + "sliderph.png")),
+      onTap: () async {
+        int curSlider2 = context.read<HomeProvider>().curSlider2;
+
+        if (homeSliderList2[curSlider2].type == "products") {
+          Product? item = homeSliderList2[curSlider2].list;
+
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+                pageBuilder: (_, __, ___) => ProductDetail(
+                    model: item, secPos: 0, index: 0, list: true)),
+          );
+        } else if (homeSliderList2[curSlider2].type == "categories") {
+          Product item = homeSliderList2[curSlider2].list;
+          if (item.subList == null || item.subList!.length == 0) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductList(
+                    name: item.name,
+                    id: item.id,
+                    tag: false,
+                    fromSeller: false,
+                  ),
+                ));
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubCategory(
+                    title: item.name!,
+                    subList: item.subList,
+                  ),
+                ));
+          }
+        }
+      },
+    );
+  }
+
   Widget deliverLoading() {
     return Shimmer.fromColors(
         baseColor: Theme.of(context).colorScheme.simmerBase,
@@ -1955,6 +2126,33 @@ class _HomePageState extends State<HomePage>
 
         pages = homeSliderList.map((slider) {
           return _buildImagePageItem(slider);
+        }).toList();
+      } else {
+        setSnackbar(msg!, context);
+      }
+
+      context.read<HomeProvider>().setSliderLoading(false);
+    }, onError: (error) {
+      setSnackbar(error.toString(), context);
+      context.read<HomeProvider>().setSliderLoading(false);
+    });
+  }
+
+  void getSlider2() {
+    Map map = Map();
+
+    apiBaseHelper.postAPICall(getSlider2Api, map).then((getdata) {
+      bool error = getdata["error"];
+      String? msg = getdata["message"];
+      if (!error) {
+        var data = getdata["data"];
+        print(getSlider2Api.toString());
+
+        homeSliderList2 =
+            (data as List).map((data) => new Model.fromSlider(data)).toList();
+
+        pages2 = homeSliderList2.map((slider) {
+          return _buildImagePageItem2(slider);
         }).toList();
       } else {
         setSnackbar(msg!, context);

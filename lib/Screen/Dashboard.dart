@@ -53,7 +53,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     getSetting();
     initDynamicLinks();
     _tabController = TabController(
-      length: 3,
+      length: 4,
       vsync: this,
     );
     LocalNotificationService.initialize();
@@ -204,11 +204,11 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
               ),
               AllCategory(),
               Cart(fromBottom: true),
-              // Offer(
-              //   fromSeller: false,
-              //   tag: false,
-              //   name: "Offer Section",
-              // ),
+              Offer(
+                fromSeller: false,
+                tag: false,
+                name: "Offer Section",
+              ),
             ],
           ),
           bottomNavigationBar: _getBottomBar(),
@@ -339,6 +339,8 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
     return Material(
       color: colors.whiteTemp,
       child: Container(
+        padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
         decoration: BoxDecoration(
           color: colors.whiteTemp,
           boxShadow: [
@@ -348,160 +350,167 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
             ),
           ],
         ),
-        child: TabBar(
-          onTap: (_) {
-            if (_tabController.index == 3) {
-              if (CUR_USERID == null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Login(),
-                  ),
-                );
-                _tabController.animateTo(0);
+        child: ClipRect(
+          child: TabBar(
+            onTap: (_) {
+              if (_tabController.index == 3) {
+                if (CUR_USERID == null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Login(),
+                    ),
+                  );
+                  _tabController.animateTo(0);
+                }
               }
-            }
-          },
-          controller: _tabController,
-          tabs: [
-            Tab(
-              icon: SvgPicture.asset(
-                _selBottom == 0
-                    ? imagePath + "sel_home.svg"
-                    : imagePath + "desel_home.svg",
-                color: _selBottom == 0 ? secondaryColor : colors.blackTemp,
-                width: 28,
-                height: 28,
+            },
+            controller: _tabController,
+            physics: const NeverScrollableScrollPhysics(),
+            labelPadding: EdgeInsets.zero,
+            indicatorWeight: 0,
+            indicatorColor: Colors.transparent,
+            indicatorSize: TabBarIndicatorSize.tab,
+            indicator: BoxDecoration(),
+            indicatorPadding: EdgeInsets.zero,
+            labelColor: secondaryColor,
+            unselectedLabelColor: colors.blackTemp,
+            labelStyle:
+                const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            unselectedLabelStyle:
+                const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+            tabs: [
+              Tab(
+                icon: SvgPicture.asset(
+                  _selBottom == 0
+                      ? imagePath + "sel_home.svg"
+                      : imagePath + "desel_home.svg",
+                  color: _selBottom == 0 ? secondaryColor : colors.blackTemp,
+                  width: 28,
+                  height: 28,
+                ),
+                text: getTranslated(context, 'HOME_LBL'),
               ),
-              text: getTranslated(context, 'HOME_LBL'),
-            ),
-            Tab(
-              icon: SvgPicture.asset(
-                _selBottom == 1
-                    ? imagePath + "category01.svg"
-                    : imagePath + "category.svg",
-                color: _selBottom == 1 ? secondaryColor : colors.blackTemp,
-                width: 26,
-                height: 26,
+              Tab(
+                icon: SvgPicture.asset(
+                  _selBottom == 1
+                      ? imagePath + "category01.svg"
+                      : imagePath + "category.svg",
+                  color: _selBottom == 1 ? secondaryColor : colors.blackTemp,
+                  width: 26,
+                  height: 26,
+                ),
+                text: getTranslated(context, 'category'),
               ),
-              text: getTranslated(context, 'category'),
-            ),
-            Tab(
-              icon: Selector<UserProvider, String>(
-                builder: (context, data, child) {
-                  return Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Center(
-                        child: SvgPicture.asset(
-                          _selBottom == 2
-                              ? imagePath + "cart01.svg"
-                              : imagePath + "cart.svg",
-                          color: _selBottom == 2
-                              ? secondaryColor
-                              : colors.blackTemp,
-                          width: 26,
-                          height: 26,
+              Tab(
+                icon: Selector<UserProvider, String>(
+                  builder: (context, data, child) {
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Center(
+                          child: SvgPicture.asset(
+                            _selBottom == 2
+                                ? imagePath + "cart01.svg"
+                                : imagePath + "cart.svg",
+                            color: _selBottom == 2
+                                ? secondaryColor
+                                : colors.blackTemp,
+                            width: 26,
+                            height: 26,
+                          ),
                         ),
-                      ),
-                      if (data != null && data.isNotEmpty && data != "0")
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Transform.translate(
-                            offset: Offset(20, -7),
-                            child: Container(
-                              padding: EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _selBottom == 2
-                                    ? secondaryColor
-                                    : colors.blackTemp,
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.white,
-                                  width: 1,
+                        if (data != null && data.isNotEmpty && data != "0")
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: Transform.translate(
+                              offset: Offset(20, -7),
+                              child: Container(
+                                padding: EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _selBottom == 2
+                                      ? secondaryColor
+                                      : colors.blackTemp,
+                                  border: Border.all(
+                                    color: Theme.of(context).colorScheme.white,
+                                    width: 1,
+                                  ),
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: 20,
+                                  minHeight: 20,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    data,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(context).colorScheme.white,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
-                              constraints: BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                  selector: (_, homeProvider) => homeProvider.curCartCount,
+                ),
+                text: getTranslated(context, 'CART'),
+              ),
+              Tab(
+                height: kBottomNavigationBarHeight + 16,
+                iconMargin: EdgeInsets.zero,
+                icon: offerImgs.isNotEmpty
+                    ? SizedBox.expand(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Offer(
+                                  fromSeller: false,
+                                  tag: false,
+                                  name: "Offer Section",
+                                ),
                               ),
-                              child: Center(
-                                child: Text(
-                                  data,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.white,
+                            );
+                          },
+                          child: AnimatedSwitcher(
+                            duration: const Duration(seconds: 4),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                key: ValueKey<String>(offerImgs[currentIndex]),
+                                imageUrl: offerImgs[currentIndex],
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
                                   ),
-                                  textAlign: TextAlign.center,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                  Icons.image_not_supported,
+                                  color: Colors.grey,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                    ],
-                  );
-                },
-                selector: (_, homeProvider) => homeProvider.curCartCount,
+                      )
+                    : const SizedBox.shrink(),
               ),
-              text: getTranslated(context, 'CART'),
-            ),
-            // Tab(
-            //   icon: SizedBox(
-            //     width: 100,
-            //     height: 100,
-            //     child: offerImgs.isNotEmpty
-            //         ? ClipRRect(
-            //             borderRadius: BorderRadius.circular(100),
-            //             child: Container(
-            //               width: 120,
-            //               height: 120,
-            //               child: AnimatedSwitcher(
-            //                 duration: const Duration(milliseconds: 800),
-            //                 transitionBuilder: (child, animation) =>
-            //                     FadeTransition(
-            //                   opacity: animation,
-            //                   child: child,
-            //                 ),
-            //                 child: CachedNetworkImage(
-            //                   key: ValueKey<String>(offerImgs[currentIndex]),
-            //                   imageUrl: offerImgs[currentIndex],
-            //                   fit: BoxFit.cover,
-            //                   placeholder: (context, url) => Center(
-            //                     child: CircularProgressIndicator(
-            //                       strokeWidth: 2,
-            //                       valueColor: AlwaysStoppedAnimation<Color>(
-            //                         Colors.green,
-            //                       ),
-            //                     ),
-            //                   ),
-            //                   errorWidget: (context, url, error) => Container(
-            //                     color: Colors.grey[200],
-            //                     child: Icon(
-            //                       Icons.image_not_supported,
-            //                       color: Colors.grey[400],
-            //                       size: 30,
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //           )
-            //         : Image.asset(
-            //             "assets/images/offer.gif",
-            //             fit: BoxFit.cover,
-            //           ),
-            //   ),
-            // ),
-          ],
-          indicator: UnderlineTabIndicator(
-            insets: EdgeInsets.fromLTRB(50.0, 0.0, 50.0, 70.0),
+            ],
           ),
-          labelColor: secondaryColor,
-          unselectedLabelColor: colors.blackTemp,
-          labelStyle: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-          unselectedLabelStyle:
-              TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -595,7 +604,7 @@ class _HomePageState extends State<Dashboard> with TickerProviderStateMixin {
 
   void startImageLoop() {
     timer?.cancel();
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer t) {
+    timer = Timer.periodic(const Duration(seconds: 4), (Timer t) {
       if (offerImgs.isNotEmpty) {
         setState(() {
           currentIndex = (currentIndex + 1) % offerImgs.length;

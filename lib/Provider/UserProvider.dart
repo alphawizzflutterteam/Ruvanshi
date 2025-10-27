@@ -8,7 +8,8 @@ class UserProvider extends ChangeNotifier {
       _mob = '',
       _profilePic = '',
       _bankFilePic = "",
-      _email = '';
+      _email = '',
+      _gst = '';
   String? _userId = '';
 
   String? _curPincode = '';
@@ -83,6 +84,11 @@ class UserProvider extends ChangeNotifier {
 
   void setEmail(String email) {
     _email = email;
+    notifyListeners();
+  }
+
+  void setGst(String gst) {
+    _gst = gst;
     notifyListeners();
   }
 

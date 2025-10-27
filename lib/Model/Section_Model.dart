@@ -111,6 +111,7 @@ class Product {
   int? minOrderQuntity;
   String? isFav,
       isReturnable,
+      maxDaysToReturnItem,
       isCancelable,
       isPurchased,
       availability,
@@ -164,6 +165,7 @@ class Product {
       this.isFav,
       this.isCancelable,
       this.isReturnable,
+      this.maxDaysToReturnItem,
       this.isPurchased,
       this.availability,
       this.noOfRating,
@@ -269,6 +271,7 @@ class Product {
       availability: json[AVAILABILITY].toString(),
       isPurchased: json[ISPURCHASED].toString(),
       isReturnable: json[ISRETURNABLE],
+      maxDaysToReturnItem: json["max_days_to_return_item"],
       otherImage: other_image,
       prVarientList: varientList,
       attributeList: attList,

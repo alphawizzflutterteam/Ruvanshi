@@ -51,7 +51,7 @@ Future<UpdateUserModels?> uploadImage(param, image) async {
 }
 
 Future<UpdateUserModels?> updateUserDetails(
-    userName, email, dob, cityId) async {
+    userName, email, dob, cityId, gst) async {
   var header = headers;
   var request = http.MultipartRequest('POST', updateUserApi);
   request.fields.addAll({
@@ -59,7 +59,8 @@ Future<UpdateUserModels?> updateUserDetails(
     'username': '$userName',
     'email': '$email',
     'dob': '$dob',
-    'city': '$cityId'
+    'city': '$cityId',
+    'gst_no': '$gst'
   });
   print('PrintDaxcvxcta:_____${request.fields}______');
   request.headers.addAll(header);
